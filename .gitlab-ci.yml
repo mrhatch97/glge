@@ -1,0 +1,27 @@
+image: gcc
+
+before_script:
+ - apt-get update --yes
+ - apt-get install --yes cmake
+
+stages:
+    - build
+    - test
+
+build:
+    stage: build
+    variables:
+        CC: gcc
+        CXX: g++
+    script:
+        - cmake -Bbuild -H.
+        - make -Cbuild -j
+    artifacts:
+        untracked: true
+
+test:
+    stage: test
+    script:
+        - make -C -j test
+    dependencies:
+        - build
