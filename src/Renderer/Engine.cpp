@@ -2,13 +2,8 @@
 
 namespace eng::render
 {
-	Engine::Engine() : resources(), shaders(), continue_running(false)
+	Engine::Engine() : shaders(), continue_running(false)
 	{
-	}
-
-	res::ResourceManager & Engine::get_resource_manager()
-	{
-		return resources;
 	}
 
 	auto Engine::get_shader_manager() -> primitive::ShaderManager &

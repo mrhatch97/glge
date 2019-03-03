@@ -1,10 +1,10 @@
-image: gcc
+image: rikorose/gcc-cmake:latest
 
 before_script:
  - apt-get update --yes
- - apt-get install --yes cmake
  - apt-get install --yes libglm-dev
  - apt-get install --yes libsoil-dev
+ - apt-get install --yes libglew-dev
 
 stages:
     - build
@@ -16,14 +16,14 @@ build:
         CC: gcc
         CXX: g++
     script:
-        - cmake -Bbuild -H.
-        - make -Cbuild -j
+        - cmake -DBUILD_TESTING=ON -Bbuild -H.
+        - cmake --build build
     artifacts:
         untracked: true
 
 test:
     stage: test
     script:
-        - make -C -j test
+        - make test
     dependencies:
         - build

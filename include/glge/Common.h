@@ -44,8 +44,8 @@ namespace eng
 
 	using size_t = std::size_t;
 
-	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+	//template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+	//template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 	using vec2 = glm::vec2;
 	using vec3 = glm::vec3;
@@ -57,7 +57,7 @@ namespace eng
 	namespace math {}
 	namespace input {}
 	namespace procgen {}
-	namespace render 
+	namespace render
 	{
 		namespace res {}
 		namespace primitive {}

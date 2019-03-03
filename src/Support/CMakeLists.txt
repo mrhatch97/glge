@@ -8,14 +8,17 @@ add_library(support OBJECT
 )
 
 target_include_directories(support
-	PUBLIC 
+	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
+	PRIVATE
+		ProcGen
 )
 
 target_compile_features(support
 	PUBLIC
-		cxx_std_17)
+		cxx_std_17
+)
 
 target_compile_definitions(support
 	PRIVATE
@@ -27,6 +30,6 @@ target_compile_definitions(support
 )
 
 target_link_libraries(support
-	PUBLIC 
+	PUBLIC
 		glm
 )

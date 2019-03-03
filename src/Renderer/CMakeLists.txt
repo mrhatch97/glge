@@ -1,5 +1,5 @@
 # Based on https://stackoverflow.com/a/47801116
-# Allows including the content of arbitrary files in a 
+# Allows including the content of arbitrary files in a
 # C++ string at compile time
 function(make_includable infile outfile)
 	file(READ ${infile} content)
@@ -18,7 +18,7 @@ add_library(render OBJECT
 	Primitives/ShaderProgram.cpp
 	Primitives/Texture.cpp
 	Resources/ModelLoader.cpp
-	Resources/ResourceManager.cpp
+#	Resources/ResourceManager.cpp
 	SceneGraph/DynamicTransform.cpp
 	SceneGraph/Node.cpp
 	SceneGraph/Scene.cpp
@@ -28,7 +28,7 @@ add_library(render OBJECT
 
 	# OpenGL Support
 	Primitives/OpenGL/GLCommon.cpp
-	Primitives/OpenGL/GLCubeMap.cpp
+	Primitives/OpenGL/gl_cubemap.cpp
 	Primitives/OpenGL/GLLines.cpp
 	Primitives/OpenGL/GLModel.cpp
 	Primitives/OpenGL/GLShader.cpp
@@ -36,7 +36,7 @@ add_library(render OBJECT
 )
 
 target_include_directories(render
-	PUBLIC 
+	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
 	PRIVATE
@@ -45,7 +45,8 @@ target_include_directories(render
 
 target_compile_features(render
 	PUBLIC
-		cxx_std_17)
+		cxx_std_17
+)
 
 target_compile_definitions(render
 	PRIVATE
@@ -57,7 +58,7 @@ target_compile_definitions(render
 )
 
 target_link_libraries(render
-	PUBLIC 
+	PUBLIC
 		glm
 	PRIVATE
 		GLEW::GLEW
@@ -65,7 +66,7 @@ target_link_libraries(render
 )
 
 # Generate delimited GLSL code for inclusion in C++ at compile-time
-file(GLOB GLSL_SOURCES 
+file(GLOB GLSL_SOURCES
 	RELATIVE ${PROJECT_SOURCE_DIR}/src/Renderer/Primitives/OpenGL
 	${PROJECT_SOURCE_DIR}/src/Renderer/Primitives/OpenGL/glsl/*.glsl)
 

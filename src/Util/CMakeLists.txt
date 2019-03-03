@@ -1,18 +1,19 @@
 add_library(util OBJECT
-	Math.cpp
+	math.cpp
 	Motion.cpp
 	Util.cpp
 )
 
 target_include_directories(util
-	PUBLIC 
+	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
 )
 
 target_compile_features(util
 	PUBLIC
-		cxx_std_17)
+		cxx_std_17
+)
 
 target_compile_definitions(util
 	PRIVATE
@@ -24,6 +25,6 @@ target_compile_definitions(util
 )
 
 target_link_libraries(util
-	PUBLIC 
+	PUBLIC
 		glm
 )

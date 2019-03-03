@@ -4,7 +4,9 @@
 #include <glge/Util/Compat.h>
 
 #include <algorithm>
+#include <cstring>
 #include <iostream> // meh - why is a model loader printing stuff?
+#include <numeric>
 
 namespace eng::render::res
 {
@@ -26,10 +28,10 @@ namespace eng::render::res
 #ifdef _WIN32
 		if (fopen_s(&file, fileinfo.filename.c_str(), "r"))
 #else
-		std::errno = 0;
+		errno = 0;
 		file = std::fopen(fileinfo.filename.c_str(), "r");
 
-		if (std::errno)
+		if (errno)
 #endif
 		{
 			throw std::runtime_error(EXC_MSG("Failed to open model file " + fileinfo.filename));
@@ -103,7 +105,7 @@ namespace eng::render::res
 				{
 					if (util::checked_fscanf(3, linebuffer, "%c %s %u", FMT_STRING_ARG(tokenbuffer2), FMT_STRING_ARG(tokenbuffer), in))
 					{
-						if (!strcmp(tokenbuffer, "Vertices:"))
+						if (!std::strcmp(tokenbuffer, "Vertices:"))
 						{
 							input_vertices.reserve(in[0]);
 							input_normals.reserve(in[0]);
@@ -111,7 +113,7 @@ namespace eng::render::res
 							normalsAllocated = true;
 							uvsAllocated = true;
 						}
-						else if (!strcmp(tokenbuffer, "Faces:"))
+						else if (!std::strcmp(tokenbuffer, "Faces:"))
 						{
 							vertex_indices.reserve(in[0]);
 							normal_indices.reserve(in[0]);
@@ -124,20 +126,20 @@ namespace eng::render::res
 						{
 							continue;
 						}
-						if (!strcmp(tokenbuffer, "vertices"))
+						if (!std::strcmp(tokenbuffer, "vertices"))
 						{
 							input_vertices.reserve(in[0]);
 							vertex_indices.reserve(in[0]);
 							verticesAllocated = true;
 
 						}
-						else if (!strcmp(tokenbuffer, "normals"))
+						else if (!std::strcmp(tokenbuffer, "normals"))
 						{
 							input_normals.reserve(in[0]);
 							normal_indices.reserve(in[0]);
 							normalsAllocated = true;
 						}
-						else if (!strcmp(tokenbuffer, "uvs"))
+						else if (!std::strcmp(tokenbuffer, "uvs"))
 						{
 							input_uvs.reserve(in[0]);
 							uv_indices.reserve(in[0]);

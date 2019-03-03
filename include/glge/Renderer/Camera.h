@@ -2,7 +2,7 @@
 
 #include <glge/Common.h>
 #include <glge/Util/Motion.h>
-#include <glge/Util/Math.h>
+#include <glge/Util/math.h>
 
 namespace eng::util
 {

@@ -1,6 +1,6 @@
 #include "glge/Renderer/Primitives/Cubemap.h"
 
-#include "GLCubemap.h"
+#include "gl_cubemap.h"
 
 namespace eng::render::primitive
 {

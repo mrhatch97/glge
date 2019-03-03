@@ -1,4 +1,4 @@
-#include <glge/Util/Math.h>
+#include <glge/Util/math.h>
 
 #include "test_utils.h"
 

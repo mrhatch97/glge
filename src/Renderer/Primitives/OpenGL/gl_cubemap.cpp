@@ -1,4 +1,4 @@
-#include "GLCubeMap.h"
+#include "gl_cubemap.h"
 
 #include <SOIL/SOIL.h>
 

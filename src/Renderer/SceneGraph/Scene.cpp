@@ -1,6 +1,6 @@
 #include "glge/Renderer/SceneGraph/Scene.h"
 
-#include <glge/Util/Math.h>
+#include <glge/Util/math.h>
 #include <glge/Renderer/SceneGraph/SceneCamera.h>
 
 // TODO delete this

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.12)
 
 project(glge
 	VERSION 0.1.0.0
@@ -8,12 +8,16 @@ project(glge
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
 find_package(glm REQUIRED)
-find_package(SOIL REQUIRED)
+find_package(SOIL REQUIRED MODULE)
 if(WIN32)
 	# smh
 	list(APPEND CMAKE_PREFIX_PATH "C:/Program Files/GLEW")
 	list(APPEND CMAKE_LIBRARY_PATH "C:/Program Files/GLEW/lib/Release/x64/")
+	find_package(GLEW REQUIRED)
+elseif(UNIX)
 	find_package(GLEW REQUIRED)
 elseif(APPLE)
 	find_library(COCOA Cocoa)
@@ -67,17 +71,9 @@ if(APPLE)
 elseif(UNIX)
 	target_link_libraries(glge
 		PRIVATE
-			pthread
-			dl
-			GLU
-			GL
-			rt
-			Xrandr
-			Xxf86vm
-			Xi
-			Xinerama
-			X11
+			GLEW::GLEW
 	)
+
 elseif(WIN32)
 	target_link_libraries(glge
 		PRIVATE
@@ -89,16 +85,18 @@ elseif(WIN32)
 	#	DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
-target_include_directories(glge 
+target_include_directories(glge
 	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(glge 
-	PUBLIC 
+target_compile_features(glge
+	PUBLIC
 		cxx_std_17
 )
+
+set_property(TARGET glge PROPERTY CXX_STANDARD 17)
 
 # Set appropriate debug flags for build type
 target_compile_definitions(glge
