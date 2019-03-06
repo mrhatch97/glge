@@ -48,3 +48,15 @@ add_executable(test_scene
 
 add_test(scene
 	test_scene)
+
+# Target to test that depends on the build of the test executables
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+	DEPENDS
+		test_safe_cast
+		test_returns_void
+		test_contains
+		test_stepper
+		test_circular
+		test_oscillator
+		test_scene
+)
