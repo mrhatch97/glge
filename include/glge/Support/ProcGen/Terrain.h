@@ -6,11 +6,8 @@
 #include <random>
 #include <tuple>
 
-namespace eng
+namespace eng::procgen
 {
-	namespace procgen
-	{
 		[[nodiscard]] util::Matrix<float> diamond_square_gen(std::seed_seq & seed,
 			size_t n, float variation, float top_left, float top_right, float bottom_left, float bottom_right);
-	}
 }

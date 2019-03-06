@@ -5,6 +5,10 @@ project(glge
 	LANGUAGES CXX
 )
 
+find_package(Doxygen)
+
+option(BUILD_DOCUMENTATION "Build Doxygen documentation" ${DOXYGEN_FOUND})
+
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
@@ -107,6 +111,26 @@ target_compile_definitions(glge
 		$<$<CONFIG:MinSizeRel>:NDEBUG>
 		GLM_FORCE_SILENT_WARNINGS
 )
+
+if(BUILD_DOCUMENTATION)
+	if(DOXYGEN_FOUND)
+		set(DOXYGEN_IN ${PROJECT_SOURCE_DIR}/docs/Doxyfile.in)
+		set(DOXYGEN_OUT ${PROJECT_BINARY_DIR}/Doxyfile)
+
+		configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+		message("Doxygen build enabled")
+
+		add_custom_target(docs ALL
+			COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+			WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+			COMMENT "Generating API docs with Doxygen"
+			VERBATIM
+		)
+
+	else()
+		message(FATAL_ERROR "Doxygen generation requested but package was not found")
+	endif()
+endif()
 
 install(TARGETS glge EXPORT glgeConfig
     ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}

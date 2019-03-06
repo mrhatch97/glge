@@ -9,22 +9,20 @@
 #include <stack>
 #include <tuple>
 
-namespace eng
+namespace eng::procgen
 {
-	namespace lsystem
+	class Tree
 	{
-		class Tree {
-		public:
-			Tree();
-			//  model transform, colorLeaf bool
-			std::forward_list<std::tuple<mat4, bool>> transforms;
-			void generate(float length, char rule, int curIter, int numIter, bool colorLeaf);
+	public:
+		Tree();
+		//  model transform, colorLeaf bool
+		std::forward_list<std::tuple<mat4, bool>> transforms;
+		void generate(float length, char rule, int curIter, int numIter, bool colorLeaf);
 
 
-		private:
-			LTurtle turtle;
-			std::stack<vec3> loc_stack;
-			std::stack<mat4> orientation_stack;
-		};
-	}
+	private:
+		LTurtle turtle;
+		std::stack<vec3> loc_stack;
+		std::stack<mat4> orientation_stack;
+	};
 }

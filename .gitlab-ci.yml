@@ -9,6 +9,7 @@ before_script:
 stages:
     - build
     - test
+    - package
 
 build:
     stage: build
@@ -16,14 +17,33 @@ build:
         CC: gcc
         CXX: g++
     script:
-        - cmake -DBUILD_TESTING=ON -Bbuild -H.
-        - cmake --build build
+        - cmake -DBUILD_TESTING=ON -DBUILD_DOCUMENTATION=OFF -Bbuild -H.
+        - cmake --build build --target glge
     artifacts:
         untracked: true
+
+docs:
+    stage: build
+    script:
+        - apt-get install --yes doxygen
+        - cmake -DBUILD_TESTING=OFF -DBUILD_DOCUMENTATION=ON -Bbuild -H.
+        - cmake --build build --target docs
+    artifacts:
+        paths:
+            - build/html
 
 test:
     stage: test
     script:
-        - make test
+        - cmake --build build --target check
     dependencies:
         - build
+
+package-docs:
+    stage: package
+    script:
+      - mv build/html public/
+    only:
+      - master
+    dependencies:
+      - docs

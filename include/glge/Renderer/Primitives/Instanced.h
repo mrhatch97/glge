@@ -1,14 +1,11 @@
 #pragma once
 
-namespace eng
+namespace eng::render::primitive
 {
-	namespace primitive
+	class Instanced
 	{
-		class Instanced
-		{
-		private:
-		public:
-			void render() const;
-		};
-	}
+	private:
+	public:
+		void render() const;
+	};
 }
