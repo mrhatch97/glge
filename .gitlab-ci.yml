@@ -39,7 +39,7 @@ test:
     dependencies:
         - build
 
-package-docs:
+pages:
     stage: package
     script:
       - mv build/html public/
