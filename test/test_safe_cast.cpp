@@ -1,6 +1,6 @@
-#include <glge/Util/Util.h>
+#include <glge/util/util.h>
 
-using namespace eng::util;
+using namespace glge::util;
 
 int main()
 {

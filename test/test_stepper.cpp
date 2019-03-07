@@ -1,9 +1,9 @@
-#include <glge/Util/math.h>
+#include <glge/util/math.h>
 
 #include "test_utils.h"
 
-using namespace eng;
-using namespace eng::math;
+using namespace glge;
+using namespace glge::math;
 
 int main()
 {

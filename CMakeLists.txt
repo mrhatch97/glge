@@ -45,16 +45,13 @@ elseif(APPLE)
     endif()
 endif()
 
-add_subdirectory(src/Support)
-add_subdirectory(src/Util)
-add_subdirectory(src/Renderer)
-
 add_library (glge STATIC
-	$<TARGET_OBJECTS:support>
-	$<TARGET_OBJECTS:util>
-	$<TARGET_OBJECTS:render>
-	src/Common.cpp
+	src/common.cpp
 )
+
+add_subdirectory(src/support)
+add_subdirectory(src/util)
+add_subdirectory(src/renderer)
 
 target_link_libraries(glge
 	PUBLIC
@@ -99,8 +96,6 @@ target_compile_features(glge
 	PUBLIC
 		cxx_std_17
 )
-
-set_property(TARGET glge PROPERTY CXX_STANDARD 17)
 
 # Set appropriate debug flags for build type
 target_compile_definitions(glge

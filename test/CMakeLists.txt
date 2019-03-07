@@ -1,4 +1,4 @@
-message("glge tests enabled")
+message("-- glge tests enabled")
 
 include_directories(
 	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
