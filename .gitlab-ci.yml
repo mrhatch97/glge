@@ -43,6 +43,9 @@ pages:
     stage: package
     script:
       - mv build/html public/
+    artifacts:
+      paths:
+        - public
     only:
       - master
     dependencies:
