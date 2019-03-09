@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <SOIL/SOIL.h>
 #include <SOIL.h>
 
 #include "gl_common.h"
