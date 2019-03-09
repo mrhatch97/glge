@@ -21,7 +21,7 @@
 
 namespace glge::renderer::opengl
 {
-  void setup_glew()
+  inline void setup_glew()
   {
     using namespace std::string_literals;
 
@@ -36,7 +36,7 @@ namespace glge::renderer::opengl
     //fprintf(stdout, "Current GLEW version: %s\n", glewGetString(GLEW_VERSION));
   }
 
-  void print_versions()
+  inline void print_versions()
   {
   	// Get info of GPU and supported OpenGL version
   	//printf("Renderer: %s\n", glGetString(GL_RENDERER));
@@ -48,7 +48,7 @@ namespace glge::renderer::opengl
   #endif
   }
 
-  void setup_opengl_settings()
+  inline void setup_opengl_settings()
   {
     #ifndef __APPLE__
     	// Setup GLEW. Don't do this on OSX systems.

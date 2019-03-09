@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SOIL/SOIL.h>
+#include <SOIL.h>
 
 #include "gl_common.h"
 #include <glge/renderer/primitives/primitive_data.h>

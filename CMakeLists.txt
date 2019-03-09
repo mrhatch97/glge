@@ -17,9 +17,6 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package(glm REQUIRED)
 find_package(SOIL REQUIRED MODULE)
 if(WIN32)
-	# smh
-	list(APPEND CMAKE_PREFIX_PATH "C:/Program Files/GLEW")
-	list(APPEND CMAKE_LIBRARY_PATH "C:/Program Files/GLEW/lib/Release/x64/")
 	find_package(GLEW REQUIRED)
 elseif(UNIX)
 	find_package(GLEW REQUIRED)
@@ -57,7 +54,7 @@ target_link_libraries(glge
 	PUBLIC
 		glm
 	PRIVATE
-		SOIL
+		SOIL::SOIL
 )
 
 # Platform-specific dependencies

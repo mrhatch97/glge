@@ -4,6 +4,7 @@
 #include "gl_buffer.h"
 
 #include <glge/common.h>
+#include <glge/util/util.h>
 
 namespace glge::renderer::primitive::opengl
 {
@@ -14,7 +15,7 @@ namespace glge::renderer::primitive::opengl
 		GLuint VAO[1], VBO[1];
 
 	public:
-		GLLines(const Vector<vec3> & points) : vertexCount(points.size())
+		GLLines(const Vector<vec3> & points) : vertexCount(util::safe_cast<size_t, GLsizei>(points.size()))
 		{
 			glGenVertexArrays(static_cast<GLsizei>(std::extent<decltype(VAO)>::value), VAO);
 			glGenBuffers(static_cast<GLsizei>(std::extent<decltype(VBO)>::value), VBO);
