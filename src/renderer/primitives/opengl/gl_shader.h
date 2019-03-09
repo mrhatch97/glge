@@ -167,9 +167,9 @@ namespace glge::renderer::primitive::opengl
       glUniformMatrix4fv(uMVP, 1, GL_FALSE, &render.MVP[0][0]);
       glUniform3fv(uColor, 1, &color[0]);
 
-      DBG_OGL_ERROR_CHK(
-        throw std::runtime_error(EXC_MSG("OpenGL error setting up shader"))
-			);
+	  DBG_OGL_ERROR_CHK(
+		  throw std::runtime_error(EXC_MSG("OpenGL error setting up shader"));
+	  );
     }
 	};
 
