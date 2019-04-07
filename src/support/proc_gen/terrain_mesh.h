@@ -11,14 +11,14 @@ namespace glge::proc_gen
     /// Converts a heightmap with the given dimensions to a list of
     /// indices describing the heightmap as a mesh of triangles.
     /// </summary>
-    Vector<unsigned int> heightmap_indices(const size_t width,
+    vector<unsigned int> heightmap_indices(const size_t width,
         const size_t height)
     {
       // two triangles per grid quad
       const size_t num_triangles = (width - 1) * (height - 1) * 2;
 
       // 3 indices per triangle
-      Vector<unsigned int> indices(num_triangles * 3);
+      vector<unsigned int> indices(num_triangles * 3);
 
       unsigned int index = 0;
 
@@ -47,10 +47,10 @@ namespace glge::proc_gen
     }
 
     // Computes the vertex normals for a heightmap with the given indices
-    Vector<vec3> heightmap_normals(const Vector<vec3> & heightmap,
-        const Vector<unsigned int> indices)
+    vector<vec3> heightmap_normals(const vector<vec3> & heightmap,
+        const vector<unsigned int> indices)
     {
-      Vector<vec3> normals(heightmap.size());
+      vector<vec3> normals(heightmap.size());
 
       for (size_t i = 0; i < indices.size(); i += 3)
       {
@@ -72,10 +72,10 @@ namespace glge::proc_gen
       return normals;
     }
 
-    Vector<vec2> heightmap_uvs(const Vector<vec3> & heightmap,
+    vector<vec2> heightmap_uvs(const vector<vec3> & heightmap,
         const size_t width, const size_t height)
     {
-      Vector<vec2> uvs(heightmap.size());
+      vector<vec2> uvs(heightmap.size());
 
       std::transform(EXECUTION_POLICY_PAR_UNSEQ
           heightmap.cbegin(), heightmap.cend(), uvs.begin(),

@@ -6,22 +6,13 @@
 
 namespace glge::renderer::primitive
 {
-	namespace opengl
-	{
-		class GLLines;
-	}
-
-	using LinesImpl = opengl::GLLines;
-
 	class Lines : public Renderable
 	{
-	private:
-		uptr<LinesImpl> lines;
 	public:
-		Lines(const Vector<vec3> & lines_data);
+		Lines() = default;
 
-		void render() const override;
+		virtual ~Lines() = default;
 
-		~Lines();
+		static unique_ptr<Lines> from_file(const vector<vec3> & points);
 	};
 }

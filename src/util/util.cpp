@@ -1,5 +1,6 @@
 #include "glge/util/util.h"
 
+#include <algorithm>
 #include <cerrno>
 #include <iostream>
 #include <cstdarg>
@@ -27,7 +28,7 @@ namespace glge
 			}
 		}
 
-		bool checked_fscanf(const int count, const char * buf, czstring fmt, ...)
+		bool checked_sscanf(int count, const char * buf, czstring fmt, ...)
 		{
 			va_list ap;
 
@@ -36,30 +37,87 @@ namespace glge
 #ifdef _MSC_VER
 			int matchCt = vsscanf_s(buf, fmt, ap);
 #else
-			int matchCt = std::vsscanf(buf, fmt, ap);
+			int matchCt = vsscanf(buf, fmt, ap);
 #endif
+
 			va_end(ap);
 
 			return count == matchCt;
 		}
 
+		UniqueHandle::UniqueHandle() : destroy(false)
+		{
+		}
+
 		UniqueHandle::UniqueHandle(std::function<void()> enter, std::function<void()> exit)
-			: destroy(true), enter(enter), exit(exit)
+			: destroy(true)
 		{
 			enter();
+			exits.push_front(exit);
 		}
 
 		UniqueHandle::UniqueHandle(UniqueHandle && other) noexcept :
-			destroy(other.destroy), enter(other.enter), exit(other.exit)
+			destroy(other.destroy), exits(std::move(other.exits))
 		{
 			other.destroy = false;
+		}
+
+		UniqueHandle & UniqueHandle::operator=(UniqueHandle && other)
+		{
+			exits = std::move(other.exits);
+			destroy = other.destroy;
+			other.destroy = false;
+
+			return *this;
+		}
+
+		void UniqueHandle::call_exits() const
+		{
+			std::for_each(exits.cbegin(), exits.cend(), [](std::function<void()> exit) { exit(); });
+		}
+
+		void UniqueHandle::reset()
+		{
+			call_exits();
+			exits.clear();
+			destroy = false;
+		}
+
+		void UniqueHandle::reset(std::function<void()> exit)
+		{
+			reset();
+			exits.push_front(exit);
+			destroy = true;
+		}
+
+		void UniqueHandle::release()
+		{
+			exits.clear();
+			destroy = false;
+		}
+
+		UniqueHandle & UniqueHandle::chain(std::function<void()> enter, std::function<void()> exit)
+		{
+			if (!destroy)
+			{
+				throw std::logic_error("Cannot chain a unique handle with no exit responsibility");
+			}
+
+			enter();
+			exits.push_front(exit);
+			return *this;
+		}
+
+		UniqueHandle::operator bool()
+		{
+			return destroy;
 		}
 
 		UniqueHandle::~UniqueHandle()
 		{
 			if (destroy)
 			{
-				exit();
+				call_exits();
 			}
 		}
 	}

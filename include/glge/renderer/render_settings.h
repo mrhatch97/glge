@@ -1,17 +1,13 @@
 #pragma once
 
+#include <glge/renderer/camera.h>
 #include <glge/common.h>
 
 namespace glge::renderer
 {
 	struct RenderSettings
 	{
-		const mat4 V;
-		const mat4 P;
-		const vec3 cam_pos;
-		const vec3 cam_dir;
-
-		RenderSettings(mat4 V, mat4 P, vec3 cam_pos, vec3 cam_dir);
+		unique_ptr<Camera> camera = nullptr;
 	};
 
 	struct RenderParameters

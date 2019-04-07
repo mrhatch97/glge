@@ -1,13 +1,13 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.13)
 
 project(glge
 	VERSION 0.1.0.0
 	LANGUAGES CXX
+	DESCRIPTION "3D rendering engine library"
 )
 
-find_package(Doxygen)
-
-option(BUILD_DOCUMENTATION "Build Doxygen documentation" ${DOXYGEN_FOUND})
+option(GLGE_HEADLESS_TESTS "Run OpenGL tests without an X server; requires EGL and GLEW compiled with EGL support" OFF)
+set(GLGE_DRIVER "OPENGL" CACHE STRING "GLGE backend driver; currently only OPENGL supported")
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -15,32 +15,6 @@ include(CMakePackageConfigHelpers)
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(glm REQUIRED)
-find_package(SOIL REQUIRED MODULE)
-if(WIN32)
-	find_package(GLEW REQUIRED)
-elseif(UNIX)
-	find_package(GLEW REQUIRED)
-elseif(APPLE)
-	find_library(COCOA Cocoa)
-    if(NOT COCOA)
-            message(FATAL_ERROR "Cocoa not found")
-    endif()
-
-    find_library(OPENGL OpenGL)
-    if(NOT OPENGL)
-            message(FATAL_ERROR "OpenGL not found")
-    endif()
-
-    find_library(IOKIT IOKit)
-    if(NOT IOKIT)
-            message(FATAL_ERROR "IOKit not found")
-    endif()
-
-    find_library(COREVIDEO CoreVideo)
-    if(NOT COREVIDEO)
-            message(FATAL_ERROR "CoreVideo not found")
-    endif()
-endif()
 
 add_library (glge STATIC
 	src/common.cpp
@@ -53,35 +27,7 @@ add_subdirectory(src/renderer)
 target_link_libraries(glge
 	PUBLIC
 		glm
-	PRIVATE
-		SOIL::SOIL
 )
-
-# Platform-specific dependencies
-if(APPLE)
-	target_link_libraries(glge
-		PRIVATE
-			${COCOA}
-			${OPENGL}
-			${IOKIT}
-			${COREVIDEO}
-	)
-elseif(UNIX)
-	target_link_libraries(glge
-		PRIVATE
-			GLEW::GLEW
-	)
-
-elseif(WIN32)
-	target_link_libraries(glge
-		PRIVATE
-			GLEW::GLEW
-	)
-
-	# TODO switch to install TARGETS with cmake 3.13
-	#install(FILES ${glew_SOURCE_DIR}/bin/Release/x64/glew32.dll
-	#	DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif()
 
 target_include_directories(glge
 	PUBLIC
@@ -97,12 +43,13 @@ target_compile_features(glge
 # Set appropriate debug flags for build type
 target_compile_definitions(glge
 	PRIVATE
-		$<$<CONFIG:Debug>:_DEBUG>
-		$<$<CONFIG:RelWithDebInfo>:_DEBUG>
-		$<$<CONFIG:Release>:NDEBUG>
-		$<$<CONFIG:MinSizeRel>:NDEBUG>
+		$<$<CONFIG:Debug>:GLGE_DEBUG>
 		GLM_FORCE_SILENT_WARNINGS
 )
+
+find_package(Doxygen)
+
+option(BUILD_DOCUMENTATION "Build Doxygen documentation" ${DOXYGEN_FOUND})
 
 if(BUILD_DOCUMENTATION)
 	if(DOXYGEN_FOUND)

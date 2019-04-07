@@ -17,7 +17,7 @@ build:
         CC: gcc
         CXX: g++
     script:
-        - cmake -DBUILD_TESTING=ON -DBUILD_DOCUMENTATION=OFF -Bbuild -H.
+        - cmake -DBUILD_TESTING=OFF -DBUILD_DOCUMENTATION=OFF -G"Unix Makefiles" -Bbuild -DCMAKE_BUILD_TYPE=Release -H.
         - cmake --build build --target glge
     artifacts:
         untracked: true
@@ -26,7 +26,7 @@ docs:
     stage: build
     script:
         - apt-get install --yes doxygen
-        - cmake -DBUILD_TESTING=OFF -DBUILD_DOCUMENTATION=ON -Bbuild -H.
+        - cmake -DBUILD_TESTING=OFF -DBUILD_DOCUMENTATION=ON -Bbuild -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -H.
         - cmake --build build --target docs
     artifacts:
         paths:
@@ -35,9 +35,25 @@ docs:
 test:
     stage: test
     script:
-        - cmake --build build --target check
-    dependencies:
-        - build
+        - cmake -DBUILD_TESTING=ON -DGLGE_HEADLESS_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DCMAKE_BUILD_TYPE=Debug -Bbuild -G"Unix Makefiles" -H.
+        - cd build
+        - cmake --build . --target build_tests
+        - ctest
+    artifacts:
+        paths:
+            - build/Testing/Temporary/*.log
+
+memcheck:
+    stage: test
+    script:
+        - apt-get install --yes valgrind
+        - cmake -DBUILD_TESTING=ON -DGLGE_HEADLESS_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DCMAKE_BUILD_TYPE=Debug -Bbuild -G"Unix Makefiles" -H.
+        - cd build
+        - cmake --build . --target build_tests
+        - ctest -T memcheck
+    artifacts:
+        paths:
+            - build/Testing/Temporary/MemoryChecker.*.log
 
 pages:
     stage: package

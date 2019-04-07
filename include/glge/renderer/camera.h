@@ -4,20 +4,19 @@
 #include <glge/util/motion.h>
 #include <glge/util/math.h>
 
-namespace glge::util
+namespace glge::renderer
 {
 	struct CameraIntrinsics
 	{
-		float fov;
-		float ratio;
-		float nearDist;
-		float farDist;
+		float v_fov;
+		float aspect_ratio;
+		float near_distance;
+		float far_distance;
 
-		CameraIntrinsics() :
-			fov(45.0f), ratio(0), nearDist(0.1f), farDist(10000.0f)
-		{ }
-
-		void set_ratio(int width, int height);
+		void set_aspect_ratio(float width, float height)
+		{
+			aspect_ratio = width / height;
+		}
 
 		vec2 near_dimensions() const;
 		vec2 far_dimensions() const;
@@ -28,11 +27,15 @@ namespace glge::util
 	struct Camera
 	{
 		CameraIntrinsics intrinsics;
-		Placement placement;
+		util::Placement placement;
+
+		Camera(
+			const CameraIntrinsics & intrinsics,
+			const util::Placement & placement
+		);
 
 		mat4 get_V() const;
 
 		math::Frustum get_view_frustum() const;
-		std::array<math::Plane, 6> get_view_planes() const;
 	};
 }

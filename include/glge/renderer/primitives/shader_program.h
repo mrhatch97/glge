@@ -4,7 +4,6 @@
 #include <glge/renderer/render_settings.h>
 #include <glge/util/util.h>
 
-#include <glge/renderer/primitives/shader_compat.h>
 #include <glge/renderer/primitives/texture.h>
 #include <glge/renderer/primitives/cubemap.h>
 
@@ -17,46 +16,49 @@ namespace glge::renderer::primitive
 	class ShaderBase
 	{
 	public:
-		ShaderBase();
+		ShaderBase() = default;
 
-		virtual ~ShaderBase();
+		virtual util::UniqueHandle bind() = 0;
+
+		virtual ~ShaderBase() = default;
 	};
 
-	template<typename TagT>
+	template<typename DataT>
+	struct ShaderInstance;
+
+	template<typename DataT>
 	class Shader : public ShaderBase
 	{
-	private:
-		uptr<typename TagT::Implementation> shader;
 	public:
-		Shader();
+		static unique_ptr<Shader<DataT>> load();
 
-		util::UniqueHandle bind();
+		Shader() = default;
 
-		template<typename...Args>
-		void parameterize(const RenderParameters & render, Args&&... args)
-		{
-			shader->parameterize(render, std::forward<Args>(args)...);
-		}
+		virtual void parameterize(const RenderParameters & render, const DataT & data) = 0;
 
 		template<typename...Args>
-		typename TagT::Instance instance(Args&&... args)
+		ShaderInstance<DataT> instance(Args && ...args)
 		{
-			return typename TagT::Instance(*this, std::forward<Args>(args)...);
+			return instance(DataT{ std::forward<Args>(args)... });
 		}
 
-		~Shader();
+		ShaderInstance<DataT> instance(const DataT & data)
+		{
+			return ShaderInstance<DataT>(*this, data);
+		}
+
+		ShaderInstance<DataT> instance(DataT && data)
+		{
+			return ShaderInstance<DataT>(*this, std::move(data));
+		}
+
+		virtual ~Shader() = default;
 	};
-
-	using NormalShader = Shader<NormalShaderTag>;
-	using ColorShader = Shader<ColorShaderTag>;
-	using TextureShader = Shader<TextureShaderTag>;
-	using SkyboxShader = Shader<SkyboxShaderTag>;
-	using EnvMapShader = Shader<EnvMapShaderTag>;
 
 	class ShaderManager
 	{
 	private:
-		std::unordered_map<std::type_index, uptr<ShaderBase>> shaders;
+		std::unordered_map<std::type_index, unique_ptr<ShaderBase>> shaders;
 
 	public:
 		ShaderManager();
@@ -64,7 +66,7 @@ namespace glge::renderer::primitive
 		template<typename ShaderT>
 		ShaderT & load()
 		{
-			uptr<ShaderT> shader = std::make_unique<ShaderT>();
+			unique_ptr<ShaderT> shader = std::make_unique<ShaderT>();
 			ShaderT & shader_ref = *shader;
 
 			shaders.emplace(typeid(ShaderT), std::move(shader));
@@ -81,60 +83,69 @@ namespace glge::renderer::primitive
 		~ShaderManager();
 	};
 
-	class ShaderInstance
+	struct ShaderInstanceBase
 	{
-	public:
-		virtual util::UniqueHandle operator()(const RenderParameters & render) const = 0;
+		ShaderBase & shader;
 
-		virtual ~ShaderInstance();
+		ShaderInstanceBase(ShaderBase & shader);
+
+		virtual void operator()(const RenderParameters & render) const = 0;
+
+		virtual ~ShaderInstanceBase() = default;
 	};
 
-	class NormalShaderInstance : public ShaderInstance
+	template<typename DataT>
+	struct ShaderInstance : public ShaderInstanceBase
 	{
-		NormalShader & shader;
-	public:
-		NormalShaderInstance(NormalShader & shader);
+		DataT data;
 
-		util::UniqueHandle operator()(const RenderParameters & render) const override;
+		ShaderInstance(Shader<DataT> & shader, const DataT & data)
+			: ShaderInstanceBase(shader), data(data)
+		{ }
+
+		ShaderInstance(Shader<DataT> & shader, DataT && data)
+			: ShaderInstanceBase(shader), data(std::move(data))
+		{ }
+
+		void operator()(const RenderParameters & render) const override
+		{
+			static_cast<Shader<DataT> &>(shader).parameterize(render, data);
+		}
 	};
 
-	class ColorShaderInstance : public ShaderInstance
+	struct NormalShaderData
 	{
-		ColorShader & shader;
-		const vec3 color;
-	public:
-		ColorShaderInstance(ColorShader & shader, vec3 color);
-
-		util::UniqueHandle operator()(const RenderParameters & render) const override;
 	};
 
-	class TextureShaderInstance : public ShaderInstance
+	struct ColorShaderData
 	{
-		TextureShader & shader;
+		vec3 color;
+	};
+
+	struct TextureShaderData
+	{
 		Texture & texture;
-	public:
-		TextureShaderInstance(TextureShader & shader, Texture & texture);
-
-		util::UniqueHandle operator()(const RenderParameters & render) const override;
 	};
 
-	class SkyboxShaderInstance : public ShaderInstance
+	struct SkyboxShaderData
 	{
-		SkyboxShader & shader;
 		Cubemap & skybox;
-	public:
-		SkyboxShaderInstance(SkyboxShader & shader, Cubemap & skybox);
-
-		util::UniqueHandle operator()(const RenderParameters & render) const override;
 	};
 
-	class EnvMapShaderInstance : public ShaderInstance
+	struct EnvMapShaderData
 	{
-		EnvMapShader & shader;
 		Cubemap & skybox;
-	public:
-		EnvMapShaderInstance(EnvMapShader & shader, Cubemap & skybox);
-
-		util::UniqueHandle operator()(const RenderParameters & render) const override;
 	};
+
+	using NormalShader = Shader<NormalShaderData>;
+	using ColorShader = Shader<ColorShaderData>;
+	using TextureShader = Shader<TextureShaderData>;
+	using SkyboxShader = Shader<SkyboxShaderData>;
+	using EnvMapShader = Shader<EnvMapShaderData>;
+
+	using NormalShaderInstance = ShaderInstance<NormalShaderData>;
+	using ColorShaderInstance = ShaderInstance<ColorShaderData>;
+	using TextureShaderInstance = ShaderInstance<TextureShaderData>;
+	using SkyboxShaderInstance = ShaderInstance<SkyboxShaderData>;
+	using EnvMapShaderInstance = ShaderInstance<EnvMapShaderData>;
 }

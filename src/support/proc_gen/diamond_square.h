@@ -3,6 +3,7 @@
 #include <glge/common.h>
 #include <glge/util/util.h>
 
+#include <cstdint>
 #include <optional>
 #include <random>
 #include <tuple>
@@ -120,11 +121,16 @@ namespace glge::proc_gen
     }
   }
 
-  void diamond_square(std::seed_seq & seed, Matrix<float> & grid,
+  void diamond_square(std::uint32_t & seed, Matrix<float> & grid,
       float variation)
   {
     Engine generator(seed);
     size_t radius = static_cast<size_t>(grid.width()) / 2;
+
+	if (variation < 0.0f)
+	{
+		throw std::invalid_argument(EXC_MSG("Variation cannot be negative"));
+	}
 
     while (radius > 0)
     {

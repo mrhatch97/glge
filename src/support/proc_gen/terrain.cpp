@@ -10,7 +10,7 @@ namespace glge::proc_gen
 	using namespace util;
 
 	Matrix<float>
-		diamond_square_gen(std::seed_seq & seed, size_t n, float variation, float top_left,
+		diamond_square_gen(std::uint32_t seed, size_t n, float variation, float top_left,
 			float top_right, float bottom_left, float bottom_right)
 	{
 		const size_t grid_sz = static_cast<size_t>(pow(2, n)) + 1;
@@ -24,7 +24,8 @@ namespace glge::proc_gen
 
 		diamond_square(seed, grid, variation);
 
-		Vector<vec3> heightmap(grid_sz * grid_sz);
+		/*
+		vector<vec3> heightmap(grid_sz * grid_sz);
 
 		for (size_t x = 0; x < grid_sz; x++)
 		{
@@ -38,6 +39,7 @@ namespace glge::proc_gen
 		//auto indices = heightmap_indices(grid.width(), grid.height());
 		//auto normals = heightmap_normals(heightmap, indices);
 		//auto uvs = heightmap_uvs(heightmap, grid.width(), grid.height());
+		*/
 
 		return std::move(grid);
 	}

@@ -1,38 +1,56 @@
 #pragma once
 
-#include <glge/renderer/scene_graph/node.h>
+#include <glge/common.h>
 #include <glge/renderer/scene_graph/scene_settings.h>
-
-#include <memory>
+#include <glge/renderer/renderer.h>
 
 namespace glge::renderer::scene_graph
 {
+	struct Node;
+  struct SceneCamera;
+  class Scene;
+  class CameraHandle;
+
+  class NodeHandle
+  {
+    protected:
+      observer_ptr<Node> parent;
+      Node & node;
+      Scene & scene;
+    public:
+      NodeHandle(observer_ptr<Node> parent, Node & node, Scene & scene);
+
+      NodeHandle add_geometry(
+          primitive::Renderable & renderable, 
+          primitive::ShaderInstanceBase & shader
+      );
+      NodeHandle add_transform(const util::Placement & placement);
+      CameraHandle add_camera(const CameraIntrinsics & intrinsics);
+  };
+
+  class CameraHandle : public NodeHandle
+  {
+    public:
+      CameraHandle(observer_ptr<Node> parent, SceneCamera & node, Scene & scene);
+
+      void activate();
+  };
+
 	class Scene
 	{
 	private:
-		Vector<SceneCamera *> cameras;
-		uptr<Node> root;
+		unique_ptr<Node> root;
 
 	public:
 		SceneSettings settings;
 
-		Scene(std::unique_ptr<Node> && root);
+		Scene();
 		~Scene();
 
 		Scene & operator=(Scene && other) = default;
 
-		void draw() const;
+		Renderer prepare_renderer() const;
 
-		void view_resized(int width, int height);
-
-		SceneCamera & get_camera();
-
-		const SceneCamera & get_camera() const;
-
-		Node & get_root();
-
-		const Node & get_root() const;
-
-		void add_camera(SceneCamera & cam);
+    NodeHandle get_root_handle();
 	};
 }

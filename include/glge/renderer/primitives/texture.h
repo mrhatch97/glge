@@ -5,23 +5,15 @@
 
 namespace glge::renderer::primitive
 {
-	namespace opengl
-	{
-		class GLTexture;
-	}
-
-	using TextureImpl = opengl::GLTexture;
-
-
 	class Texture
 	{
-	private:
-		uptr<TextureImpl> texture;
 	public:
-		Texture(const TextureData & texture_data);
+		Texture() = default;
 
-		~Texture();
+		virtual ~Texture() = default;
 
-		void activate() const;
+		virtual void activate() const = 0;
+
+		static unique_ptr<Texture> from_file(const TextureFileInfo & file_info);
 	};
 }

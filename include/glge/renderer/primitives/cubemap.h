@@ -5,23 +5,15 @@
 
 namespace glge::renderer::primitive
 {
-	namespace opengl
-	{
-		class GLCubemap;
-	}
-
-	using CubemapImpl = opengl::GLCubemap;
-
-
 	class Cubemap
 	{
-	private:
-		uptr<CubemapImpl> cubemap;
 	public:
-		Cubemap(const CubemapData & cubemap_data);
+		Cubemap() = default;
 
-		~Cubemap();
+		virtual ~Cubemap() = default;
 
-		void activate() const;
+		virtual void activate() const = 0;
+	
+		static unique_ptr<Cubemap> from_file(const CubemapFileInfo & file_info);
 	};
 }

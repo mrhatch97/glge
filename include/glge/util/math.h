@@ -1,3 +1,9 @@
+/// \brief Mathematical functions and helper classes.
+///
+/// Contains mathematical functions and helper classes used by glge.
+///
+/// \file math.h
+
 #pragma once
 
 #include <glge/common.h>
@@ -26,8 +32,8 @@ namespace glge::math
 
 		T operator--(int) { T old = val; val -= step; return old; }
 
-		Stepper(const T & start, const T & step) : 
-			val(start), step(step) 
+		Stepper(const T & start, const T & step) :
+			val(start), step(step)
 		{ }
 	};
 
@@ -106,6 +112,11 @@ namespace glge::math
 		}
 	};
 
+	/// <summary>Clamp a value to a range, wrapping between max and min as needed.</summary>
+	/// <param name="val">Value to clamp.</param>
+	/// <param name="min">Minimum allowed value.</param>
+	/// <param name="max">Maximum allowed value.</param>
+	/// <typeparam name="T">Type of value to clamp.</typeparam>
 	template<typename T>
 	T wrap_range(const T & val, const T & min, const T & max)
 	{
@@ -124,45 +135,65 @@ namespace glge::math
 		return cur_val;
 	}
 
+	/// <summary>Geometric sphere; a point and radius.</summary>
 	struct Sphere
 	{
+		/// <summary>Radius of the Sphere.</summary>
 		float radius;
+		/// <summary>Origin point of the Sphere.</summary>
 		vec3 origin;
 	};
 
+	/// <summary>Geometric 2D plane in 3D space, defined by a point and a
+	/// normal vector.</summary>
 	struct Plane
 	{
 	private:
 		const float d;
 	public:
+		/// <summary>A point on the plane; defines its location in space.</summary>
 		const vec3 point;
+		/// <summary>A normal vector to the plane; defines its orientation in space.</summary>
+		/// Defines the set of points on the plane, along with the point. The vector
+		/// is considered to point towards the "inside" of the plane, for computations
+		/// where that is relevant.
 		const vec3 normal;
 
 		Plane(const vec3 & point, const vec3 & normal) : d(glm::dot(point, normal)), point(point), normal(normal)
 		{
 		}
 
+		/// <summary>Compute the distance from the plane to a point.</summary>
+		/// <param name="pt">Point to compute distance to.</param>
+		/// <returns>Distance from the nearest point on the plane to the given point.
+		/// Negative if the point is "outside" the plane.</returns>
 		float distance_from(const vec3 & pt) const;
 	};
 
+	/// <summary>A geometric pyramidal frustum.</summary>
+	/// A set of 6 planes encompassing a space in the shape of a clipped pyramid.
 	struct Frustum
 	{
-		const Plane near, far, left, right, bottom, top;
+		const Plane near,   ///< <summary>Near plane.</summary>
+								far,    ///< <summary>Far plane.</summary>
+								left,   ///< <summary>Left plane.</summary>
+								right,  ///< <summary>Right plane.</summary>
+								bottom, ///< <summary>Bottom plane.</summary>
+								top;    ///< <summary>Top plane.</summary>
 
 		Frustum(const std::array<Plane, 6> & planes);
 	};
 
 	/// <summary>
-	/// Test whether a <c>Sphere</c> is inside a <c>Plane</c>.
+	/// Test whether a Sphere is inside a Plane.
 	/// The normal vector of a plane points towards the "inside" direction.
 	/// </summary>
 	/// <returns>True if the sphere is inside the plane.</returns>
 	bool contains(Plane plane, Sphere sphere);
 
 	/// <summary>
-	/// Test whether a <c>Sphere</c> is inside a <c>Frustum</c>.
+	/// Test whether a Sphere is inside a Frustum.
 	/// </summary>
-	/// <seealso cref="contains(Plane, Sphere)"/>
 	bool contains(Frustum frustum, Sphere sphere);
 
 	struct BezierCurve
@@ -195,8 +226,8 @@ namespace glge::math
 
 		vec3 evaluateAt(float t) const;
 		vec3 velocityAt(float t) const;
-		Vector<vec3> evaluateAt(const Vector<float> & ts) const;
-		Vector<vec3> sample(unsigned int samples_per_path) const;
+		vector<vec3> evaluateAt(const vector<float> & ts) const;
+		vector<vec3> sample(unsigned int samples_per_path) const;
 	};
 
 	bool compareByX(vec3, vec3);

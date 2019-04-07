@@ -8,12 +8,12 @@ namespace glge::renderer::scene_graph
 
 	struct SceneSettings
 	{
-		const SceneCamera * active_camera;
+		observer_ptr<const SceneCamera> active_camera;
 
 		bool draw_bounding_spheres;
 		bool enable_VF_culling;
 
-		SceneSettings(const SceneCamera * active_camera,
+		SceneSettings(observer_ptr<const SceneCamera> active_camera,
 			bool draw_bounding_spheres,
 			bool enable_VF_culling);
 	};

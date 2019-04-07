@@ -1,36 +1,46 @@
 #pragma once
 
 #include <glge/common.h>
-#include <glge/renderer/primitives/renderable.h>
-#include <glge/renderer/primitives/shader_program.h>
 #include <glge/renderer/render_settings.h>
 
-#include <queue>
-#include <variant>
+#include <map>
+#include <typeindex>
 
 namespace glge::renderer
 {
-	//template<typename T>
-	//constexpr T frame_time_ratio = static_cast<T>(frame_clock::period::num) / static_cast<T>(frame_clock::period::den);
+	namespace primitive
+	{
+		class Renderable;
+		struct ShaderInstanceBase;
+	}
+
+	// TODO find a better place/name for this func?
+	void configure_environment();
 
 	struct RenderTarget
 	{
-		const primitive::Renderable & target;
-		const primitive::ShaderInstance & shader;
+		const primitive::Renderable & renderable;
+		const primitive::ShaderInstanceBase & shader_instance;
 		mat4 M;
 	};
 
 	class Renderer
 	{
-		// TODO use multimap instead of queue to throw into buckets based on underlying shader
-		std::queue<RenderTarget> render_queue;
+		std::multimap<std::type_index, RenderTarget> render_targets;
 
-		RenderSettings settings;
 	public:
-		Renderer(const RenderSettings & settings);
+		RenderSettings settings;
 
-		void enqueue(const primitive::Renderable & target, const primitive::ShaderInstance & shader, mat4 M);
+		Renderer();
+
+		void enqueue(
+			const primitive::Renderable & target, 
+			const primitive::ShaderInstanceBase & shader_instance,
+			mat4 M
+		);
 
 		void render();
+
+		size_t target_count() const;
 	};
 }

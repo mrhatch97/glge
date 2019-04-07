@@ -1,62 +1,49 @@
 message("-- glge tests enabled")
 
-include_directories(
-	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/test/include>
-)
-
-link_libraries(glge)
-
-add_executable(test_safe_cast
-	test_safe_cast.cpp)
-
-add_test(safe_cast
-	test_safe_cast)
-
-add_executable(test_returns_void
-	test_returns_void.cpp)
-
-add_test(returns_void
-	test_returns_void)
-
-add_executable(test_contains
-	test_contains.cpp)
-
-add_test(contains
-	test_contains)
-
-add_executable(test_stepper
-	test_stepper.cpp)
-
-add_test(stepper
-	test_stepper)
-
-add_executable(test_circular
-	test_circular.cpp)
-
-add_test(circular
-	test_circular)
-
-add_executable(test_oscillator
-	test_oscillator.cpp)
-
-add_test(oscillator
-	test_oscillator)
-
-add_executable(test_scene
-	test_scene.cpp)
-
-add_test(scene
-	test_scene)
-
 # Target to test that depends on the build of the test executables
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-	DEPENDS
-		test_safe_cast
-		test_returns_void
-		test_contains
-		test_stepper
-		test_circular
-		test_oscillator
-		test_scene
-)
+add_custom_target(build_tests)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS build_tests)
+
+macro(add_quick_test test_name)
+	add_executable(test_${test_name}
+		test_${test_name}.cpp)
+
+	target_link_libraries(test_${test_name}
+		PRIVATE
+			glge)
+
+	target_include_directories(test_${test_name}
+		PRIVATE
+			${PROJECT_SOURCE_DIR}/test/include)
+
+	add_test(NAME ${test_name}
+		COMMAND test_${test_name}
+		WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/test)
+
+	add_dependencies(build_tests test_${test_name})
+endmacro()
+
+add_quick_test(safe_cast)
+add_quick_test(returns_void)
+add_quick_test(contains)
+add_quick_test(stepper)
+add_quick_test(circular)
+add_quick_test(oscillator)
+add_quick_test(parse_model)
+add_quick_test(parse_model_big)
+add_quick_test(model_to_EBO)
+add_quick_test(heightmap_gen)
+
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test/resources/models)
+
+add_custom_command(TARGET test_parse_model POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${PROJECT_SOURCE_DIR}/test/resources/models/test.obj ${PROJECT_BINARY_DIR}/test/resources/models)
+
+add_custom_command(TARGET test_parse_model_big POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${PROJECT_SOURCE_DIR}/test/resources/models/big.obj ${PROJECT_BINARY_DIR}/test/resources/models)
+
+if(${GLGE_DRIVER} STREQUAL "OPENGL")
+	add_subdirectory(opengl)
+endif()

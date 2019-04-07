@@ -7,22 +7,16 @@
 
 namespace glge::renderer::primitive
 {
-	namespace opengl
-	{
-		class GLModel;
-	}
-
-	using ModelImpl = opengl::GLModel;
-
 	class Model : public Renderable
 	{
-	private:
-		uptr<ModelImpl> model;
 	public:
-		Model(const res::ModelData & model_data);
+		Model() = default;
 
-		~Model();
+		virtual ~Model() = default;
 
-		void render() const override;
+		static unique_ptr<Model> from_file(const ModelFileInfo & file_info);
+		static unique_ptr<Model> from_data(const ModelData & model_data);
+		static unique_ptr<Model> from_data(ModelData && model_data);
+		static unique_ptr<Model> from_data(const EBOModelData & model_data);
 	};
 }

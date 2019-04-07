@@ -2,11 +2,7 @@
 
 namespace glge::renderer
 {
-	RenderSettings::RenderSettings(mat4 V, mat4 P, vec3 cam_pos, vec3 cam_dir) :
-		V(V), P(P), cam_pos(cam_pos), cam_dir(cam_dir)
-	{ }
-
 	RenderParameters::RenderParameters(const RenderSettings& settings, mat4 M) :
-		settings(settings), M(M), MVP(settings.P * settings.V * M)
+		settings(settings), M(M), MVP(settings.camera->intrinsics.get_P() * settings.camera->get_V() * M)
 	{ }
 }

@@ -1,44 +1,66 @@
 #pragma once
 
+#include <glge/common.h>
+
 namespace glge::renderer::primitive
 {
 	struct ModelFileInfo
 	{
-		String filename;
+		string filename;
 		bool is_textured;
 	};
 
+	using VertexPoints = vector<vec3>;
+	using NormalPoints = vector<vec3>;
+	using UVPoints = vector<vec2>;
+	using Indices = vector<unsigned int>;
+
+	struct VertexData
+	{
+		VertexPoints points;
+		Indices indices;
+	};
+
+	struct NormalData
+	{
+		NormalPoints points;
+		Indices indices;
+	};
+
+	struct UVData
+	{
+		UVPoints points;
+		Indices indices;
+	};
+
+	struct EBOModelData;
+
 	struct ModelData
 	{
-		Vector<vec3> vertices;
-		Vector<vec3> normals;
-		Vector<vec2> uvs;
-		Vector<unsigned int> indices;
+		VertexData vertex_data;
+		NormalData normal_data;
+		UVData uv_data;
 
-		bool is_textured() const
-		{
-			return !uvs.empty();
-		}
+		static ModelData from_file(const ModelFileInfo & file_info);
+		static EBOModelData to_EBO_data(const ModelData & data);
+		static EBOModelData to_EBO_data(ModelData && data);
+	};
+
+	struct EBOModelData
+	{
+		VertexPoints vertices;
+		NormalPoints normals;
+		UVPoints uvs;
+		Indices indices;
 	};
 
 	struct TextureFileInfo
 	{
-		String path;
-	};
-
-	struct TextureData
-	{
-		int width, height, channels;
-		uptr<unsigned char[]> data;
+		string path;
 	};
 
 	struct CubemapFileInfo
 	{
 		TextureFileInfo top, bottom, left, right, front, back;
-	};
-
-	struct CubemapData
-	{
-		TextureData top, bottom, left, right, front, back;
 	};
 }
