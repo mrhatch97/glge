@@ -40,7 +40,7 @@
 *.svg binary
 #*.svg text
 *.eps binary
-*.obj text
+*.obj binary
 
 #sources
 *.c text diff=cpp
