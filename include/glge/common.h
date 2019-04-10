@@ -1,4 +1,4 @@
-/// \brief Common declarations and aliases for glge.
+/// <summary>Common declarations and aliases for glge.</summary>
 ///
 /// Definitions of main library namespaces, commonly used type aliases,
 /// and other utilities.
@@ -55,7 +55,9 @@ namespace glge
 
 	/// <summary>Vocabulary type alias for null-terminated C strings.</summary>
 	using zstring = char *;
-	/// <summary>Vocabulary type alias for const null-terminated C strings.</summary>
+	/// <summary>
+  /// Vocabulary type alias for const null-terminated C strings.
+  /// </summary>
 	using czstring = const char *;
 
 	// Extremely commonly used types
@@ -75,17 +77,24 @@ namespace glge
 	template<typename W>
 	using observer_ptr = W *;
 
-	/// <summary>Helper struct for pattern-matching like std::visit syntax.</summary>
-	///
+	/// <summary>
+  /// Helper struct for pattern-matching like std::visit syntax.
+  /// </summary>
 	/// A helper struct for std::visit to enable pattern matching-like syntax by
 	/// aggregating lambdas in a single object.
-	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+	template<class... Ts> 
+  struct overloaded : Ts... 
+  { 
+    using Ts::operator()...; 
+  };
 
-	/// <summary>Template deduction guide for std::visit pattern matching struct.</summary>
-	///
+	/// <summary>
+  /// Template deduction guide for std::visit pattern matching struct.
+  /// </summary>
 	/// User defined deduction guide for overloaded to allow implicit type
 	/// deduction in pattern matching syntax.
-	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+	template<class... Ts> 
+  overloaded(Ts...) -> overloaded<Ts...>;
 
 	/// <summary>Namespace for programming utilities.</summary>
 	///

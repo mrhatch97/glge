@@ -79,7 +79,7 @@ namespace glge::renderer::primitive
 		};
 	}
 
-	unique_ptr<Lines> Lines::from_file(const vector<vec3> & points)
+	unique_ptr<Lines> Lines::from_points(const vector<vec3> & points)
 	{
 		return std::make_unique<opengl::GLLines>(points);
 	}

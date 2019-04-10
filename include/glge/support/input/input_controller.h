@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glge/common.h>
-#include <glge/support/input/events.h>
 
 #include <any>
 #include <bitset>
@@ -9,28 +8,43 @@
 #include <map>
 #include <unordered_map>
 
-class Window;
-
 namespace glge
 {
 	namespace input
 	{
+    // TODO switch this to use registration of event handler functors
+    // instead of event handler classes
+
+    /// <summary>
+    /// Interface for a consumer of input events.
+    /// </summary>
 		class InputConsumer
 		{
 		public:
-			virtual void raise(const events::InputEvent & e) = 0;
+      /// <summary>Notifies the consumer that an event was raised.</summary>
+			virtual void raise(const std::any & e) = 0;
 			virtual ~InputConsumer() { };
 		};
 
+    /// <summary>
+    /// Class that manages user input, input states, and input event
+    /// dispatching.
+    /// </summary>
 		class InputController
 		{
 		public:
+      /// <summary>
+      /// Action associated with button input.
+      /// </summary>
 			enum LogicalAction : bool
 			{
 				PRESS = true,
 				RELEASE = false
 			};
 
+      /// <summary>
+      /// Key associated with keyboard input.
+      /// </summary>
 			enum LogicalKey
 			{
 				KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H,
@@ -51,6 +65,10 @@ namespace glge
 				KEY_UNKNOWN
 			};
 
+      /// <summary>
+      /// Keyboard modifier associated with keyboard
+      /// input.
+      /// </summary>
 			enum LogicalMod
 			{
 				MOD_SHIFT, MOD_CTRL, MOD_ALT,
@@ -60,6 +78,9 @@ namespace glge
 				NOT_MOD = -1
 			};
 
+      /// <summary>
+      /// Button associated with mouse input.
+      /// </summary>
 			enum LogicalButton
 			{
 				BUTTON_LEFT, BUTTON_RIGHT,
@@ -69,14 +90,57 @@ namespace glge
 				BUTTON_UNKNOWN
 			};
 
+      /// <summary>
+      /// Construct a new InputController with the given InputConsumer
+      /// as the consumer for its events.
+      /// </summary>
 			InputController(InputConsumer & parent);
 
+      /// <summary>
+      /// Call to notify this InputController of a new keyboard input.</summary>
+      /// </summary>
+      /// <param name="action">Action the user took.</param>
+      /// <param name="key">Key the user pressed.</param>
 			void key_in(LogicalAction action, LogicalKey key);
+
+      /// <summary>
+      /// Call to notify this InputController of a new modifier input.</summary>
+      /// </summary>
+      /// <param name="action">Action the user took.</param>
+      /// <param name="mod">Modifier the user pressed.</param>
 			void mod_in(LogicalAction action, LogicalMod mod);
-			void mouse_click(LogicalAction action, LogicalButton, float cur_x, float cur_y);
+
+      /// <summary>
+      /// Call to notify this InputController of a mouse click.</summary>
+      /// </summary>
+      /// <param name="action">Action the user took.</param>
+      /// <param name="btn">Button the user pressed.</param>
+      /// <param name="cur_x">Current x-coordinate of the cursor.</param>
+      /// <param name="cur_y">Current y-coordinate of the cursor.</param>
+			void mouse_click(
+          LogicalAction action, 
+          LogicalButton btn, 
+          float cur_x, 
+          float cur_y);
+
+      /// <summary>
+      /// Call to notify this InputController of a mouse movement.</summary>
+      /// </summary>
+      /// <param name="cur_x">Current x-coordinate of the cursor.</param>
+      /// <param name="cur_y">Current y-coordinate of the cursor.</param>
 			void mouse_mov(float cur_x, float cur_y);
+
+      /// <summary>
+      /// Call to notify this InputController of a mouse scroll.</summary>
+      /// </summary>
+      /// <param name="delta_x">Distance scrolled in the x direction.</param>
+      /// <param name="delta_y">Distance scrolled in the y direction.</param>
 			void mouse_scroll(float delta_x, float delta_y);
 
+      /// <summary>
+      /// Call to raise input events based on the current state of the
+      /// InputController.
+      /// </summary>
 			void poll_key_inputs();
 
 		private:
@@ -134,13 +198,13 @@ namespace glge
 
 			struct KeyCommand
 			{
-				events::InputEvent command;
+        std::any command;
 				InputRepeat should_repeat;
 
 				KeyCommand() : command(), should_repeat(NO_REPEAT)
 				{ }
 
-				KeyCommand(const events::InputEvent & command, InputRepeat should_repeat) :
+				KeyCommand(const std::any & command, InputRepeat should_repeat) :
 					command(command), should_repeat(should_repeat)
 				{ }
 			};

@@ -1,4 +1,4 @@
-/// \brief Support for cross-platform capability.
+/// <summary>Support for cross-platform capability.</summary>
 ///
 /// Contains utility macros and variables for cross compatibility between
 /// Windows, Linux, and OSX.
@@ -77,6 +77,16 @@
 
 namespace glge::util
 {
+  /// <summary>
+  /// Attempt to open the given file path in the given mode.
+  /// If this fails for any reason, throws an exception.
+  /// </summary>
+  /// <param name="file_name">Path to file to open.</param>
+  /// <param name="mode">Mode string to open file with; as in fopen.</param>
+  /// <returns>Handle to opened file.</returns>
+  /// <exception cref="std::runtime_error">
+  /// Thrown if file fails to open.
+  /// </exception>
 	inline FILE * try_fopen(czstring file_name, czstring mode)
 	{
 		FILE * file;
@@ -99,7 +109,9 @@ namespace glge::util
 }
 
 /// \def GET_CWD()
-/// <summary>Platform-independent macro for getting the current working directory.</summary>
+/// <summary>
+/// Platform-independent macro for getting the current working directory.
+/// </summary>
 ///
 /// Gets the current working directory. Prefers std::filesystem if available,
 /// falls back to platform specific cwd functions if not.

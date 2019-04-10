@@ -54,22 +54,6 @@ namespace glge
 			drag_state(NOT_DRAGGING), drag_point(0, 0)
 		{
 			auto rot_speed = glm::radians(camera_speed);
-
-			using namespace input::events;
-
-			// TODO move this to a config file
-			input_binds[KeyInput{ KEY_ESCAPE, mod_bitset{} }] = KeyCommand{ CommandCloseWindowEvent{}, NO_REPEAT };
-			input_binds[KeyInput{ KEY_F1, mod_bitset{} }] = KeyCommand{ CommandSetSceneEvent{ 0 }, NO_REPEAT };
-			input_binds[KeyInput{ KEY_F2, mod_bitset{} }] = KeyCommand{ CommandSetSceneEvent{ 1 }, NO_REPEAT };
-			input_binds[KeyInput{ KEY_F3, mod_bitset{} }] = KeyCommand{ CommandSetSceneEvent{ 2 }, NO_REPEAT };
-			input_binds[KeyInput{ KEY_F4, mod_bitset{} }] = KeyCommand{ CommandSetSceneEvent{ 3 }, NO_REPEAT };
-			input_binds[KeyInput{ KEY_B, mod_bitset{} }] = KeyCommand{ CommandToggleBoundingSpheresEvent{}, NO_REPEAT };
-			input_binds[KeyInput{ KEY_V, mod_bitset{} }] = KeyCommand{ CommandToggleVFCullingEvent{}, NO_REPEAT };
-			input_binds[KeyInput{ KEY_P, mod_bitset{} }] = KeyCommand{ CommandTogglePauseEvent{}, NO_REPEAT };
-			input_binds[KeyInput{ KEY_W, mod_bitset{} }] = KeyCommand{ CommandSurgeEvent{ NORMAL, camera_speed }, REPEAT };
-			input_binds[KeyInput{ KEY_A, mod_bitset{} }] = KeyCommand{ CommandYawEvent{ INVERT, rot_speed }, REPEAT };
-			input_binds[KeyInput{ KEY_S, mod_bitset{} }] = KeyCommand{ CommandSurgeEvent{ INVERT, camera_speed }, REPEAT };
-			input_binds[KeyInput{ KEY_D, mod_bitset{} }] = KeyCommand{ CommandYawEvent{ NORMAL, rot_speed }, REPEAT };
 		}
 
 		void InputController::key_in(LogicalAction action, LogicalKey key)
@@ -136,8 +120,6 @@ namespace glge
 
 		void InputController::mouse_mov(float cur_x, float cur_y)
 		{
-			using namespace events;
-
 			switch (drag_state)
 			{
 			case DRAGGING:
@@ -145,8 +127,8 @@ namespace glge
 					auto delta_x = (cur_x - drag_point.x) / rotation_dampening;
 					auto delta_y = -(cur_y - drag_point.y) / rotation_dampening;
 
-					parent.raise(CommandRollEvent{ INVERT, glm::radians(delta_x) });
-					parent.raise(CommandPitchEvent{ NORMAL, glm::radians(delta_y) });
+					//parent.raise(CommandRollEvent{ INVERT, glm::radians(delta_x) });
+					//parent.raise(CommandPitchEvent{ NORMAL, glm::radians(delta_y) });
 
 					drag_point = vec2(cur_x, cur_y);
 				}
@@ -157,8 +139,7 @@ namespace glge
 
 		void InputController::mouse_scroll(float delta_x, float delta_y)
 		{
-			using namespace events;
-			parent.raise(CommandSurgeEvent{ NORMAL, delta_y });
+			//parent.raise(CommandSurgeEvent{ NORMAL, delta_y });
 		}
 
 		void InputController::poll_key_inputs()
