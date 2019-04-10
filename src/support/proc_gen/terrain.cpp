@@ -10,8 +10,8 @@ namespace glge::proc_gen
 	using namespace util;
 
 	Matrix<float>
-		diamond_square_gen(std::uint32_t seed, size_t n, float variation, float top_left,
-			float top_right, float bottom_left, float bottom_right)
+		diamond_square_gen(std::uint32_t seed, size_t n, float variation, 
+        float top_left,	float top_right, float bottom_left, float bottom_right)
 	{
 		const size_t grid_sz = static_cast<size_t>(pow(2, n)) + 1;
 

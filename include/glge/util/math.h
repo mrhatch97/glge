@@ -1,7 +1,5 @@
 /// <summary>Mathematical functions and helper classes.</summary>
 ///
-/// Contains mathematical functions and helper classes used by glge.
-///
 /// \file math.h
 
 #pragma once
@@ -12,35 +10,68 @@
 
 namespace glge::math
 {
+  /// <summary>
+  /// Class for incrementing and decrementing a value by a constant step.
+  /// </summary>
+  /// <typeparam name="T">
+  /// Type of the underlying value of the stepper.
+  /// </typeparam>
 	template<typename T>
-	struct Stepper
+	class Stepper
 	{
 	private:
 		T val;
 	public:
+    /// <summary>Amount to increase or decrease value by per step.</summary>
 		const T step;
 
+    /// <summary>
+    /// Gets the current value of the Stepper.
+    /// </summary>
+    /// <returns>Current value of the stepper.</returns>
 		T get() const { return val; }
 
+    /// <summary>
+    /// Implicitly gets the current value of the Stepper.
+    /// </summary>
+    /// <returns>Current value of the stepper.</returns>
 		operator T() const { return val; }
 
+    /// <summary>Increment the value of the Stepper by one step.</summary>
+    /// <returns>New value of the Stepper.</returns>
 		T operator++() { val += step; return val; }
 
+    /// <summary>Increment the value of the Stepper by one step.</summary>
+    /// <returns>Old value of the Stepper.</returns>
 		T operator++(int) { T old = val; val += step; return old; }
 
+    /// <summary>Decrement the value of the Stepper by one step.</summary>
+    /// <returns>New value of the Stepper.</returns>
 		T operator--() { val -= step; return val; }
 
+    /// <summary>Decrement the value of the Stepper by one step.</summary>
+    /// <returns>Old value of the Stepper.</returns>
 		T operator--(int) { T old = val; val -= step; return old; }
 
+    /// <summary>
+    /// Constructs a new Stepper with the given start value and step.
+    /// </summary>
 		Stepper(const T & start, const T & step) :
 			val(start), step(step)
 		{ }
 	};
 
+  /// <summary>
+  /// Class for oscillating a value between a minimum and maximum value.
+  /// </summary>
+  /// <typeparam name="T">
+  /// Type of the underlying value of the oscillator.
+  /// </typeparam>
 	template<typename T>
-	struct Oscillator
+	class Oscillator
 	{
 	private:
+		T val;
 		bool increasing;
 
 		void step(T delta)
@@ -62,21 +93,35 @@ namespace glge::math
 			}
 		}
 	public:
-		T val;
+    /// <summary>Amount to increase or decrease value by per step.</summary>
 		const T delta;
+    /// <summary>Minimum value of the oscillator.</summary>
 		const T min;
+    /// <summary>Maximum value of the oscillator.</summary>
 		const T max;
 
+    /// <summary>
+    /// Gets the current value of the Oscillator.
+    /// </summary>
+    /// <returns>Current value of the Oscillator.</returns>
 		T get() const { return val; }
 
+    /// <summary>
+    /// Implicitly gets the current value of the Oscillator.
+    /// </summary>
+    /// <returns>Current value of the Oscillator.</returns>
 		operator T() const { return val; }
 
+    /// <summary>Increment the value of the Oscillator by one step.</summary>
+    /// <returns>New value of the Oscillator.</returns>
 		T operator++()
 		{
 			step(delta);
 			return val;
 		}
 
+    /// <summary>Increment the value of the Oscillator by one step.</summary>
+    /// <returns>Old value of the Oscillator.</returns>
 		T operator++(T)
 		{
 			T old = val;
@@ -84,12 +129,16 @@ namespace glge::math
 			return old;
 		}
 
+    /// <summary>Decrement the value of the Oscillator by one step.</summary>
+    /// <returns>New value of the Oscillator.</returns>
 		T operator--()
 		{
 			step(-delta);
 			return val;
 		}
 
+    /// <summary>Decrement the value of the Oscillator by one step.</summary>
+    /// <returns>Old value of the Oscillator.</returns>
 		T operator--(T)
 		{
 			T old = val;
@@ -97,6 +146,10 @@ namespace glge::math
 			return old;
 		}
 
+    /// <summary>
+    /// Constructs a new Oscillator with the given start value, step, min, and
+    /// max.
+    /// </summary>
 		Oscillator(const T & start, const T & delta, const T & min, const T & max)
 			: increasing(true), val(start), delta(delta), min(min), max(max)
 		{
@@ -215,12 +268,18 @@ namespace glge::math
 	/// </summary>
 	bool contains(Frustum frustum, Sphere sphere);
 
+  /// <summary>
+  /// Representation of a cubic Bezier curve.
+  /// </summary>
 	struct BezierCurve
 	{
 	private:
 		const mat4 points;
 		static const mat4 basis;
 	public:
+    /// <summary>
+    /// Constructs a BezierCurve with the given 4 control points.
+    /// </summary>
 		BezierCurve(
         const vec3 & p0, 
         const vec3 & p1, 
@@ -229,27 +288,95 @@ namespace glge::math
     ) :	points(vec4(p0, 1.0f), vec4(p1, 1.0f), vec4(p2, 1.0f), vec4(p3, 1.0f))
 		{ }
 
-		vec3 evaluateAt(const float t) const;
-		vec3 velocityAt(const float t) const;
+    /// <summary>
+    /// Compute the point on the curve for the given value of t.
+    /// </summary>
+    /// <param name="t">
+    /// Control parameter; must be in the range [0, 1]. Describes the progress
+    /// along the curve of the point.
+    /// </param>
+    /// <returns>Computed point.</returns>
+		vec3 evaluate_at(const float t) const;
+
+    /// <summary>
+    /// Compute the tangent on the curve for the given value of t.
+    /// </summary>
+    /// <param name="t">
+    /// Control parameter; must be in the range [0, 1]. Describes the progress
+    /// along the curve of the point.
+    /// </param>
+    /// <returns>Computed tangent.</returns>
+		vec3 velocity_at(const float t) const;
 	};
 
+  /// <summary>
+  /// Handle on a Bezier path to enforce C1 continuity.
+  /// </summary>
 	struct BezierHandle
 	{
+    /// <summary>Interpolating point; point on the curve.</summary>
 		vec3 interp_point;
+    /// <summary>Control point; one side of the handle.</summary>
 		vec3 control_point;
-		vec3 otherControlPoint() const
+
+    /// <summary>Control point on the opposite side of the handle.</summary>
+    /// <returns>
+    /// Control point on the line between the interpolating point
+    /// and concrete control point.
+    /// </returns>
+		vec3 opposite_control_point() const
 		{
 			return interp_point - (control_point - interp_point);
 		}
 	};
 
+  /// <summary>
+  /// A series of two or more BezierHandles defining a 
+  /// composite Bezier curve.
+  /// </summary>
 	struct BezierPath
 	{
+    /// <summary>Collection of control handles. Must be at least 2.</summary>
 		std::vector<BezierHandle> handles;
 
-		vec3 evaluateAt(float t) const;
-		vec3 velocityAt(float t) const;
-		vector<vec3> evaluateAt(const vector<float> & ts) const;
+    /// <summary>
+    /// Compute the point on the composite curve for the given value of t.
+    /// </summary>
+    /// <param name="t">
+    /// Control parameter; must be in the range [0, 1]. Describes the progress
+    /// along the curve of the point.
+    /// </param>
+    /// <returns>Computed point.</returns>
+		vec3 evaluate_at(float t) const;
+
+    /// <summary>
+    /// Compute the tangent on the composite curve for the given value of t.
+    /// </summary>
+    /// <param name="t">
+    /// Control parameter; must be in the range [0, 1]. Describes the progress
+    /// along the curve of the point.
+    /// </param>
+    /// <returns>Computed tangent.</returns>
+		vec3 velocity_at(float t) const;
+
+    /// <summary>
+    /// Compute a set of points on the composite curve for the given 
+    /// values of t.
+    /// </summary>
+    /// <param name="ts">
+    /// Control parameters; must be in the range [0, 1]. Each describes the 
+    /// progress along the curve of the point.
+    /// </param>
+    /// <returns>Computed points.</returns>
+		vector<vec3> evaluate_at(const vector<float> & ts) const;
+
+    /// <summary>
+    /// Compute a set of equidistant points on the composite curve.
+    /// </summary>
+    /// <param name="samples_per_path">
+    /// Number of sample points to compute.
+    /// </param>
+    /// <returns>Computed points.</returns>
 		vector<vec3> sample(unsigned int samples_per_path) const;
 	};
 

@@ -14,7 +14,7 @@ and uses GLEW for its extension manager.
 ## Installation
 Building glge requires [CMake](https://cmake.org/download/) version 3.13 or higher, 
 a C++ compiler supporting [C++17](https://en.cppreference.com/w/cpp/compiler_support),
-[glm](https://glm.g-truc.net/0.9.9/index.html), 
+[glm](https://glm.g-truc.net), 
 [Simple OpenGL Image Library (SOIL)](https://www.lonesock.net/soil.html), and
 [GLEW](http://glew.sourceforge.net/).
 

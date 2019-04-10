@@ -17,7 +17,12 @@ namespace glge::proc_gen
 		Tree();
 		//  model transform, colorLeaf bool
 		std::forward_list<std::tuple<mat4, bool>> transforms;
-		void generate(float length, char rule, int curIter, int numIter, bool colorLeaf);
+		void generate(
+        float length, 
+        char rule, 
+        int curIter, 
+        int numIter, 
+        bool colorLeaf);
 
 
 	private:

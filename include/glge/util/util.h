@@ -286,9 +286,17 @@ namespace glge::util
 		}
 
 		Matrix(const Matrix &) = delete;
+
+    /// <summary>
+    /// Construct a new Matrix by moving the data from
+    /// another Matrix.
+    /// </summary>
 		Matrix(Matrix &&) = default;
 
 		Matrix & operator=(const Matrix &) = delete;
+    /// <summary>
+    /// Move another Matrix into this Matrix.
+    /// </summary>
 		Matrix & operator=(Matrix &&) = default;
 
 		/// <summary>Get a reference to the object in the Matrix at the given 1D

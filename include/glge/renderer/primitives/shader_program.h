@@ -116,14 +116,26 @@ namespace glge::renderer::primitive
 		virtual ~Shader() = default;
 	};
 
+  /// <summary>
+  /// A simple helper for loading and maintaining lifetime of loaded
+  /// Shader objects.
+  /// </summary>
 	class ShaderManager
 	{
 	private:
 		std::unordered_map<std::type_index, unique_ptr<ShaderBase>> shaders;
 
 	public:
+    /// <summary>
+    /// Construct a new ShaderManager with no managed shaders.
+    /// </summary>
 		ShaderManager();
 
+    /// <summary>
+    /// Load the shader with the given type.
+    /// </summary>
+    /// <typeparam name="ShaderT">Type of the Shader to load.</typeparam>
+    /// <returns>Reference to the loaded Shader.</returns>
 		template<typename ShaderT>
 		ShaderT & load()
 		{
@@ -135,6 +147,11 @@ namespace glge::renderer::primitive
 			return shader_ref;
 		}
 
+    /// <summary>
+    /// Get a reference to the loaded shader with the given type.
+    /// </summary>
+    /// <typeparam name="ShaderT">Type of the Shader to get.</typeparam>
+    /// <returns>Reference to the Shader.</returns>
 		template<typename ShaderT>
 		ShaderT & get()
 		{
@@ -160,7 +177,7 @@ namespace glge::renderer::primitive
 		ShaderInstanceBase(ShaderBase & shader);
 
     /// <summary>
-    /// Parameterize the active shader.
+    /// Parameterizes the active shader.
     /// </summary>
     /// Note that this does not bind the associated shader; the caller
     /// must ensure the shader is bound before invoking this function.
@@ -169,19 +186,43 @@ namespace glge::renderer::primitive
 		virtual ~ShaderInstanceBase() = default;
 	};
 
+  /// <summary>
+  /// An instance of a shader; represents a binding of
+  /// shader parameters to a shader program.
+  /// </summary>
+  /// <typeparam name="DataT">
+  /// Type of the data object used to parameterize the
+  /// associated shader.
+  /// </typeparam>
 	template<typename DataT>
 	struct ShaderInstance : public ShaderInstanceBase
 	{
+    /// <summary>
+    /// The data object containing shader parameters.
+    /// </summary>
 		DataT data;
 
+    /// <summary>
+    /// Constructs a new ShaderInstance binding the given Shader
+    /// and data object. The data object is copied.
+    /// </summary>
 		ShaderInstance(Shader<DataT> & shader, const DataT & data)
 			: ShaderInstanceBase(shader), data(data)
 		{ }
 
+    /// <summary>
+    /// Constructs a new ShaderInstance binding the given Shader
+    /// and data object. Takes ownership of the data object.
+    /// </summary>
 		ShaderInstance(Shader<DataT> & shader, DataT && data)
 			: ShaderInstanceBase(shader), data(std::move(data))
 		{ }
 
+    /// <summary>
+    /// Parameterizes the active shader.
+    /// </summary>
+    /// Note that this does not bind the associated shader; the caller
+    /// must ensure the shader is bound before invoking this function.
 		void operator()(const RenderParameters & render) const override
 		{
 			static_cast<Shader<DataT> &>(shader).parameterize(render, data);

@@ -14,8 +14,11 @@ namespace glge::math
 		return glm::dot(pt, normal) - d;
 	}
 
-	Frustum::Frustum(const std::array<Plane, 6> & planes) : near(planes[0]), far(planes[1]),
-		left(planes[2]), right(planes[3]), bottom(planes[4]), top(planes[5]) { }
+	Frustum::Frustum(const std::array<Plane, 6> & planes) : 
+    near(planes[0]), far(planes[1]),
+		left(planes[2]), right(planes[3]), 
+    bottom(planes[4]), top(planes[5]) 
+  { }
 
 	bool contains(Frustum frustum, Sphere sphere)
 	{
@@ -30,13 +33,15 @@ namespace glge::math
 	}
 
 	// Geometric basis matrix for a Cubic bezier curve - universally constant
-	const mat4 BezierCurve::basis = mat4(vec4{ -1, 3, -3, 1 }, vec4{ 3, -6, 3, 0 }, vec4{ -3, 3, 0, 0 }, vec4{ 1, 0, 0, 0 });
+	const mat4 BezierCurve::basis = mat4(vec4{ -1, 3, -3, 1 }, 
+      vec4{ 3, -6, 3, 0 }, vec4{ -3, 3, 0, 0 }, vec4{ 1, 0, 0, 0 });
 
-	vec3 BezierCurve::evaluateAt(const float t) const
+	vec3 BezierCurve::evaluate_at(const float t) const
 	{
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG("A bezier curve cannot be evaluated at a range outside [0, 1]"));
+			throw std::domain_error(EXC_MSG(
+            "A bezier curve cannot be evaluated at a range outside [0, 1]"));
 		}
 
 		vec4 T(t * t * t, t * t, t, 1);
@@ -44,11 +49,12 @@ namespace glge::math
 		return points * basis * T;
 	}
 
-	vec3 BezierCurve::velocityAt(const float t) const
+	vec3 BezierCurve::velocity_at(const float t) const
 	{
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG("A bezier curve cannot be evaluated at a range outside [0, 1]"));
+			throw std::domain_error(EXC_MSG(
+            "A bezier curve cannot be evaluated at a range outside [0, 1]"));
 		}
 
 		vec4 T(3 * t * t, 2 * t, 1, 0);
@@ -56,16 +62,18 @@ namespace glge::math
 		return points * basis * T;
 	}
 
-	vec3 BezierPath::evaluateAt(const float t) const
+	vec3 BezierPath::evaluate_at(const float t) const
 	{
 		if (handles.size() < 1)
 		{
-			throw std::logic_error(EXC_MSG("A bezier path must have at least 1 handle to define a full curve"));
+			throw std::logic_error(EXC_MSG("A bezier path must have at least 1"
+            "handle to define a full curve"));
 		}
 
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG("A bezier path cannot be evaluated at a range outside [0, 1]"));
+			throw std::domain_error(EXC_MSG("A bezier path cannot be evaluated at a"
+            " range outside [0, 1]"));
 		}
 
 		size_t num_curves = static_cast<size_t>(handles.size());
@@ -97,23 +105,25 @@ namespace glge::math
 		}
 
 		vec3 p0 = first_handle->interp_point;
-		vec3 p1 = first_handle->otherControlPoint();
+		vec3 p1 = first_handle->opposite_control_point();
 		vec3 p2 = second_handle->control_point;
 		vec3 p3 = second_handle->interp_point;
 
-		return BezierCurve(p0, p1, p2, p3).evaluateAt(offset_t - offset_t_floor);
+		return BezierCurve(p0, p1, p2, p3).evaluate_at(offset_t - offset_t_floor);
 	}
 
-	vec3 BezierPath::velocityAt(const float t) const
+	vec3 BezierPath::velocity_at(const float t) const
 	{
 		if (handles.size() < 1)
 		{
-			throw std::logic_error(EXC_MSG("A bezier path must have at least 1 handle to define a full curve"));
+			throw std::logic_error(EXC_MSG("A bezier path must have at least 1 "
+            "handle to define a full curve"));
 		}
 
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG("A bezier path cannot be evaluated at a range outside [0, 1]"));
+			throw std::domain_error(EXC_MSG("A bezier path cannot be evaluated at a "
+            "range outside [0, 1]"));
 		}
 
 		size_t num_curves = static_cast<size_t>(handles.size());
@@ -145,18 +155,18 @@ namespace glge::math
 		}
 
 		vec3 p0 = first_handle->interp_point;
-		vec3 p1 = first_handle->otherControlPoint();
+		vec3 p1 = first_handle->opposite_control_point();
 		vec3 p2 = second_handle->control_point;
 		vec3 p3 = second_handle->interp_point;
 
-		return BezierCurve(p0, p1, p2, p3).velocityAt(offset_t - offset_t_floor);
+		return BezierCurve(p0, p1, p2, p3).velocity_at(offset_t - offset_t_floor);
 	}
 
-	vector<vec3> BezierPath::evaluateAt(const vector<float> & ts) const
+	vector<vec3> BezierPath::evaluate_at(const vector<float> & ts) const
 	{
 		vector<vec3> result(ts.size());
 		std::transform(ts.cbegin(), ts.cend(), result.begin(), 
-        [&](const float t) { return this->evaluateAt(t); });
+        [&](const float t) { return this->evaluate_at(t); });
 		return result;
 	}
 
@@ -167,7 +177,7 @@ namespace glge::math
 		const float step = 1.0f / (num_samples);
 		std::iota(ts.begin(), ts.end(), math::Stepper(0.0f, step));
 
-		return evaluateAt(ts);
+		return evaluate_at(ts);
 	}
 
 	bool compare_by_x(vec3 v1, vec3 v2)
