@@ -1,4 +1,4 @@
-/// \brief Mathematical functions and helper classes.
+/// <summary>Mathematical functions and helper classes.</summary>
 ///
 /// Contains mathematical functions and helper classes used by glge.
 ///
@@ -107,12 +107,16 @@ namespace glge::math
 			// TODO deal with overflow? unsure if possible
 			if (std::abs(delta) >= std::abs(max - min))
 			{
-				throw std::logic_error("Oscillator delta is greater than the distance between max and min");
+				throw std::logic_error(
+            "Oscillator delta is greater than the distance between max and min"
+        );
 			}
 		}
 	};
 
-	/// <summary>Clamp a value to a range, wrapping between max and min as needed.</summary>
+	/// <summary>
+  /// Clamp a value to a range, wrapping between max and min as needed.
+  /// </summary>
 	/// <param name="val">Value to clamp.</param>
 	/// <param name="min">Minimum allowed value.</param>
 	/// <param name="max">Maximum allowed value.</param>
@@ -153,20 +157,31 @@ namespace glge::math
 	public:
 		/// <summary>A point on the plane; defines its location in space.</summary>
 		const vec3 point;
-		/// <summary>A normal vector to the plane; defines its orientation in space.</summary>
+		/// <summary>
+    /// A normal vector to the plane; defines its orientation in space.
+    /// </summary>
 		/// Defines the set of points on the plane, along with the point. The vector
-		/// is considered to point towards the "inside" of the plane, for computations
-		/// where that is relevant.
+		/// is considered to point towards the "inside" of the plane, for 
+    /// computations where that is relevant.
 		const vec3 normal;
 
-		Plane(const vec3 & point, const vec3 & normal) : d(glm::dot(point, normal)), point(point), normal(normal)
+    /// <summary>
+    /// Constructs a new Plane containing the given point and with the given
+    /// normal vector.
+    /// </summary>
+    /// <param name="point">Point on the plane.</param>
+    /// <param name="normal">Vector normal to the plane.</param>
+		Plane(const vec3 & point, const vec3 & normal) : 
+      d(glm::dot(point, normal)), point(point), normal(normal)
 		{
 		}
 
 		/// <summary>Compute the distance from the plane to a point.</summary>
 		/// <param name="pt">Point to compute distance to.</param>
-		/// <returns>Distance from the nearest point on the plane to the given point.
-		/// Negative if the point is "outside" the plane.</returns>
+		/// <returns>
+    /// Distance from the nearest point on the plane to the given point.
+		/// Negative if the point is "outside" the plane.
+    /// </returns>
 		float distance_from(const vec3 & pt) const;
 	};
 
@@ -181,6 +196,10 @@ namespace glge::math
 								bottom, ///< <summary>Bottom plane.</summary>
 								top;    ///< <summary>Top plane.</summary>
 
+    /// <summary>
+    /// Constructs a Frustum with the given array of 6 Planes.
+    /// </summary>
+    /// <param name="planes">Array of 6 Planes comprising the Frustum.</param>
 		Frustum(const std::array<Plane, 6> & planes);
 	};
 
@@ -202,8 +221,12 @@ namespace glge::math
 		const mat4 points;
 		static const mat4 basis;
 	public:
-		BezierCurve(const vec3 & p0, const vec3 & p1, const vec3 & p2, const vec3 & p3) :
-			points(vec4(p0, 1.0f), vec4(p1, 1.0f), vec4(p2, 1.0f), vec4(p3, 1.0f))
+		BezierCurve(
+        const vec3 & p0, 
+        const vec3 & p1, 
+        const vec3 & p2, 
+        const vec3 & p3
+    ) :	points(vec4(p0, 1.0f), vec4(p1, 1.0f), vec4(p2, 1.0f), vec4(p3, 1.0f))
 		{ }
 
 		vec3 evaluateAt(const float t) const;
@@ -230,20 +253,49 @@ namespace glge::math
 		vector<vec3> sample(unsigned int samples_per_path) const;
 	};
 
-	bool compareByX(vec3, vec3);
-	bool compareByY(vec3, vec3);
-	bool compareByZ(vec3, vec3);
+  /// <summary>Compare vectors by x-coordinate value.</summary>
+  /// <returns>True if first vector is less than second.</returns>
+	bool compare_by_x(vec3, vec3);
+  /// <summary>Compare vectors by y-coordinate value.</summary>
+  /// <returns>True if first vector is less than second.</returns>
+	bool compare_by_y(vec3, vec3);
+  /// <summary>Compare vectors by z-coordinate value.</summary>
+  /// <returns>True if first vector is less than second.</returns>
+	bool compare_by_z(vec3, vec3);
 
-	bool compareByAbsX(vec3, vec3);
-	bool compareByAbsY(vec3, vec3);
-	bool compareByAbsZ(vec3, vec3);
+  /// <summary>Compare vectors by x-coordinate absolute value.</summary>
+  /// <returns>True if first vector is less than second.</returns>
+	bool compare_by_x_abs(vec3, vec3);
+  /// <summary>Compare vectors by y-coordinate absolute value.</summary>
+  /// <returns>True if first vector is less than second.</returns>
+	bool compare_by_y_abs(vec3, vec3);
+  /// <summary>Compare vectors by z-coordinate absolute value.</summary>
+  /// <returns>True if first vector is less than second.</returns>
+	bool compare_by_z_abs(vec3, vec3);
 
-	bool compareByMagnitude(vec3, vec3);
+  /// <summary>Compare vectors by magnitude.</summary>
+  /// <returns>True if first vector is greater than second.</returns>
+	bool compare_by_magnitude(vec3, vec3);
 
-	vec3 trackballPoint(double windowX, double windowY, double x, double y);
+  /// <summary>
+  /// Compute a normalized vector from the center of a virtual ball
+  /// to a point on the surface of the ball, using a point in a window.
+  /// </summary>
+  /// <param name="window_width">Width of the window.</param>
+  /// <param name="window_height">Height of the window.</param>
+  /// <param name="x">x-coordinate in window.</param>
+  /// <param name="y">y-coordinate in window.</param>
+	vec3 trackball_point(
+      float window_width, 
+      float window_height, 
+      float x, 
+      float y);
 
-	mat4 homogenousMatrix(float v);
-
+  /// <summary>
+  /// Compute a rotation quaternion to rotate from one direction vector to 
+  /// another.
+  /// </summary>
+  /// <param name="start">Vector to rotate from.</param>
+  /// <param name="target">Vector to rotate to.</param>
 	quat rotation_between_vectors(vec3 start, vec3 target);
-	quat orient_object(vec3 default_direction, vec3 direction, vec3 default_up, vec3 up_dir);
 }

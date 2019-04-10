@@ -49,11 +49,12 @@ namespace glge
 		{
 		}
 
-		UniqueHandle::UniqueHandle(std::function<void()> enter, std::function<void()> exit)
+		UniqueHandle::UniqueHandle(std::function<void()> enter, 
+        FunctionType exit)
 			: destroy(true)
 		{
 			enter();
-			exits.push_front(exit);
+			exits.push(exit);
 		}
 
 		UniqueHandle::UniqueHandle(UniqueHandle && other) noexcept :
@@ -71,40 +72,49 @@ namespace glge
 			return *this;
 		}
 
-		void UniqueHandle::call_exits() const
+		void UniqueHandle::call_exits()
 		{
-			std::for_each(exits.cbegin(), exits.cend(), [](std::function<void()> exit) { exit(); });
+      while(!exits.empty())
+      {
+        auto & exit_func = exits.top();
+        exits.pop();
+        exit_func();
+      }
 		}
 
 		void UniqueHandle::reset()
 		{
 			call_exits();
-			exits.clear();
 			destroy = false;
 		}
 
-		void UniqueHandle::reset(std::function<void()> exit)
+		void UniqueHandle::reset(FunctionType exit)
 		{
 			reset();
-			exits.push_front(exit);
+			exits.push(exit);
 			destroy = true;
 		}
 
 		void UniqueHandle::release()
 		{
-			exits.clear();
+      while(!exits.empty())
+      {
+        exits.pop();
+      }
 			destroy = false;
 		}
 
-		UniqueHandle & UniqueHandle::chain(std::function<void()> enter, std::function<void()> exit)
+		UniqueHandle & UniqueHandle::chain(std::function<void()> enter, 
+        FunctionType exit)
 		{
 			if (!destroy)
 			{
-				throw std::logic_error("Cannot chain a unique handle with no exit responsibility");
+				throw std::logic_error("Cannot chain a unique handle with no exit "
+            "responsibility");
 			}
 
 			enter();
-			exits.push_front(exit);
+			exits.push(exit);
 			return *this;
 		}
 

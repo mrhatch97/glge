@@ -155,7 +155,8 @@ namespace glge::math
 	vector<vec3> BezierPath::evaluateAt(const vector<float> & ts) const
 	{
 		vector<vec3> result(ts.size());
-		std::transform(ts.cbegin(), ts.cend(), result.begin(), [&](const float t) { return this->evaluateAt(t); });
+		std::transform(ts.cbegin(), ts.cend(), result.begin(), 
+        [&](const float t) { return this->evaluateAt(t); });
 		return result;
 	}
 
@@ -169,59 +170,56 @@ namespace glge::math
 		return evaluateAt(ts);
 	}
 
-	bool compareByX(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_x(vec3 v1, vec3 v2)
 	{
 		return v1.x < v2.x;
 	}
 
-	bool compareByY(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_y(vec3 v1, vec3 v2)
 	{
 		return v1.y < v2.y;
 	}
 
-	bool compareByZ(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_z(vec3 v1, vec3 v2)
 	{
 		return v1.z < v2.z;
 	}
 
-	bool compareByAbsX(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_x_abs(vec3 v1, vec3 v2)
 	{
 		return glm::abs(v1.x) < glm::abs(v2.x);
 	}
 
-	bool compareByAbsY(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_y_abs(vec3 v1, vec3 v2)
 	{
 		return glm::abs(v1.y) < glm::abs(v2.y);
 	}
 
-	bool compareByAbsZ(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_z_abs(vec3 v1, vec3 v2)
 	{
 		return glm::abs(v1.z) < glm::abs(v2.z);
 	}
 
-	bool compareByMagnitude(glm::vec3 v1, glm::vec3 v2)
+	bool compare_by_magnitude(vec3 v1, vec3 v2)
 	{
 		return glm::length(v1) < glm::length(v2);
 	}
 
-	vec3 trackballPoint(double windowX, double windowY, double x, double y)
+	vec3 trackball_point(float window_width, float window_height, 
+      float x, float y)
 	{
-		glm::vec3 v;
-		float d;
-		v.x = (2.0f * static_cast<float>(x) - static_cast<float>(windowX)) / static_cast<float>(windowX);
-		v.y = (static_cast<float>(windowY) - 2.0f * static_cast<float>(y)) / static_cast<float>(windowY);
-		v.z = 0.0f;
-		d = glm::length(v);
-		d = (d < 1.0) ? d : 1.0f;
-		v.z = glm::sqrt(1.001f - d * d);
-		return glm::normalize(v);
-	}
+    // Convert (x, y) to [-1, 1] space
+		glm::vec3 v(
+        (2.0f * x - window_width) / window_width,
+        (window_height - 2.0f * y) / window_height,
+        0.0f);
 
-	mat4 homogenousMatrix(float v)
-	{
-		glm::mat4 m(v);
-		m[3][3] = 1.0f;
-		return m;
+    // Distance from ball center must be at least 1
+		float d = std::max(glm::length(v), 1.0f);
+
+		v.z = glm::sqrt(1.001f - d * d);
+
+		return glm::normalize(v);
 	}
 
 	quat rotation_between_vectors(vec3 start, vec3 target)
@@ -238,8 +236,10 @@ namespace glge::math
 			// there is no "ideal" rotation axis
 			// So guess one; any will do as long as it's perpendicular to start
 			rotation_axis = cross(vec3(0.0f, 0.0f, 1.0f), start);
-			if (glm::length2(rotation_axis) < std::nextafter(0.0f, 1.0f)) // parallel - try again
+
+			if (glm::length2(rotation_axis) < std::nextafter(0.0f, 1.0f)) 
 			{
+        // parallel - try again
 				rotation_axis = cross(vec3(1.0f, 0.0f, 0.0f), start);
 			}
 
@@ -258,18 +258,5 @@ namespace glge::math
 			rotation_axis.y * invs,
 			rotation_axis.z * invs
 		);
-	}
-
-	quat orient_object(vec3 default_direction, vec3 direction, vec3 default_up, vec3 up_dir)
-	{
-		quat rot_direction = rotation_between_vectors(default_direction, direction);
-
-		vec3 right = cross(direction, up_dir);
-		up_dir = cross(right, direction);
-
-		vec3 new_up = rot_direction * default_up;
-		quat rot_up = rotation_between_vectors(new_up, up_dir);
-
-		return rot_up * rot_direction;
 	}
 }

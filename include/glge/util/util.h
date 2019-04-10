@@ -1,4 +1,4 @@
-/// \brief Programming utilities.
+/// <summary>Miscellaneous programming utilities.</summary>
 ///
 /// Contains various utility classes and functions used by glge.
 ///
@@ -12,6 +12,7 @@
 #include <forward_list>
 #include <functional>
 #include <tuple>
+#include <stack>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -25,7 +26,8 @@
 /// Exception message with extra file info in debug configurations,
 /// otherwise the original error.
 /// </returns>
-#define EXC_MSG(msg) glge::util::exception_message(msg, __FILE__, __LINE__, __func__)
+#define EXC_MSG(msg) glge::util::exception_message(msg, \
+__FILE__, __LINE__, __func__)
 
 namespace glge::util
 {
@@ -39,16 +41,31 @@ namespace glge::util
 	template<typename F>
 	constexpr bool returns_void_v = returns_void<F>::value;
 
-	/// <summary>Get an exception message formatted with extra debug info.</summary>
+	/// <summary>
+  /// Get an exception message formatted with extra debug info.
+  /// </summary>
 	/// Produces an exception message with extra source file information
 	/// in debug builds; otherwise, returns the unmodified exception message.
 	/// <seealso cref="EXC_MSG(msg)"/>
-	/// <param name="msg">std::string to use as the main exception message.</param>
-	/// <param name="filename">Name of the source file the exception originated from.</param>
+	/// <param name="msg">
+  /// std::string to use as the main exception message.
+  /// </param>
+	/// <param name="filename">
+  /// Name of the source file the exception originated from.
+  /// </param>
 	/// <param name="line">Line number the exception originated from.</param>
-	/// <param name="func">Name of the function the exception originated from.</param>
-	/// <returns><c>std::string</c> formatted exception message.</returns>
-	inline string exception_message(const string msg, czstring filename, size_t line, czstring func)
+	/// <param name="func">
+  /// Name of the function the exception originated from.
+  /// </param>
+	/// <returns>
+  /// <c>std::string</c> formatted exception message.
+  /// </returns>
+	inline string exception_message(
+      string msg, 
+      czstring filename, 
+      size_t line, 
+      czstring func
+      )
 	{
 		if constexpr (debug)
 		{
@@ -77,11 +94,18 @@ namespace glge::util
 	/// and returns the result of f in a tuple with the duration the call took.
 	/// If f returns void, returns the duration the call took directly.
 	/// <param name="f">Callable object to invoke.</param>
-	/// <param name="args">Optional parameter pack to pass to the invocation of f.</param>
+	/// <param name="args">
+  /// Optional parameter pack to pass to the invocation of f.
+  /// </param>
 	/// <typeparam name="F">Type of f. Must be callable.</typeparam>
 	/// <typeparam name="Args">Parameter pack of args to pass to F.</typeparam>
-	/// <returns>Tuple of (result, duration) or duration if result is void.</returns>
-	template<typename F, typename Clock = std::chrono::steady_clock, typename... Args>
+	/// <returns>
+  /// Tuple of (result, duration) or duration if result is void.
+  /// </returns>
+	template<
+    typename F, 
+    typename Clock = std::chrono::steady_clock, 
+    typename... Args>
 	std::conditional_t<
 		returns_void_v<F>,
 		typename Clock::duration,
@@ -108,9 +132,12 @@ namespace glge::util
 	/// </summary>
 	/// Converts from From to To. If the conversion is widening, this is identical
 	/// to <c>static_cast</c>. If the conversion is narrowing, checks to see
-	/// that no data is lost and throws <c>std::logic_error</c> if the value changes.
+	/// that no data is lost and throws <c>std::logic_error</c> if the value 
+  /// changes.
 	/// <param name="value">Value to convert from.</param>
-	/// <typeparam name="From">Type of value to convert from. Must be scalar.</typeparam>
+	/// <typeparam name="From">
+  /// Type of value to convert from. Must be scalar.
+  /// </typeparam>
 	/// <typeparam name="To">Type to convert to. Must be scalar.</typeparam>
 	/// <exception cref="std::logic_error">
 	/// Throws if narrowing conversion changes value.
@@ -135,56 +162,110 @@ namespace glge::util
 	}
 
 	/// <summary>Helper for lifting bracket pattern code into RAII code.</summary>
-	/// Stores two functions with side effects. Entry function is run when the
-	/// object is created, exit function when it is destroyed. This allows
+  /// This handle stores a list of functions to be invoked for their side
+  /// effects when the handle is destroyed. Exit functions are invoked in
+  /// FIFO order to simulate "unwinding". Functions are invoked from the
+  /// destructor and so should be noexcept.
+  /// 
+  /// This allows
 	/// bracket pattern style code (e.g. resource acquisition and release)
 	/// to be lifted into RAII code.
 	struct [[nodiscard]] UniqueHandle
 	{
-	private:
+  public:
+    // TODO switch to std::function<void() noexcept when implemented by
+    // compilers
+    /// <summary>Type of exit functions.</summary>
+    using FunctionType = std::function<void()>; 
+  private:
 		bool destroy;
-		std::forward_list<std::function<void()>> exits;
+    std::stack<FunctionType> exits;
 
-		void call_exits() const;
+		void call_exits();
 
 	public:
+		/// <summary>
+		/// Construct a new UniqueHandle with no responsibilities.
+		/// </summary>
 		UniqueHandle();
 
 		/// <summary>
 		/// Construct a new UniqueHandle with the given entry and exit
 		/// functions.
 		/// </summary>
-		///
 		/// <param name="enter">Entry function; run immediately.</param>
 		/// <param name="exit">Exit function; run on object destruction.</param>
-		UniqueHandle(std::function<void()> enter, std::function<void()> exit);
+		UniqueHandle(std::function<void()> enter, FunctionType exit);
 
 		UniqueHandle(const UniqueHandle &) = delete;
 
-		/// <summary>Construct a new UniqueHandle by moving an existing
-		/// UniqueHandle's exit responsibility to the new object.</summary>
-		///
+		/// <summary>
+    /// Construct a new UniqueHandle by moving an existing
+		/// UniqueHandle's exit responsibility to the new object.
+    /// </summary>
 		/// <param name="other">Other UniqueHandle to be moved from</param>
 		UniqueHandle(UniqueHandle && other) noexcept;
 
 		UniqueHandle & operator=(const UniqueHandle &) = delete;
+
+    /// <summary>
+    /// Move the exit responsibilities of another UniqueHandle into this handle.
+    /// <summary>
+    /// The exit responsibilities of the other handle are moved into this
+    /// handle. The other handle will have no more exit responsibilities.
+    /// <param name="other">
+    /// The UniqueHandle to move responsibility
+    /// from.
+    /// </param>
 		UniqueHandle & operator=(UniqueHandle && other);
 
+    /// <summary>
+    /// Force all exit functions to be invoked and clear all responsibilities of
+    /// the handle.
+    /// </summary>
 		void reset();
-		void reset(std::function<void()> exit);
-		void release();
-		UniqueHandle & chain(std::function<void()> enter, std::function<void()> exit);
 
+    /// <summary>
+    /// Force all exit functions to be invoked, then remove all exit 
+    /// responsibilities and replace them with the given exit function.
+    /// </summary>
+    /// <param name="exit">New exit function for UniqueHandle to call.</param>
+		void reset(FunctionType exit);
+
+    /// <summary>
+    /// Release all exit function responsbilities from this handle.
+    /// </summary>
+		void release();
+
+		/// <summary>
+    /// Chain a new bracket pattern into this handle.
+		/// </summary>
+    /// Assume a new responsibility for this handle. The entry function is
+    /// invoked immediately, and the exit function is run at object 
+    /// destruction, before previously-specified exit functions.
+		///
+		/// <param name="enter">Entry function; run immediately.</param>
+		/// <param name="exit">Exit function; run on object destruction.</param>
+		UniqueHandle & chain(
+        std::function<void()> enter, 
+        FunctionType exit);
+
+    /// <summary>
+    /// Checks if this handle has exit responsibilities>
+    /// </summary>
+    /// <returns>True if will invoke functions on destruction.</returns>
 		operator bool();
 
-		/// <summary>Destructor calls the exit function if this UniqueHandle is
-		/// still responsible for the call.</summary>
+		/// <summary>Destructor calls the exit functions if this UniqueHandle is
+		/// still responsible for the calls.</summary>
 		~UniqueHandle();
 	};
 
 	/// <summary>Dynamically-sized 2D array wrapper.</summary>
 	/// Helper for accessing a dynamically-allocated array with 2D indices.
-	/// <typeparam name="T">Type to store in the Matrix. No requirements.</typeparam>
+	/// <typeparam name="T">
+  /// Type to store in the Matrix. No requirements.
+  /// </typeparam>
 	template<typename T>
 	class Matrix
 	{
@@ -194,6 +275,11 @@ namespace glge::util
 		const size_t _height;
 
 	public:
+		/// <summary>
+    /// Construct a new matrix with the given dimensions.
+		/// </summary>
+		/// <param name="width">Width of the matrix.</param>
+		/// <param name="height">Height of the matrix.</param>
 		Matrix(std::size_t width, size_t height) :
 			mat(new T[width * height]()), _width(width), _height(height)
 		{
@@ -209,18 +295,24 @@ namespace glge::util
 		/// index.</summary>
 		/// <seealso cref="at()"/>
 		/// <seealso cref="index()"/>
-		/// <param name="idx">1D index into the Matrix. Moves across width, then height.</param>
+		/// <param name="idx">
+    /// 1D index into the Matrix. Moves across width, then height.
+    /// </param>
 		/// <returns>Reference to object at (x, y).</returns>
 		[[nodiscard]] T & operator[](std::size_t idx)
 		{
 			return mat[idx];
 		}
 
-		/// <summary>Get a const reference to the object in the Matrix at the given 1D
-		/// index.</summary>
+		/// <summary>
+    /// Get a const reference to the object in the Matrix at the given 1D
+		/// index.
+    /// </summary>
 		/// <seealso cref="at()"/>
 		/// <seealso cref="index()"/>
-		/// <param name="idx">1D index into the Matrix. Moves across width, then height.</param>
+		/// <param name="idx">
+    /// 1D index into the Matrix. Moves across width, then height.
+    /// </param>
 		/// <returns>Const reference to object at (x, y).</returns>
 		[[nodiscard]] const T & operator[](size_t idx) const
 		{

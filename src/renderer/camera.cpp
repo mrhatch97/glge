@@ -18,10 +18,12 @@ namespace glge::renderer
 
 	mat4 CameraIntrinsics::get_P() const
 	{
-		return glm::perspective(glm::radians(v_fov), aspect_ratio, near_distance, far_distance);
+		return glm::perspective(glm::radians(v_fov), aspect_ratio, near_distance, 
+        far_distance);
 	}
 
-	Camera::Camera(const CameraIntrinsics & intrinsics, const util::Placement & placement) :
+	Camera::Camera(const CameraIntrinsics & intrinsics, 
+      const util::Placement & placement) :
 		intrinsics(intrinsics), placement(placement)
 	{ }
 
@@ -51,7 +53,6 @@ namespace glge::renderer
 	math::Frustum Camera::get_view_frustum() const
 	{
 		auto near_dimensions = intrinsics.near_dimensions();
-		auto far_dimensions = intrinsics.far_dimensions();
 		auto right_vec = placement.get_right_direction();
 		auto camera_vec = placement.get_forward_direction();
 		auto up_vec = placement.get_up_direction();
@@ -63,10 +64,14 @@ namespace glge::renderer
 		math::Plane near(near_center, camera_vec);
 		math::Plane far(far_center, -camera_vec);
 
-		auto right_plane_normal = glm::normalize((near_center + right_vec * near_dimensions.x / 2.0f) - cam_pos);
-		auto left_plane_normal = glm::normalize((near_center - right_vec * near_dimensions.x / 2.0f) - cam_pos);
-		auto top_plane_normal = glm::normalize((near_center + up_vec * near_dimensions.y / 2.0f) - cam_pos);
-		auto bottom_plane_normal = glm::normalize((near_center - up_vec * near_dimensions.y / 2.0f) - cam_pos);
+		auto right_plane_normal = glm::normalize((near_center + right_vec * 
+          near_dimensions.x / 2.0f) - cam_pos);
+		auto left_plane_normal = glm::normalize((near_center - right_vec * 
+          near_dimensions.x / 2.0f) - cam_pos);
+		auto top_plane_normal = glm::normalize((near_center + up_vec * 
+          near_dimensions.y / 2.0f) - cam_pos);
+		auto bottom_plane_normal = glm::normalize((near_center - up_vec * 
+          near_dimensions.y / 2.0f) - cam_pos);
 
 		math::Plane right(cam_pos, glm::cross(up_vec, right_plane_normal));
 		math::Plane left(cam_pos, -glm::cross(up_vec, left_plane_normal));
