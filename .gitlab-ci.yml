@@ -1,11 +1,5 @@
 image: rikorose/gcc-cmake:latest
 
-before_script:
- - apt-get update --yes
- - apt-get install --yes libglm-dev
- - apt-get install --yes libsoil-dev
- - apt-get install --yes libglew-dev
-
 stages:
     - build
     - test
@@ -17,6 +11,10 @@ build:
         CC: gcc
         CXX: g++
     script:
+        - apt-get update --yes
+        - apt-get install --yes libglm-dev
+        - apt-get install --yes libsoil-dev
+        - apt-get install --yes libglew-dev
         - cmake -DBUILD_TESTING=OFF -DBUILD_DOCUMENTATION=OFF -G"Unix Makefiles" -Bbuild -DCMAKE_BUILD_TYPE=Release -H.
         - cmake --build build --target glge
     artifacts:
@@ -35,17 +33,24 @@ docs:
 test:
     stage: test
     script:
+        - apt-get update --yes
+        - apt-get install --yes libglm-dev
+        - apt-get install --yes libsoil-dev
+        - apt-get install --yes libglew-dev
         - cmake -DBUILD_TESTING=ON -DGLGE_HEADLESS_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DCMAKE_BUILD_TYPE=Test -Bbuild -G"Unix Makefiles" -H.
         - cd build
         - cmake --build . --target build_tests
         - ctest
     artifacts:
-        paths:
-            - build/Testing/Temporary/*.log
+        untracked: true
 
 memcheck:
     stage: test
     script:
+        - apt-get update --yes
+        - apt-get install --yes libglm-dev
+        - apt-get install --yes libsoil-dev
+        - apt-get install --yes libglew-dev
         - apt-get install --yes valgrind
         - cmake -DBUILD_TESTING=ON -DGLGE_HEADLESS_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DCMAKE_BUILD_TYPE=Debug -Bbuild -G"Unix Makefiles" -H.
         - cd build
