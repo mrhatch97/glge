@@ -23,6 +23,7 @@ build:
 docs:
     stage: build
     script:
+        - apt-get update --yes
         - apt-get install --yes doxygen
         - cmake -DBUILD_TESTING=OFF -DBUILD_DOCUMENTATION=ON -Bbuild -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -H.
         - cmake --build build --target docs
