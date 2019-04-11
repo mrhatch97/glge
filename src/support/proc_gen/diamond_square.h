@@ -21,12 +21,12 @@ namespace glge::proc_gen
   [[nodiscard]] std::optional<float> grid_get_safe(const Matrix<float> & grid,
       size_t x, size_t y)
   {
-    if (x < 0 || x >= grid.width())
+    if (x >= grid.width())
     {
       return std::nullopt;
     }
 
-    if (y < 0 || y >= grid.height())
+    if (y >= grid.height())
     {
       return std::nullopt;
     }

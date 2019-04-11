@@ -79,10 +79,10 @@ namespace glge::math
 		size_t num_curves = static_cast<size_t>(handles.size());
 
 		auto offset_t = t * num_curves;
-		auto offset_t_floor = glm::floor(offset_t);
+		float offset_t_floor = glm::floor(offset_t);
 
-		int first_handle_idx = static_cast<int>(offset_t_floor);
-		int second_handle_idx = static_cast<int>(offset_t_floor + 1.0f);
+		size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
+		size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
 
 #if _DEBUG
 		if (first_handle_idx == second_handle_idx)
@@ -129,10 +129,10 @@ namespace glge::math
 		size_t num_curves = static_cast<size_t>(handles.size());
 
 		auto offset_t = t * num_curves;
-		auto offset_t_floor = glm::floor(offset_t);
+		float offset_t_floor = glm::floor(offset_t);
 
-		int first_handle_idx = static_cast<int>(offset_t_floor);
-		int second_handle_idx = static_cast<int>(offset_t_floor + 1.0f);
+		size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
+		size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
 
 #if _DEBUG
 		if (first_handle_idx == second_handle_idx)
