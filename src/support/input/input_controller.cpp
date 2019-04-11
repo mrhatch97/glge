@@ -53,7 +53,6 @@ namespace glge
 			parent(parent), key_states(UP), mod_states(UP),
 			drag_state(NOT_DRAGGING), drag_point(0, 0)
 		{
-			auto rot_speed = glm::radians(camera_speed);
 		}
 
 		void InputController::key_in(LogicalAction action, LogicalKey key)
@@ -124,8 +123,8 @@ namespace glge
 			{
 			case DRAGGING:
 				{
-					auto delta_x = (cur_x - drag_point.x) / rotation_dampening;
-					auto delta_y = -(cur_y - drag_point.y) / rotation_dampening;
+					// auto delta_x = (cur_x - drag_point.x) / rotation_dampening;
+					// auto delta_y = -(cur_y - drag_point.y) / rotation_dampening;
 
 					//parent.raise(CommandRollEvent{ INVERT, glm::radians(delta_x) });
 					//parent.raise(CommandPitchEvent{ NORMAL, glm::radians(delta_y) });
@@ -137,7 +136,7 @@ namespace glge
 			}
 		}
 
-		void InputController::mouse_scroll(float delta_x, float delta_y)
+		void InputController::mouse_scroll(float, float)
 		{
 			//parent.raise(CommandSurgeEvent{ NORMAL, delta_y });
 		}

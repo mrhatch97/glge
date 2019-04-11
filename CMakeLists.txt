@@ -9,10 +9,11 @@ project(glge
 option(GLGE_HEADLESS_TESTS "Run OpenGL tests without an X server; requires EGL and GLEW compiled with EGL support" OFF)
 set(GLGE_DRIVER "OPENGL" CACHE STRING "GLGE backend driver; currently only OPENGL supported")
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(glm REQUIRED)
 
@@ -40,11 +41,24 @@ target_compile_features(glge
 		cxx_std_17
 )
 
-# Set appropriate debug flags for build type
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(glge
+        PUBLIC
+            $<$<CONFIG:Test>:--coverage -g -fPIC -O0> # Set up test flags for gcc test coverage report generation
+        PRIVATE
+            -Wall -Wextra -Werror
+    )
+    target_link_options(glge
+        PUBLIC
+            $<$<CONFIG:Test>:--coverage>
+    )
+endif()
+
 target_compile_definitions(glge
 	PRIVATE
-		$<$<CONFIG:Debug>:GLGE_DEBUG>
-		GLM_FORCE_SILENT_WARNINGS
+        $<$<CONFIG:Debug>:GLGE_DEBUG>   # Enable debug info for Debug and Test builds
+        $<$<CONFIG:Test>:GLGE_DEBUG>
+        GLM_FORCE_SILENT_WARNINGS       # I don't care about warnings in glm's code
 )
 
 find_package(Doxygen)

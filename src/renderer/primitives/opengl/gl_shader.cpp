@@ -18,7 +18,9 @@ namespace glge::renderer::primitive
 		protected:
 			const GLProgram prog;
 		public:
-			GLShader() : prog(renderer::opengl::load_simple_shader(ShaderT::vertex_code, ShaderT::fragment_code))
+			GLShader() : 
+        prog(renderer::opengl::load_simple_shader(ShaderT::vertex_code, 
+              ShaderT::fragment_code))
 			{
 			}
 
@@ -48,7 +50,8 @@ namespace glge::renderer::primitive
 			{
 			}
 
-			void parameterize(const RenderParameters & render, const NormalShaderData & data) override
+			void parameterize(const RenderParameters & render, 
+          const NormalShaderData &) override
 			{
 				glUniformMatrix4fv(uMVP, 1, GL_FALSE, &render.MVP[0][0]);
 

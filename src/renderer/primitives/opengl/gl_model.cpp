@@ -34,25 +34,32 @@ namespace glge::renderer::primitive
 			}
 
 			GLModel(const EBOModelData & model_data) :
-				index_count(static_cast<GLsizei>(model_data.indices.size())), destroy(false)
+				index_count(static_cast<GLsizei>(model_data.indices.size())), 
+        destroy(false)
 			{
 				glGenVertexArrays(static_cast<GLsizei>(VAO.size()), VAO.data());
 				glGenBuffers(static_cast<GLsizei>(VBO.size()), VBO.data());
 				glGenBuffers(static_cast<GLsizei>(EBO.size()), EBO.data());
 
-				renderer::opengl::throw_if_gl_error(EXC_MSG("Failed to generate requisite storage for model"));
+				renderer::opengl::throw_if_gl_error(
+            EXC_MSG("Failed to generate requisite storage for model"));
 
 				{
-					util::UniqueHandle vaoBind([&] { glBindVertexArray(VAO[0]); }, [] { glBindVertexArray(0); });
+					util::UniqueHandle vaoBind(
+              [&] { glBindVertexArray(VAO[0]); }, [] { glBindVertexArray(0); });
 
-					bind_attrib_data(VBO[vertex_index], vertex_index, model_data.vertices, false);
+					bind_attrib_data(VBO[vertex_index], vertex_index, 
+              model_data.vertices, false);
+
 					if (!model_data.normals.empty())
 					{
-						bind_attrib_data(VBO[normal_index], normal_index, model_data.normals, true);
+						bind_attrib_data(VBO[normal_index], normal_index, 
+                model_data.normals, true);
 					}
 					if (!model_data.uvs.empty())
 					{
-						bind_attrib_data(VBO[texcor_index], texcor_index, model_data.uvs, false);
+						bind_attrib_data(VBO[texcor_index], texcor_index, 
+                model_data.uvs, false);
 					}
 
 					bind_element_array(EBO[0], model_data.indices);
@@ -95,7 +102,7 @@ namespace glge::renderer::primitive
 				}
 			}
 
-			const GLuint getVAO() const { return VAO[0]; }
+			GLuint getVAO() const { return VAO[0]; }
 		};
 	}
 

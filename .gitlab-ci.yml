@@ -9,7 +9,7 @@ before_script:
 stages:
     - build
     - test
-    - package
+    - post-test
 
 build:
     stage: build
@@ -35,7 +35,7 @@ docs:
 test:
     stage: test
     script:
-        - cmake -DBUILD_TESTING=ON -DGLGE_HEADLESS_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DCMAKE_BUILD_TYPE=Debug -Bbuild -G"Unix Makefiles" -H.
+        - cmake -DBUILD_TESTING=ON -DGLGE_HEADLESS_TESTS=OFF -DBUILD_DOCUMENTATION=OFF -DCMAKE_BUILD_TYPE=Test -Bbuild -G"Unix Makefiles" -H.
         - cd build
         - cmake --build . --target build_tests
         - ctest
@@ -55,8 +55,16 @@ memcheck:
         paths:
             - build/Testing/Temporary/MemoryChecker.*.log
 
+coverage:
+    stage: post-test
+    script:
+        - cd build
+        - ctest -T coverage
+    dependencies:
+        - test
+
 pages:
-    stage: package
+    stage: post-test
     script:
       - mv build/html public/
     artifacts:

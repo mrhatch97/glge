@@ -1,6 +1,9 @@
 glge
 ======
-[![pipeline status](https://gitlab.com/mrhatch/glge/badges/master/pipeline.svg)](https://gitlab.com/mrhatch/glge/commits/master) [Doxygen Reference](https://mrhatch.gitlab.io/glge)
+[![pipeline status](https://gitlab.com/mrhatch/glge/badges/master/pipeline.svg)](https://gitlab.com/mrhatch/glge/commits/master) 
+[![coverage report](https://gitlab.com/mrhatch/glge/badges/master/coverage.svg)](https://gitlab.com/mrhatch/glge/commits/master) 
+[Doxygen Reference](https://mrhatch.gitlab.io/glge)
+ 
 
 glge is a library providing high-level abstractions for 3D graphics rendering, 
 as well as utilities for tasks common to applications with 3D graphics. It 
