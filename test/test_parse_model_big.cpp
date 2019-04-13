@@ -7,7 +7,8 @@ using namespace glge::renderer::primitive;
 
 void test_load()
 {
-	ModelData data = ModelData::from_file(ModelFileInfo{ "./resources/models/big.obj", false });
+	ModelData data = ModelData::from_file(
+		ModelFileInfo{"./resources/models/big.obj", false});
 
 	test_equal(34835U, data.vertex_data.points.size());
 	test_equal(34835U, data.normal_data.points.size());

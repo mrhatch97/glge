@@ -14,17 +14,19 @@ namespace glge::math
 		return glm::dot(pt, normal) - d;
 	}
 
-	Frustum::Frustum(const std::array<Plane, 6> & planes) : 
-    near(planes[0]), far(planes[1]),
-		left(planes[2]), right(planes[3]), 
-    bottom(planes[4]), top(planes[5]) 
-  { }
+	Frustum::Frustum(const std::array<Plane, 6> & planes) :
+		near(planes[0]), far(planes[1]), left(planes[2]), right(planes[3]),
+		bottom(planes[4]), top(planes[5])
+	{}
 
 	bool contains(Frustum frustum, Sphere sphere)
 	{
-		return contains(frustum.near, sphere) && contains(frustum.far, sphere) &&
-			contains(frustum.left, sphere) && contains(frustum.right, sphere) &&
-			contains(frustum.bottom, sphere) && contains(frustum.top, sphere);
+		return contains(frustum.near, sphere) &&
+			   contains(frustum.far, sphere) &&
+			   contains(frustum.left, sphere) &&
+			   contains(frustum.right, sphere) &&
+			   contains(frustum.bottom, sphere) &&
+			   contains(frustum.top, sphere);
 	}
 
 	bool contains(Plane plane, Sphere sphere)
@@ -33,15 +35,18 @@ namespace glge::math
 	}
 
 	// Geometric basis matrix for a Cubic bezier curve - universally constant
-	const mat4 BezierCurve::basis = mat4(vec4{ -1, 3, -3, 1 }, 
-      vec4{ 3, -6, 3, 0 }, vec4{ -3, 3, 0, 0 }, vec4{ 1, 0, 0, 0 });
+	const mat4 BezierCurve::basis = mat4(vec4{-1, 3, -3, 1},
+										 vec4{3, -6, 3, 0},
+										 vec4{-3, 3, 0, 0},
+										 vec4{1, 0, 0, 0});
 
-	vec3 BezierCurve::evaluate_at(const float t) const
+	vec3 BezierCurve::evaluate_at(float t) const
 	{
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG(
-            "A bezier curve cannot be evaluated at a range outside [0, 1]"));
+			throw std::domain_error(
+				EXC_MSG("A bezier curve cannot be evaluated at a range outside "
+						"[0, 1]"));
 		}
 
 		vec4 T(t * t * t, t * t, t, 1);
@@ -49,12 +54,13 @@ namespace glge::math
 		return points * basis * T;
 	}
 
-	vec3 BezierCurve::velocity_at(const float t) const
+	vec3 BezierCurve::velocity_at(float t) const
 	{
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG(
-            "A bezier curve cannot be evaluated at a range outside [0, 1]"));
+			throw std::domain_error(
+				EXC_MSG("A bezier curve cannot be evaluated at a range outside "
+						"[0, 1]"));
 		}
 
 		vec4 T(3 * t * t, 2 * t, 1, 0);
@@ -62,18 +68,19 @@ namespace glge::math
 		return points * basis * T;
 	}
 
-	vec3 BezierPath::evaluate_at(const float t) const
+	vec3 BezierPath::evaluate_at(float t) const
 	{
 		if (handles.size() < 1)
 		{
 			throw std::logic_error(EXC_MSG("A bezier path must have at least 1"
-            "handle to define a full curve"));
+										   "handle to define a full curve"));
 		}
 
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG("A bezier path cannot be evaluated at a"
-            " range outside [0, 1]"));
+			throw std::domain_error(
+				EXC_MSG("A bezier path cannot be evaluated at a"
+						" range outside [0, 1]"));
 		}
 
 		size_t num_curves = static_cast<size_t>(handles.size());
@@ -87,7 +94,8 @@ namespace glge::math
 #if _DEBUG
 		if (first_handle_idx == second_handle_idx)
 		{
-			throw std::logic_error(EXC_MSG("Handles for path curve were identical"));
+			throw std::logic_error(
+				EXC_MSG("Handles for path curve were identical"));
 		}
 #endif
 		const math::BezierHandle * first_handle;
@@ -109,21 +117,23 @@ namespace glge::math
 		vec3 p2 = second_handle->control_point;
 		vec3 p3 = second_handle->interp_point;
 
-		return BezierCurve(p0, p1, p2, p3).evaluate_at(offset_t - offset_t_floor);
+		return BezierCurve(p0, p1, p2, p3)
+			.evaluate_at(offset_t - offset_t_floor);
 	}
 
-	vec3 BezierPath::velocity_at(const float t) const
+	vec3 BezierPath::velocity_at(float t) const
 	{
 		if (handles.size() < 1)
 		{
 			throw std::logic_error(EXC_MSG("A bezier path must have at least 1 "
-            "handle to define a full curve"));
+										   "handle to define a full curve"));
 		}
 
 		if (t > 1.0f || t < 0.0f)
 		{
-			throw std::domain_error(EXC_MSG("A bezier path cannot be evaluated at a "
-            "range outside [0, 1]"));
+			throw std::domain_error(
+				EXC_MSG("A bezier path cannot be evaluated at a "
+						"range outside [0, 1]"));
 		}
 
 		size_t num_curves = static_cast<size_t>(handles.size());
@@ -137,7 +147,8 @@ namespace glge::math
 #if _DEBUG
 		if (first_handle_idx == second_handle_idx)
 		{
-			throw std::logic_error(EXC_MSG("Handles for path curve were identical"));
+			throw std::logic_error(
+				EXC_MSG("Handles for path curve were identical"));
 		}
 #endif
 		const math::BezierHandle * first_handle;
@@ -159,18 +170,19 @@ namespace glge::math
 		vec3 p2 = second_handle->control_point;
 		vec3 p3 = second_handle->interp_point;
 
-		return BezierCurve(p0, p1, p2, p3).velocity_at(offset_t - offset_t_floor);
+		return BezierCurve(p0, p1, p2, p3)
+			.velocity_at(offset_t - offset_t_floor);
 	}
 
 	vector<vec3> BezierPath::evaluate_at(const vector<float> & ts) const
 	{
 		vector<vec3> result(ts.size());
-		std::transform(ts.cbegin(), ts.cend(), result.begin(), 
-        [&](const float t) { return this->evaluate_at(t); });
+		std::transform(ts.cbegin(), ts.cend(), result.begin(),
+					   [&](const float t) { return this->evaluate_at(t); });
 		return result;
 	}
 
-	vector<vec3> BezierPath::sample(const unsigned int samples_per_path) const
+	vector<vec3> BezierPath::sample(unsigned int samples_per_path) const
 	{
 		const size_t num_samples = samples_per_path * handles.size();
 		vector<float> ts(num_samples);
@@ -180,20 +192,11 @@ namespace glge::math
 		return evaluate_at(ts);
 	}
 
-	bool compare_by_x(vec3 v1, vec3 v2)
-	{
-		return v1.x < v2.x;
-	}
+	bool compare_by_x(vec3 v1, vec3 v2) { return v1.x < v2.x; }
 
-	bool compare_by_y(vec3 v1, vec3 v2)
-	{
-		return v1.y < v2.y;
-	}
+	bool compare_by_y(vec3 v1, vec3 v2) { return v1.y < v2.y; }
 
-	bool compare_by_z(vec3 v1, vec3 v2)
-	{
-		return v1.z < v2.z;
-	}
+	bool compare_by_z(vec3 v1, vec3 v2) { return v1.z < v2.z; }
 
 	bool compare_by_x_abs(vec3 v1, vec3 v2)
 	{
@@ -215,16 +218,14 @@ namespace glge::math
 		return glm::length(v1) < glm::length(v2);
 	}
 
-	vec3 trackball_point(float window_width, float window_height, 
-      float x, float y)
+	vec3
+	trackball_point(float window_width, float window_height, float x, float y)
 	{
-    // Convert (x, y) to [-1, 1] space
-		glm::vec3 v(
-        (2.0f * x - window_width) / window_width,
-        (window_height - 2.0f * y) / window_height,
-        0.0f);
+		// Convert (x, y) to [-1, 1] space
+		glm::vec3 v((2.0f * x - window_width) / window_width,
+					(window_height - 2.0f * y) / window_height, 0.0f);
 
-    // Distance from ball center must be at least 1
+		// Distance from ball center must be at least 1
 		float d = std::max(glm::length(v), 1.0f);
 
 		v.z = glm::sqrt(1.001f - d * d);
@@ -247,9 +248,9 @@ namespace glge::math
 			// So guess one; any will do as long as it's perpendicular to start
 			rotation_axis = cross(vec3(0.0f, 0.0f, 1.0f), start);
 
-			if (glm::length2(rotation_axis) < std::nextafter(0.0f, 1.0f)) 
+			if (glm::length2(rotation_axis) < std::nextafter(0.0f, 1.0f))
 			{
-        // parallel - try again
+				// parallel - try again
 				rotation_axis = cross(vec3(1.0f, 0.0f, 0.0f), start);
 			}
 
@@ -262,11 +263,7 @@ namespace glge::math
 		float s = sqrt((1 + cos_theta) * 2);
 		float invs = 1 / s;
 
-		return quat(
-			s * 0.5f,
-			rotation_axis.x * invs,
-			rotation_axis.y * invs,
-			rotation_axis.z * invs
-		);
+		return quat(s * 0.5f, rotation_axis.x * invs, rotation_axis.y * invs,
+					rotation_axis.z * invs);
 	}
-}
+}   // namespace glge::math

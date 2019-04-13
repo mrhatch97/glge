@@ -9,5 +9,5 @@ namespace glge::renderer::primitive
 	ShaderManager::~ShaderManager() = default;
 
 	ShaderInstanceBase::ShaderInstanceBase(ShaderBase & shader) : shader(shader)
-	{ }
-}
+	{}
+}   // namespace glge::renderer::primitive

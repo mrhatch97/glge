@@ -10,7 +10,8 @@
 namespace glge::renderer::primitive
 {
 	// TODO Improvements:
-	// Read file into large buffer, parse chunk by chunk on multiple threads instead of file IO every line
+	// Read file into large buffer, parse chunk by chunk on multiple threads
+	// instead of file IO every line
 	ModelData ModelData::from_file(const ModelFileInfo & file_info)
 	{
 		Indices vertex_indices;
@@ -30,8 +31,8 @@ namespace glge::renderer::primitive
 			char tokenchar[1];
 			float fl[3];
 			unsigned int in[9];
-			bool indicesAllocated = false, verticesAllocated = false, 
-			  normalsAllocated = false, uvsAllocated = false;
+			bool indicesAllocated = false, verticesAllocated = false,
+				 normalsAllocated = false, uvsAllocated = false;
 
 			if (!std::fgets(linebuffer, sizeof(linebuffer), file))
 			{
@@ -47,22 +48,26 @@ namespace glge::renderer::primitive
 				switch (lineSecond)
 				{
 				case ' ':
-					if (util::checked_sscanf(4, linebuffer, "%s %f %f %f", 
-                FMT_STRING_ARG(tokenbuffer), fl, fl + 1, fl + 2))
+					if (util::checked_sscanf(4, linebuffer, "%s %f %f %f",
+											 FMT_STRING_ARG(tokenbuffer), fl,
+											 fl + 1, fl + 2))
 					{
 						vertices.emplace_back(fl[0], fl[1], fl[2]);
 					}
 					break;
 				case 'n':
-					if (util::checked_sscanf(4, linebuffer, "%s %f %f %f", 
-                FMT_STRING_ARG(tokenbuffer), fl, fl + 1, fl + 2))
+					if (util::checked_sscanf(4, linebuffer, "%s %f %f %f",
+											 FMT_STRING_ARG(tokenbuffer), fl,
+											 fl + 1, fl + 2))
 					{
 						normals.emplace_back(fl[0], fl[1], fl[2]);
 					}
 					break;
 				case 't':
-					if (file_info.is_textured && util::checked_sscanf(3, linebuffer, 
-                "%s %f %f", FMT_STRING_ARG(tokenbuffer), fl, fl + 1))
+					if (file_info.is_textured &&
+						util::checked_sscanf(3, linebuffer, "%s %f %f",
+											 FMT_STRING_ARG(tokenbuffer), fl,
+											 fl + 1))
 					{
 						uvs.emplace_back(fl[0], fl[1]);
 					}
@@ -71,9 +76,10 @@ namespace glge::renderer::primitive
 				break;
 			case 'f':
 				if (file_info.is_textured &&
-					util::checked_sscanf(10, linebuffer, "%s %u/%u/%u %u/%u/%u %u/%u/%u", 
-            FMT_STRING_ARG(tokenbuffer), in, in + 1, in + 2, in + 3, in + 4, 
-            in + 5, in + 6, in + 7, in + 8))
+					util::checked_sscanf(
+						10, linebuffer, "%s %u/%u/%u %u/%u/%u %u/%u/%u",
+						FMT_STRING_ARG(tokenbuffer), in, in + 1, in + 2, in + 3,
+						in + 4, in + 5, in + 6, in + 7, in + 8))
 				{
 					for (int i = 0; i < 3; i++)
 					{
@@ -82,9 +88,10 @@ namespace glge::renderer::primitive
 						normal_indices.push_back(in[i * 3 + 2] - 1);
 					}
 				}
-				else if (util::checked_sscanf(7, linebuffer, "%s %u//%u %u//%u %u//%u", 
-              FMT_STRING_ARG(tokenbuffer), in, in + 1, in + 2, in + 3, in + 4, 
-              in + 5))
+				else if (util::checked_sscanf(
+							 7, linebuffer, "%s %u//%u %u//%u %u//%u",
+							 FMT_STRING_ARG(tokenbuffer), in, in + 1, in + 2,
+							 in + 3, in + 4, in + 5))
 				{
 					for (int i = 0; i < 3; i++)
 					{
@@ -94,11 +101,12 @@ namespace glge::renderer::primitive
 				}
 				break;
 			case '#':
-				if (!verticesAllocated || !indicesAllocated || 
-            !normalsAllocated || !uvsAllocated)
+				if (!verticesAllocated || !indicesAllocated ||
+					!normalsAllocated || !uvsAllocated)
 				{
-					if (util::checked_sscanf(3, linebuffer, "%c %s %u", 
-                FMT_STRING_ARG(tokenbuffer2), FMT_STRING_ARG(tokenbuffer), in))
+					if (util::checked_sscanf(3, linebuffer, "%c %s %u",
+											 FMT_STRING_ARG(tokenbuffer2),
+											 FMT_STRING_ARG(tokenbuffer), in))
 					{
 						if (!std::strcmp(tokenbuffer, "Vertices:"))
 						{
@@ -114,9 +122,11 @@ namespace glge::renderer::primitive
 							indicesAllocated = true;
 						}
 					}
-					else if (util::checked_sscanf(4, linebuffer, "%c %s %c%u", 
-                FMT_STRING_ARG(tokenbuffer2), FMT_STRING_ARG(tokenbuffer), 
-                FMT_STRING_ARG(tokenchar), in))
+					else if (util::checked_sscanf(4, linebuffer, "%c %s %c%u",
+												  FMT_STRING_ARG(tokenbuffer2),
+												  FMT_STRING_ARG(tokenbuffer),
+												  FMT_STRING_ARG(tokenchar),
+												  in))
 					{
 						if (tokenchar[0] != '[')
 						{
@@ -127,7 +137,6 @@ namespace glge::renderer::primitive
 							vertices.reserve(in[0]);
 							vertex_indices.reserve(in[0]);
 							verticesAllocated = true;
-
 						}
 						else if (!std::strcmp(tokenbuffer, "normals"))
 						{
@@ -159,7 +168,9 @@ namespace glge::renderer::primitive
 			}
 		}
 
-		return ModelData{ { vertices, vertex_indices }, { normals, normal_indices }, { uvs, uv_indices } };
+		return ModelData{{vertices, vertex_indices},
+						 {normals, normal_indices},
+						 {uvs, uv_indices}};
 	}
 
 	EBOModelData ModelData::to_EBO_data(const ModelData & model_data)
@@ -169,22 +180,29 @@ namespace glge::renderer::primitive
 
 	EBOModelData ModelData::to_EBO_data(ModelData && model_data)
 	{
-		if (model_data.vertex_data.points.size() == model_data.vertex_data.indices.size()
-			&& model_data.normal_data.points.size() == model_data.normal_data.indices.size()
-			&& model_data.uv_data.points.size() == model_data.uv_data.indices.size())
+		if (model_data.vertex_data.points.size() ==
+				model_data.vertex_data.indices.size() &&
+			model_data.normal_data.points.size() ==
+				model_data.normal_data.indices.size() &&
+			model_data.uv_data.points.size() ==
+				model_data.uv_data.indices.size())
 		{
-			return EBOModelData{ std::move(model_data.vertex_data.points), std::move(model_data.normal_data.points),
-				std::move(model_data.uv_data.points), std::move(model_data.vertex_data.indices) };
+			return EBOModelData{std::move(model_data.vertex_data.points),
+								std::move(model_data.normal_data.points),
+								std::move(model_data.uv_data.points),
+								std::move(model_data.vertex_data.indices)};
 		}
 
-		auto copy_op = [=](auto & data)
-		{
+		auto copy_op = [=](auto & data) {
 			auto copy = data.points;
 			data.points.resize(data.indices.size());
 
-			std::transform(EXECUTION_POLICY_SEQ
-				data.indices.cbegin(), data.indices.cend(), data.points.begin(),
-				[&](const typename decltype(data.indices)::size_type idx) { return copy.at(idx); });
+			std::transform(
+				EXECUTION_POLICY_SEQ data.indices.cbegin(), data.indices.cend(),
+				data.points.begin(),
+				[&](const typename decltype(data.indices)::size_type idx) {
+					return copy.at(idx);
+				});
 		};
 
 		try
@@ -193,15 +211,18 @@ namespace glge::renderer::primitive
 			copy_op(model_data.normal_data);
 			copy_op(model_data.uv_data);
 
-			std::iota(model_data.vertex_data.indices.begin(), model_data.vertex_data.indices.end(), 0);
+			std::iota(model_data.vertex_data.indices.begin(),
+					  model_data.vertex_data.indices.end(), 0);
 
-			return EBOModelData{ std::move(model_data.vertex_data.points), std::move(model_data.normal_data.points), 
-				std::move(model_data.uv_data.points), std::move(model_data.vertex_data.indices) };
+			return EBOModelData{std::move(model_data.vertex_data.points),
+								std::move(model_data.normal_data.points),
+								std::move(model_data.uv_data.points),
+								std::move(model_data.vertex_data.indices)};
 		}
 		catch (const std::exception &)
 		{
-			std::throw_with_nested(std::runtime_error(
-				EXC_MSG("Failed processing model info - model file may be invalid")));
+			std::throw_with_nested(std::runtime_error(EXC_MSG(
+				"Failed processing model info - model file may be invalid")));
 		}
 	}
-}
+}   // namespace glge::renderer::primitive

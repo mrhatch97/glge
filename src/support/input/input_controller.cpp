@@ -29,7 +29,7 @@ namespace glge
 				active_inputs.erase(key);
 				break;
 			case DOWN:
-				KeyInput new_input{ key, mod_states };
+				KeyInput new_input{key, mod_states};
 
 				if (input_binds.find(new_input) == input_binds.cend())
 				{
@@ -40,7 +40,7 @@ namespace glge
 
 				parent.raise(input_bind.command);
 
-				if(input_bind.should_repeat)
+				if (input_bind.should_repeat)
 				{
 					active_inputs[key] = new_input;
 				}
@@ -52,8 +52,7 @@ namespace glge
 		InputController::InputController(InputConsumer & parent) :
 			parent(parent), key_states(UP), mod_states(UP),
 			drag_state(NOT_DRAGGING), drag_point(0, 0)
-		{
-		}
+		{}
 
 		void InputController::key_in(LogicalAction action, LogicalKey key)
 		{
@@ -98,7 +97,10 @@ namespace glge
 			update_mod_state(mod, new_state);
 		}
 
-		void InputController::mouse_click(LogicalAction action, LogicalButton btn, float cur_x, float cur_y)
+		void InputController::mouse_click(LogicalAction action,
+										  LogicalButton btn,
+										  float cur_x,
+										  float cur_y)
 		{
 			if (btn != BUTTON_LEFT)
 			{
@@ -122,15 +124,16 @@ namespace glge
 			switch (drag_state)
 			{
 			case DRAGGING:
-				{
-					// auto delta_x = (cur_x - drag_point.x) / rotation_dampening;
-					// auto delta_y = -(cur_y - drag_point.y) / rotation_dampening;
+			{
+				// auto delta_x = (cur_x - drag_point.x) / rotation_dampening;
+				// auto delta_y = -(cur_y - drag_point.y) / rotation_dampening;
 
-					//parent.raise(CommandRollEvent{ INVERT, glm::radians(delta_x) });
-					//parent.raise(CommandPitchEvent{ NORMAL, glm::radians(delta_y) });
+				// parent.raise(CommandRollEvent{ INVERT, glm::radians(delta_x)
+				// }); parent.raise(CommandPitchEvent{ NORMAL,
+				// glm::radians(delta_y) });
 
-					drag_point = vec2(cur_x, cur_y);
-				}
+				drag_point = vec2(cur_x, cur_y);
+			}
 			case NOT_DRAGGING:
 				return;
 			}
@@ -138,17 +141,18 @@ namespace glge
 
 		void InputController::mouse_scroll(float, float)
 		{
-			//parent.raise(CommandSurgeEvent{ NORMAL, delta_y });
+			// parent.raise(CommandSurgeEvent{ NORMAL, delta_y });
 		}
 
 		void InputController::poll_key_inputs()
 		{
-			auto raise_events = [&](std::pair<const LogicalKey, KeyInput> & pair)
-			{
-				parent.raise(input_binds.at(pair.second).command);
-			};
+			auto raise_events =
+				[&](std::pair<const LogicalKey, KeyInput> & pair) {
+					parent.raise(input_binds.at(pair.second).command);
+				};
 
-			std::for_each(active_inputs.begin(), active_inputs.end(), raise_events);
+			std::for_each(active_inputs.begin(), active_inputs.end(),
+						  raise_events);
 		}
-	}
-}
+	}   // namespace input
+}   // namespace glge

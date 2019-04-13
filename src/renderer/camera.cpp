@@ -18,32 +18,31 @@ namespace glge::renderer
 
 	mat4 CameraIntrinsics::get_P() const
 	{
-		return glm::perspective(glm::radians(v_fov), aspect_ratio, near_distance, 
-        far_distance);
+		return glm::perspective(glm::radians(v_fov), aspect_ratio,
+								near_distance, far_distance);
 	}
 
-	Camera::Camera(const CameraIntrinsics & intrinsics, 
-      const util::Placement & placement) :
-		intrinsics(intrinsics), placement(placement)
-	{ }
+	Camera::Camera(const CameraIntrinsics & intrinsics,
+				   const util::Placement & placement) :
+		intrinsics(intrinsics),
+		placement(placement)
+	{}
 
 	mat4 Camera::get_V() const
 	{
 		mat4 cam2world = placement.transform;
 
 		mat4 world_to_cam_rot = {
-			{ cam2world[0][0], cam2world[1][0],  cam2world[2][0], 0},
-			{ cam2world[0][1], cam2world[1][1],  cam2world[2][1], 0},
-			{ cam2world[0][2], cam2world[1][2],  cam2world[2][2], 0},
-			{ 0, 0, 0, 1 }
-		};
+			{cam2world[0][0], cam2world[1][0], cam2world[2][0], 0},
+			{cam2world[0][1], cam2world[1][1], cam2world[2][1], 0},
+			{cam2world[0][2], cam2world[1][2], cam2world[2][2], 0},
+			{0, 0, 0, 1}};
 
 		mat4 world_to_cam_trans = {
-			{ 1, 0,  0, 0 },
-			{ 0, 1,  0, 0 },
-			{ 0, 0,  1, 0 },
-			{-cam2world[3][0], -cam2world[3][1], -cam2world[3][2], 1}
-		};
+			{1, 0, 0, 0},
+			{0, 1, 0, 0},
+			{0, 0, 1, 0},
+			{-cam2world[3][0], -cam2world[3][1], -cam2world[3][2], 1}};
 
 		mat4 world2cam = world_to_cam_rot * world_to_cam_trans;
 
@@ -64,21 +63,20 @@ namespace glge::renderer
 		math::Plane near(near_center, camera_vec);
 		math::Plane far(far_center, -camera_vec);
 
-		auto right_plane_normal = glm::normalize((near_center + right_vec * 
-          near_dimensions.x / 2.0f) - cam_pos);
-		auto left_plane_normal = glm::normalize((near_center - right_vec * 
-          near_dimensions.x / 2.0f) - cam_pos);
-		auto top_plane_normal = glm::normalize((near_center + up_vec * 
-          near_dimensions.y / 2.0f) - cam_pos);
-		auto bottom_plane_normal = glm::normalize((near_center - up_vec * 
-          near_dimensions.y / 2.0f) - cam_pos);
+		auto right_plane_normal = glm::normalize(
+			(near_center + right_vec * near_dimensions.x / 2.0f) - cam_pos);
+		auto left_plane_normal = glm::normalize(
+			(near_center - right_vec * near_dimensions.x / 2.0f) - cam_pos);
+		auto top_plane_normal = glm::normalize(
+			(near_center + up_vec * near_dimensions.y / 2.0f) - cam_pos);
+		auto bottom_plane_normal = glm::normalize(
+			(near_center - up_vec * near_dimensions.y / 2.0f) - cam_pos);
 
 		math::Plane right(cam_pos, glm::cross(up_vec, right_plane_normal));
 		math::Plane left(cam_pos, -glm::cross(up_vec, left_plane_normal));
 		math::Plane top(cam_pos, -glm::cross(right_vec, top_plane_normal));
 		math::Plane bottom(cam_pos, glm::cross(right_vec, bottom_plane_normal));
 
-		return std::array<math::Plane, 6> { near, far, right, left, top, bottom };
-
+		return std::array<math::Plane, 6>{near, far, right, left, top, bottom};
 	}
-}
+}   // namespace glge::renderer

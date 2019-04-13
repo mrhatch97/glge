@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glge/util/util.h>
 #include <glge/util/compat.h>
+#include <glge/util/util.h>
 
 #if GLGE_APPLE
 #include <OpenGL/gl3.h>
@@ -21,4 +21,4 @@ namespace glge::renderer::opengl
 	}
 
 	constexpr GLuint GL_NO_PROGRAM = 0;
-}
+}   // namespace glge::renderer::opengl

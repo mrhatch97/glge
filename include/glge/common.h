@@ -14,11 +14,11 @@
 #define GLM_FORCE_RADIANS
 #endif
 
-#include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/vector_angle.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/vector_angle.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <map>
 #include <memory>
@@ -46,31 +46,33 @@ namespace glge
 	extern std::mutex stdio_write_lock;
 
 #ifdef GLGE_DEBUG
-/// <summary>Flag for debug builds.</summary>
+	/// <summary>Flag for debug builds.</summary>
 	constexpr bool debug = true;
 #else
-/// <summary>Flag for debug builds.</summary>
+	/// <summary>Flag for debug builds.</summary>
 	constexpr bool debug = false;
 #endif
 
-	/// <summary>Vocabulary type alias for null-terminated C strings.</summary>
+	/// <summary>
+	/// Vocabulary type alias for null-terminated C strings.
+	/// </summary>
 	using zstring = char *;
 	/// <summary>
-  /// Vocabulary type alias for const null-terminated C strings.
-  /// </summary>
+	/// Vocabulary type alias for const null-terminated C strings.
+	/// </summary>
 	using czstring = const char *;
 
 	// Extremely commonly used types
-	using std::map;
-	using std::size_t;
-	using std::string;
-	using std::vector;
-	using std::unique_ptr;
+	using glm::mat4;
+	using glm::quat;
 	using glm::vec2;
 	using glm::vec3;
 	using glm::vec4;
-	using glm::mat4;
-	using glm::quat;
+	using std::map;
+	using std::size_t;
+	using std::string;
+	using std::unique_ptr;
+	using std::vector;
 
 	// TODO switch to std::observer_ptr when standardized
 	/// <summary>Vocabulary type alias for non-owning pointers.</summary>
@@ -78,63 +80,66 @@ namespace glge
 	using observer_ptr = W *;
 
 	/// <summary>
-  /// Helper struct for pattern-matching like std::visit syntax.
-  /// </summary>
+	/// Helper struct for pattern-matching like std::visit syntax.
+	/// </summary>
 	/// A helper struct for std::visit to enable pattern matching-like syntax by
 	/// aggregating lambdas in a single object.
-	template<class... Ts> 
-  struct overloaded : Ts... 
-  { 
-    using Ts::operator()...; 
-  };
+	template<class... Ts>
+	struct overloaded : Ts...
+	{
+		using Ts::operator()...;
+	};
 
 	/// <summary>
-  /// Template deduction guide for std::visit pattern matching struct.
-  /// </summary>
+	/// Template deduction guide for std::visit pattern matching struct.
+	/// </summary>
 	/// User defined deduction guide for overloaded to allow implicit type
 	/// deduction in pattern matching syntax.
-	template<class... Ts> 
-  overloaded(Ts...) -> overloaded<Ts...>;
+	template<class... Ts>
+	overloaded(Ts...)->overloaded<Ts...>;
 
 	/// <summary>Namespace for programming utilities.</summary>
 	///
 	/// Namespace containing various utility classes and functions used by glge.
-	namespace util {}
+	namespace util
+	{}
 
 	/// <summary>Namespace for mathematical utilities.</summary>
 	///
 	/// Namespace containing mathematical helper classes and functions.
-	namespace math {}
+	namespace math
+	{}
 
 	/// <summary>Namespace for user input handling.</summary>
-	///
 	/// Namespace containing support for receiving and responding to user input.
-	namespace input {}
+	namespace input
+	{}
 
 	/// <summary>Namespace for procedural generation functions.</summary>
-	///
-	/// Namespace containing functions for procedural generation of heightmaps and
-	/// other entities.
-	namespace proc_gen {}
+	/// Namespace containing functions for procedural generation of heightmaps
+	/// and other entities.
+	namespace proc_gen
+	{}
 
 	/// <summary>Namespace for classes supporting 3D rendering.</summary>
-	///
 	/// Namespace containing classes for describing a 3D scene in a scene graph,
 	/// instantiating rendering primitives, and dispatching primitives to be
 	/// drawn by the rendering backend.
 	namespace renderer
 	{
 		/// <summary>Namespace for rendering primitive classes.</summary>
-		///
 		/// Namespace containing classes for managing rendering primitives at
 		/// an implementation-independent level.
-		namespace primitive {}
+		namespace primitive
+		{}
 
-		/// <summary>Namespace for 3D scene description as a scene graph.</summary>
-		///
-		/// Namespace containing classes for describing a 3D scene as a scene graph,
-		/// traversing it to produce rendering jobs, and manipulating rendering
-		/// parameters of the scene.
-		namespace scene_graph {}
-	}
-}
+		/// <summary>
+		/// Namespace for 3D scene description as a scene graph.
+		/// </summary>
+		/// Namespace containing classes for describing a 3D scene as a scene
+		/// graph, traversing it to produce rendering jobs, and manipulating
+		/// rendering parameters of the scene.
+		namespace scene_graph
+		{}
+	}   // namespace renderer
+}   // namespace glge

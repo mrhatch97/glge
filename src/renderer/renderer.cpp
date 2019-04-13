@@ -8,24 +8,25 @@ namespace glge::renderer
 {
 	Renderer::Renderer() = default;
 
-	void Renderer::enqueue(
-		const primitive::Renderable & target, 
-		const primitive::ShaderInstanceBase & shader_instance, 
-		mat4 M)
+	void
+	Renderer::enqueue(const primitive::Renderable & target,
+					  const primitive::ShaderInstanceBase & shader_instance,
+					  mat4 M)
 	{
-		render_targets.emplace(typeid(shader_instance.shader), 
-        RenderTarget{ target, shader_instance, M });
+		render_targets.emplace(typeid(shader_instance.shader),
+							   RenderTarget{target, shader_instance, M});
 	}
 
 	void Renderer::render()
 	{
-		for (auto iter = render_targets.cbegin(), end = render_targets.cend(); 
-        iter != end; )
+		for (auto iter = render_targets.cbegin(), end = render_targets.cend();
+			 iter != end;)
 		{
 			auto region_start_iter = iter;
 			auto shader_bind = iter->second.shader_instance.shader.bind();
 
-			for (; (iter != end) && (iter->first == region_start_iter->first); iter++)
+			for (; (iter != end) && (iter->first == region_start_iter->first);
+				 iter++)
 			{
 				const RenderTarget & current_target = iter->second;
 
@@ -38,8 +39,5 @@ namespace glge::renderer
 		}
 	}
 
-	size_t Renderer::target_count() const
-	{
-		return render_targets.size();
-	}
-}
+	size_t Renderer::target_count() const { return render_targets.size(); }
+}   // namespace glge::renderer

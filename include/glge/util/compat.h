@@ -11,16 +11,16 @@
 
 #if _WIN32
 #define GLGE_WINDOWS 1
-#define GLGE_LINUX   0
-#define GLGE_APPLE   0
+#define GLGE_LINUX 0
+#define GLGE_APPLE 0
 #elif __linux__
 #define GLGE_WINDOWS 0
-#define GLGE_LINUX   1
-#define GLGE_APPLE   0
+#define GLGE_LINUX 1
+#define GLGE_APPLE 0
 #elif __APPLE__
 #define GLGE_WINDOWS 0
-#define GLGE_LINUX   0
-#define GLGE_APPLE   1
+#define GLGE_LINUX 0
+#define GLGE_APPLE 1
 #else
 #error "Could not identify platform for compatibility"
 #endif
@@ -39,23 +39,26 @@
 #endif
 
 /// \def EXECUTION_POLICY_SEQ
-/// <summary>Function argument equivalent to std::execution::seq.
-/// Do not follow with comma.</summary>
-///
+/// <summary>
+/// Function argument equivalent to std::execution::seq. Do not follow with 
+/// comma.
+/// </summary>
 /// Allows use of sequential execution policy, automatically excluded on
 /// systems that do not support execution policies.
 
 /// \def EXECUTION_POLICY_PAR
-/// <summary>Function argument equivalent to std::execution::par.
-/// Do not follow with comma.</summary>
-///
+/// <summary>
+/// Function argument equivalent to std::execution::par. Do not follow with 
+/// comma.
+/// </summary>
 /// Allows use of parallel execution policy, automatically excluded on
 /// systems that do not support execution policies.
 
 /// \def EXECUTION_POLICY_PAR_UNSEQ
-/// <summary>Function argument equivalent to std::execution::par_unseq.
-/// Do not follow with comma.</summary>
-///
+/// <summary>
+/// Function argument equivalent to std::execution::par_unseq. Do not follow with 
+/// comma.
+/// </summary>
 /// Allows use of unsequenced parallel execution policy, automatically excluded
 /// on systems that do not support execution policies.
 
@@ -63,8 +66,8 @@
 
 #include <execution>
 
-#define EXECUTION_POLICY_SEQ       std::execution::seq,
-#define EXECUTION_POLICY_PAR       std::execution::par,
+#define EXECUTION_POLICY_SEQ std::execution::seq,
+#define EXECUTION_POLICY_PAR std::execution::par,
 #define EXECUTION_POLICY_PAR_UNSEQ std::execution::par_unseq,
 
 #else
@@ -77,22 +80,22 @@
 
 namespace glge::util
 {
-  /// <summary>
-  /// Attempt to open the given file path in the given mode.
-  /// If this fails for any reason, throws an exception.
-  /// </summary>
-  /// <param name="file_name">Path to file to open.</param>
-  /// <param name="mode">Mode string to open file with; as in fopen.</param>
-  /// <returns>Handle to opened file.</returns>
-  /// <exception cref="std::runtime_error">
-  /// Thrown if file fails to open.
-  /// </exception>
+	/// <summary>
+	/// Attempt to open the given file path in the given mode.
+	/// If this fails for any reason, throws an exception.
+	/// </summary>
+	/// <param name="file_name">Path to file to open.</param>
+	/// <param name="mode">Mode string to open file with; as in fopen.</param>
+	/// <returns>Handle to opened file.</returns>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if file fails to open.
+	/// </exception>
 	inline FILE * try_fopen(czstring file_name, czstring mode)
 	{
 		FILE * file;
 
 #ifdef _MSC_VER
-		if(fopen_s(&file, file_name, mode) != 0)
+		if (fopen_s(&file, file_name, mode) != 0)
 #else
 		errno = 0;
 
@@ -101,12 +104,13 @@ namespace glge::util
 		if (errno)
 #endif
 		{
-			throw std::runtime_error("Failed to open file " + string(file_name));
+			throw std::runtime_error("Failed to open file " +
+									 string(file_name));
 		}
 
 		return file;
 	}
-}
+}   // namespace glge::util
 
 /// \def GET_CWD()
 /// <summary>
@@ -161,6 +165,6 @@ namespace glge::util
 			return string("");
 		}
 	}
-}
+}   // namespace glge::util
 
 #endif

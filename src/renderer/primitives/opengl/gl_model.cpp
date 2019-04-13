@@ -1,5 +1,5 @@
-#include "gl_common.h"
 #include "gl_buffer.h"
+#include "gl_common.h"
 
 #include <glge/common.h>
 #include <glge/renderer/primitives/model.h>
@@ -20,46 +20,43 @@ namespace glge::renderer::primitive
 			bool destroy;
 
 		public:
-
 			GLModel(const GLModel &) = delete;
 
-			GLModel(GLModel && other) : 
-				index_count(other.index_count),
-				VAO(other.VAO),
-				VBO(other.VBO),
-				EBO(other.EBO),
-				destroy(other.destroy)
+			GLModel(GLModel && other) :
+				index_count(other.index_count), VAO(other.VAO), VBO(other.VBO),
+				EBO(other.EBO), destroy(other.destroy)
 			{
 				other.destroy = false;
 			}
 
 			GLModel(const EBOModelData & model_data) :
-				index_count(static_cast<GLsizei>(model_data.indices.size())), 
-        destroy(false)
+				index_count(static_cast<GLsizei>(model_data.indices.size())),
+				destroy(false)
 			{
 				glGenVertexArrays(static_cast<GLsizei>(VAO.size()), VAO.data());
 				glGenBuffers(static_cast<GLsizei>(VBO.size()), VBO.data());
 				glGenBuffers(static_cast<GLsizei>(EBO.size()), EBO.data());
 
 				renderer::opengl::throw_if_gl_error(
-            EXC_MSG("Failed to generate requisite storage for model"));
+					EXC_MSG("Failed to generate requisite storage for model"));
 
 				{
 					util::UniqueHandle vaoBind(
-              [&] { glBindVertexArray(VAO[0]); }, [] { glBindVertexArray(0); });
+						[&] { glBindVertexArray(VAO[0]); },
+						[] { glBindVertexArray(0); });
 
-					bind_attrib_data(VBO[vertex_index], vertex_index, 
-              model_data.vertices, false);
+					bind_attrib_data(VBO[vertex_index], vertex_index,
+									 model_data.vertices, false);
 
 					if (!model_data.normals.empty())
 					{
-						bind_attrib_data(VBO[normal_index], normal_index, 
-                model_data.normals, true);
+						bind_attrib_data(VBO[normal_index], normal_index,
+										 model_data.normals, true);
 					}
 					if (!model_data.uvs.empty())
 					{
-						bind_attrib_data(VBO[texcor_index], texcor_index, 
-                model_data.uvs, false);
+						bind_attrib_data(VBO[texcor_index], texcor_index,
+										 model_data.uvs, false);
 					}
 
 					bind_element_array(EBO[0], model_data.indices);
@@ -72,9 +69,12 @@ namespace glge::renderer::primitive
 			{
 				if (destroy)
 				{
-					glDeleteVertexArrays(static_cast<GLsizei>(VAO.size()), VAO.data());
-					glDeleteBuffers(static_cast<GLsizei>(VBO.size()), VBO.data());
-					glDeleteBuffers(static_cast<GLsizei>(EBO.size()), EBO.data());
+					glDeleteVertexArrays(static_cast<GLsizei>(VAO.size()),
+										 VAO.data());
+					glDeleteBuffers(static_cast<GLsizei>(VBO.size()),
+									VBO.data());
+					glDeleteBuffers(static_cast<GLsizei>(EBO.size()),
+									EBO.data());
 				}
 			}
 
@@ -84,27 +84,27 @@ namespace glge::renderer::primitive
 
 			void render() const override
 			{
-				util::UniqueHandle vaoBind(
-					[&] { glBindVertexArray(VAO[0]); },
-					[] { glBindVertexArray(0); }
-				);
+				util::UniqueHandle vaoBind([&] { glBindVertexArray(VAO[0]); },
+										   [] { glBindVertexArray(0); });
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("Error prior to render"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("Error prior to render"));
 				}
 
 				glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("Error during render"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("Error during render"));
 				}
 			}
 
 			GLuint getVAO() const { return VAO[0]; }
 		};
-	}
+	}   // namespace opengl
 
 	unique_ptr<Model> Model::from_file(const ModelFileInfo & file_info)
 	{
@@ -120,7 +120,8 @@ namespace glge::renderer::primitive
 
 	unique_ptr<Model> Model::from_data(ModelData && model_data)
 	{
-		EBOModelData ebo_data = ModelData::to_EBO_data(std::forward<ModelData>(model_data));
+		EBOModelData ebo_data =
+			ModelData::to_EBO_data(std::forward<ModelData>(model_data));
 		return Model::from_data(ebo_data);
 	}
 
@@ -128,4 +129,4 @@ namespace glge::renderer::primitive
 	{
 		return std::make_unique<opengl::GLModel>(ebo_data);
 	}
-}
+}   // namespace glge::renderer::primitive

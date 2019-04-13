@@ -7,7 +7,8 @@ using namespace glge::renderer::primitive;
 
 void test_move()
 {
-	ModelData data = ModelData::from_file(ModelFileInfo{ "./resources/models/test.obj", true });
+	ModelData data = ModelData::from_file(
+		ModelFileInfo{"./resources/models/test.obj", true});
 
 	EBOModelData ebo_data = ModelData::to_EBO_data(std::move(data));
 
@@ -19,7 +20,8 @@ void test_move()
 
 void test_copy()
 {
-	ModelData data = ModelData::from_file(ModelFileInfo{ "./resources/models/test.obj", true });
+	ModelData data = ModelData::from_file(
+		ModelFileInfo{"./resources/models/test.obj", true});
 
 	EBOModelData ebo_data = ModelData::to_EBO_data(data);
 
