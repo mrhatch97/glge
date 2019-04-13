@@ -1,7 +1,7 @@
 #include "glge/renderer/scene_graph/scene.h"
 
-#include <glge/util/util.h>
 #include <glge/renderer/renderer.h>
+#include <glge/util/util.h>
 
 #include "base_dispatcher.h"
 #include "geometry.h"
@@ -20,12 +20,9 @@ namespace glge::renderer::scene_graph
 	public:
 		explicit RenderingSceneDispatcher(Renderer & renderer) :
 			renderer(renderer)
-		{ }
+		{}
 
-		mat4 dispatch(const Node &, mat4 cur_M) const override
-		{
-			return cur_M;
-		}
+		mat4 dispatch(const Node &, mat4 cur_M) const override { return cur_M; }
 
 		mat4 dispatch(const Geometry & node, mat4 cur_M) const override
 		{
@@ -33,12 +30,14 @@ namespace glge::renderer::scene_graph
 			return cur_M;
 		}
 
-		mat4 dispatch(const SceneTransform & transform, mat4 cur_M) const override
+		mat4 dispatch(const SceneTransform & transform,
+					  mat4 cur_M) const override
 		{
 			return transform.placement.transform * cur_M;
 		}
 
-		mat4 dispatch(const SceneCamera & scene_camera, mat4 cur_M) const override
+		mat4 dispatch(const SceneCamera & scene_camera,
+					  mat4 cur_M) const override
 		{
 			if (scene_camera.active)
 			{
@@ -68,15 +67,19 @@ namespace glge::renderer::scene_graph
 
 			mat4 new_M = node_ptr->accept(dispatcher, cur_M);
 
-			std::for_each(node_ptr->children.cbegin(), node_ptr->children.cend(),
-				[&](const unique_ptr<Node> & node) { nodes.emplace(node.get(), new_M); });
+			std::for_each(node_ptr->children.cbegin(),
+						  node_ptr->children.cend(),
+						  [&](const unique_ptr<Node> & node) {
+							  nodes.emplace(node.get(), new_M);
+						  });
 		}
 
 		if (!renderer.settings.camera)
 		{
-			throw std::logic_error("Tried to render scene without an active camera");
+			throw std::logic_error(
+				"Tried to render scene without an active camera");
 		}
 
 		return renderer;
 	}
-}
+}   // namespace glge::renderer::scene_graph

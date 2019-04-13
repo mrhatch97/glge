@@ -9,7 +9,7 @@
 constexpr int test_fail_code = -1;
 constexpr std::uint32_t test_rand_seed = 1754195816U;
 
-template<typename T = void(*)()>
+template<typename T = void (*)()>
 class Test
 {
 private:
@@ -43,14 +43,11 @@ private:
 	}
 
 protected:
-	
-	virtual void pre_test() { };
-	virtual void post_test() { };
+	virtual void pre_test(){};
+	virtual void post_test(){};
 
 public:
-	Test(T test) : test(test)
-	{
-	}
+	Test(T test) : test(test) {}
 
 	void run()
 	{
@@ -71,7 +68,7 @@ public:
 };
 
 template<typename T>
-Test(T test) -> Test<T>;
+Test(T test)->Test<T>;
 
 template<typename F>
 inline void test_fails(F f, std::string msg = "Expected exception")
@@ -82,7 +79,8 @@ inline void test_fails(F f, std::string msg = "Expected exception")
 		throw std::runtime_error(EXC_MSG(msg));
 	}
 	catch (const std::logic_error &)
-	{ }
+	{
+	}
 }
 
 inline void test_assert(bool val, std::string msg = "Assertion failed")

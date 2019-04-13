@@ -10,15 +10,16 @@
 
 namespace glge::renderer
 {
-  /// <summary>
-  /// Rendering engine.
-  /// </summary>
+	/// <summary>
+	/// Rendering engine.
+	/// </summary>
 	class Engine
 	{
 	private:
 		primitive::ShaderManager shaders;
 
 		bool continue_running;
+
 	public:
 		Engine();
 
@@ -28,9 +29,9 @@ namespace glge::renderer
 		/// <returns>Reference to the engine's shader manager.</returns>
 		primitive::ShaderManager & get_shader_manager();
 
-    /// <summary>
-    /// Begin the main engine loop.
-    /// </summary>
+		/// <summary>
+		/// Begin the main engine loop.
+		/// </summary>
 		void run();
 	};
-}
+}   // namespace glge::renderer

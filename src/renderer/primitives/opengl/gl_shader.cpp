@@ -1,10 +1,10 @@
 #include "gl_program.h"
-#include <glge/renderer/primitives/texture.h>
+#include <glge/common.h>
 #include <glge/renderer/primitives/cubemap.h>
 #include <glge/renderer/primitives/shader_program.h>
+#include <glge/renderer/primitives/texture.h>
 #include <glge/renderer/render_settings.h>
 #include <glge/util/util.h>
-#include <glge/common.h>
 
 namespace glge::renderer::primitive
 {
@@ -17,17 +17,15 @@ namespace glge::renderer::primitive
 		{
 		protected:
 			const GLProgram prog;
-		public:
-			GLShader() : 
-        prog(renderer::opengl::load_simple_shader(ShaderT::vertex_code, 
-              ShaderT::fragment_code))
-			{
-			}
 
-			util::UniqueHandle bind() override
-			{
-				return prog.activate();
-			}
+		public:
+			GLShader() :
+				prog(renderer::opengl::load_simple_shader(
+					ShaderT::vertex_code,
+					ShaderT::fragment_code))
+			{}
+
+			util::UniqueHandle bind() override { return prog.activate(); }
 
 			virtual ~GLShader() = default;
 		};
@@ -36,6 +34,7 @@ namespace glge::renderer::primitive
 		{
 		private:
 			const GLuint uMVP;
+
 		public:
 			static constexpr czstring vertex_code =
 #include "generated/glsl/normal.vert.glsl"
@@ -45,19 +44,17 @@ namespace glge::renderer::primitive
 #include "generated/glsl/normal.frag.glsl"
 				;
 
-			GLNormalShader() :
-				uMVP(prog.get_uniform("MVP"))
-			{
-			}
+			GLNormalShader() : uMVP(prog.get_uniform("MVP")) {}
 
-			void parameterize(const RenderParameters & render, 
-          const NormalShaderData &) override
+			void parameterize(const RenderParameters & render,
+							  const NormalShaderData &) override
 			{
 				glUniformMatrix4fv(uMVP, 1, GL_FALSE, &render.MVP[0][0]);
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("OpenGL error setting up shader"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("OpenGL error setting up shader"));
 				}
 			}
 		};
@@ -66,6 +63,7 @@ namespace glge::renderer::primitive
 		{
 		private:
 			const GLuint uMVP, uColor;
+
 		public:
 			static constexpr czstring vertex_code =
 #include "generated/glsl/color.vert.glsl"
@@ -78,24 +76,28 @@ namespace glge::renderer::primitive
 			GLColorShader() :
 				uMVP(prog.get_uniform("MVP")),
 				uColor(prog.get_uniform("in_color"))
-			{ }
+			{}
 
-			void parameterize(const RenderParameters & render, const ColorShaderData & data) override
+			void parameterize(const RenderParameters & render,
+							  const ColorShaderData & data) override
 			{
 				glUniformMatrix4fv(uMVP, 1, GL_FALSE, &render.MVP[0][0]);
 				glUniform3fv(uColor, 1, &data.color[0]);
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("OpenGL error setting up shader"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("OpenGL error setting up shader"));
 				}
 			}
 		};
 
-		class GLTextureShader : public GLShader<TextureShaderData, GLTextureShader>
+		class GLTextureShader :
+			public GLShader<TextureShaderData, GLTextureShader>
 		{
 		private:
 			const GLuint uMVP, uModel;
+
 		public:
 			static constexpr czstring vertex_code =
 #include "generated/glsl/tex.vert.glsl"
@@ -106,11 +108,11 @@ namespace glge::renderer::primitive
 				;
 
 			GLTextureShader() :
-				uMVP(prog.get_uniform("MVP")),
-				uModel(prog.get_uniform("model"))
-			{ }
+				uMVP(prog.get_uniform("MVP")), uModel(prog.get_uniform("model"))
+			{}
 
-			void parameterize(const RenderParameters & render, const TextureShaderData & data) override
+			void parameterize(const RenderParameters & render,
+							  const TextureShaderData & data) override
 			{
 				data.texture.activate();
 
@@ -119,7 +121,8 @@ namespace glge::renderer::primitive
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("OpenGL error setting up shader"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("OpenGL error setting up shader"));
 				}
 			}
 		};
@@ -128,6 +131,7 @@ namespace glge::renderer::primitive
 		{
 		private:
 			const GLuint uMVP;
+
 		public:
 			static constexpr czstring vertex_code =
 #include "generated/glsl/skybox.vert.glsl"
@@ -137,21 +141,18 @@ namespace glge::renderer::primitive
 #include "generated/glsl/skybox.frag.glsl"
 				;
 
-			GLSkyboxShader() :
-				uMVP(prog.get_uniform("MVP"))
-			{ }
+			GLSkyboxShader() : uMVP(prog.get_uniform("MVP")) {}
 
 			util::UniqueHandle bind() override
 			{
 				return std::move(
-					GLShader<SkyboxShaderData, GLSkyboxShader>::bind()
-					.chain(
+					GLShader<SkyboxShaderData, GLSkyboxShader>::bind().chain(
 						[&] { glCullFace(GL_FRONT); },
-						[&] { glCullFace(GL_BACK); }
-					));
+						[&] { glCullFace(GL_BACK); }));
 			}
 
-			void parameterize(const RenderParameters & render, const SkyboxShaderData & data) override
+			void parameterize(const RenderParameters & render,
+							  const SkyboxShaderData & data) override
 			{
 				data.skybox.activate();
 
@@ -159,7 +160,8 @@ namespace glge::renderer::primitive
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("OpenGL error setting up shader"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("OpenGL error setting up shader"));
 				}
 			}
 		};
@@ -168,6 +170,7 @@ namespace glge::renderer::primitive
 		{
 		private:
 			const GLuint uMVP, uModel, uCam;
+
 		public:
 			static constexpr czstring vertex_code =
 #include "generated/glsl/envmap.vert.glsl"
@@ -181,9 +184,10 @@ namespace glge::renderer::primitive
 				uMVP(prog.get_uniform("MVP")),
 				uModel(prog.get_uniform("model")),
 				uCam(prog.get_uniform("camPos"))
-			{ }
+			{}
 
-			void parameterize(const RenderParameters & render, const EnvMapShaderData & data) override
+			void parameterize(const RenderParameters & render,
+							  const EnvMapShaderData & data) override
 			{
 				data.skybox.activate();
 
@@ -195,11 +199,12 @@ namespace glge::renderer::primitive
 
 				if constexpr (debug)
 				{
-					renderer::opengl::throw_if_gl_error(EXC_MSG("OpenGL error setting up shader"));
+					renderer::opengl::throw_if_gl_error(
+						EXC_MSG("OpenGL error setting up shader"));
 				}
 			}
 		};
-	}
+	}   // namespace opengl
 
 	template<>
 	unique_ptr<NormalShader> NormalShader::load()
@@ -230,4 +235,4 @@ namespace glge::renderer::primitive
 	{
 		return std::make_unique<opengl::GLEnvMapShader>();
 	}
-}
+}   // namespace glge::renderer::primitive

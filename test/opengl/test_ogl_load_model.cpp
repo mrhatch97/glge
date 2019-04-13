@@ -8,7 +8,7 @@ using namespace glge::renderer::primitive;
 
 void test_load()
 {
-	Model::from_file(ModelFileInfo{ "./resources/models/test.obj", true });
+	Model::from_file(ModelFileInfo{"./resources/models/test.obj", true});
 }
 
 int main()

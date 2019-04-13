@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glge/common.h>
+
 namespace glge::renderer::scene_graph
 {
 	struct Node;
@@ -13,9 +15,10 @@ namespace glge::renderer::scene_graph
 	public:
 		virtual mat4 dispatch(const Node & node, mat4 cur_M) const = 0;
 		virtual mat4 dispatch(const Geometry & node, mat4 cur_M) const = 0;
-		virtual mat4 dispatch(const SceneTransform & node, mat4 cur_M) const = 0;
+		virtual mat4 dispatch(const SceneTransform & node,
+							  mat4 cur_M) const = 0;
 		virtual mat4 dispatch(const SceneCamera & node, mat4 cur_M) const = 0;
 
 		virtual ~BaseDispatcher() = default;
 	};
-}
+}   // namespace glge::renderer::scene_graph

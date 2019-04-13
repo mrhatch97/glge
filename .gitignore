@@ -1,4 +1,3 @@
 .vs
 compile_commands.json
-.clang-format
 CMakeSettings.json

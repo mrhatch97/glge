@@ -8,7 +8,7 @@ using namespace glge::renderer::primitive;
 
 void test_load()
 {
-	Texture::from_file(TextureFileInfo{ "./resources/textures/test.png" });
+	Texture::from_file(TextureFileInfo{"./resources/textures/test.png"});
 }
 
 int main()

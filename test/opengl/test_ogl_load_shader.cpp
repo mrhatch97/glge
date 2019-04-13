@@ -1,6 +1,6 @@
 #include <glge/renderer/primitives/shader_program.h>
-#include <glge/renderer/renderer.h>
 #include <glge/renderer/primitives/texture.h>
+#include <glge/renderer/renderer.h>
 
 #include "ogl_test_utils.h"
 
@@ -24,14 +24,13 @@ void test_instance()
 	auto skybox_shader = SkyboxShader::load();
 	auto envmap_shader = EnvMapShader::load();
 
-	auto tex_ptr = Texture::from_file(TextureFileInfo{ "./resources/textures/test.png" });
+	auto tex_ptr =
+		Texture::from_file(TextureFileInfo{"./resources/textures/test.png"});
 	auto cubemap_ptr = Cubemap::from_file(CubemapFileInfo{
-		"./resources/cubemaps/test_up.tga",
-		"./resources/cubemaps/test_dn.tga",
-		"./resources/cubemaps/test_lf.tga",
-		"./resources/cubemaps/test_rt.tga",
+		"./resources/cubemaps/test_up.tga", "./resources/cubemaps/test_dn.tga",
+		"./resources/cubemaps/test_lf.tga", "./resources/cubemaps/test_rt.tga",
 		"./resources/cubemaps/test_ft.tga",
-		"./resources/cubemaps/test_bk.tga" });
+		"./resources/cubemaps/test_bk.tga"});
 
 	auto normal_instance = normal_shader->instance();
 	auto color_instance = color_shader->instance(vec3(1.0f, 1.0f, 1.0f));

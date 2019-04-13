@@ -2,9 +2,7 @@
 
 namespace glge::renderer
 {
-	Engine::Engine() : shaders(), continue_running(false)
-	{
-	}
+	Engine::Engine() : shaders(), continue_running(false) {}
 
 	auto Engine::get_shader_manager() -> primitive::ShaderManager &
 	{
@@ -16,7 +14,6 @@ namespace glge::renderer
 		continue_running = true;
 		while (continue_running)
 		{
-
 		}
 	}
-}
+}   // namespace glge::renderer

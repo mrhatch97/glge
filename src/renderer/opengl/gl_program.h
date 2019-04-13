@@ -11,6 +11,7 @@ namespace glge::renderer::opengl
 	{
 	public:
 		using id_type = GLuint;
+
 	private:
 		const id_type id;
 
@@ -32,18 +33,20 @@ namespace glge::renderer::opengl
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &info_log_length);
 			if (!success)
 			{
-				unique_ptr<char[]> error = std::make_unique<char[]>(static_cast<size_t>(info_log_length) + 1);
+				unique_ptr<char[]> error = std::make_unique<char[]>(
+					static_cast<size_t>(info_log_length) + 1);
 				glGetShaderInfoLog(id, info_log_length, NULL, error.get());
-				throw std::runtime_error(EXC_MSG("Failed to compile shader source: "s +
-					error.get()));
+				throw std::runtime_error(EXC_MSG(
+					"Failed to compile shader source: "s + error.get()));
 			}
 
 			return id;
 		}
+
 	public:
-		GLShader(czstring code, GLenum shader_type) : id(load_shader_source(code, shader_type))
-		{
-		}
+		GLShader(czstring code, GLenum shader_type) :
+			id(load_shader_source(code, shader_type))
+		{}
 
 		GLShader(const GLShader &) = delete;
 		GLShader(GLShader &&) = delete;
@@ -51,15 +54,9 @@ namespace glge::renderer::opengl
 		GLShader & operator=(const GLShader &) = delete;
 		GLShader & operator=(GLShader &&) = delete;
 
-		id_type get_id() const
-		{
-			return id;
-		}
+		id_type get_id() const { return id; }
 
-		~GLShader()
-		{
-			glDeleteShader(id);
-		}
+		~GLShader() { glDeleteShader(id); }
 	};
 
 	class GLProgram
@@ -68,8 +65,11 @@ namespace glge::renderer::opengl
 		using id_type = GLuint;
 
 		const id_type id;
+
 	public:
-		GLProgram(const GLShader & vertex_shader, const GLShader & fragment_shader) : id(glCreateProgram())
+		GLProgram(const GLShader & vertex_shader,
+				  const GLShader & fragment_shader) :
+			id(glCreateProgram())
 		{
 			using namespace std::literals::string_literals;
 
@@ -77,17 +77,14 @@ namespace glge::renderer::opengl
 			auto fragment_id = fragment_shader.get_id();
 
 			util::UniqueHandle attach_bind(
-				[=]
-				{
+				[=] {
 					glAttachShader(id, vertex_id);
 					glAttachShader(id, fragment_id);
 				},
-				[=]
-				{
+				[=] {
 					glDetachShader(id, vertex_id);
 					glDetachShader(id, fragment_id);
-				}
-			);
+				});
 
 			glLinkProgram(id);
 
@@ -99,10 +96,11 @@ namespace glge::renderer::opengl
 			glGetProgramiv(id, GL_INFO_LOG_LENGTH, &info_log_length);
 			if (!success)
 			{
-				unique_ptr<char[]> error = std::make_unique<char[]>(static_cast<size_t>(info_log_length) + 1);
+				unique_ptr<char[]> error = std::make_unique<char[]>(
+					static_cast<size_t>(info_log_length) + 1);
 				glGetShaderInfoLog(id, info_log_length, NULL, error.get());
-				throw std::runtime_error(EXC_MSG("Failed to link program: "s +
-					error.get()));
+				throw std::runtime_error(
+					EXC_MSG("Failed to link program: "s + error.get()));
 			}
 		}
 
@@ -114,10 +112,8 @@ namespace glge::renderer::opengl
 
 		util::UniqueHandle activate() const
 		{
-			return util::UniqueHandle(
-				[&] { glUseProgram(id); },
-				[&] { glUseProgram(GL_NO_PROGRAM); }
-			);
+			return util::UniqueHandle([&] { glUseProgram(id); },
+									  [&] { glUseProgram(GL_NO_PROGRAM); });
 		}
 
 		GLint get_uniform(czstring name) const
@@ -130,10 +126,7 @@ namespace glge::renderer::opengl
 			return get_uniform(name.c_str());
 		}
 
-		~GLProgram()
-		{
-			glDeleteProgram(id);
-		}
+		~GLProgram() { glDeleteProgram(id); }
 	};
 
 	GLProgram load_simple_shader(czstring vertex_code, czstring fragment_code)
@@ -143,4 +136,4 @@ namespace glge::renderer::opengl
 
 		return GLProgram(vertex_shader, fragment_shader);
 	}
-}
+}   // namespace glge::renderer::opengl

@@ -10,19 +10,20 @@ namespace glge::renderer::scene_graph
 		CameraIntrinsics camera_intrinsics;
 		bool active = false;
 
-    SceneCamera(const CameraIntrinsics & intrinsics) :
-      camera_intrinsics(intrinsics)
-    { }
+		SceneCamera(const CameraIntrinsics & intrinsics) :
+			camera_intrinsics(intrinsics)
+		{}
 
-		mat4 accept(const BaseDispatcher & dispatcher, mat4 cur_M) const override
+		mat4 accept(const BaseDispatcher & dispatcher,
+					mat4 cur_M) const override
 		{
 			return dispatcher.dispatch(*this, cur_M);
 		}
 
 		unique_ptr<Camera> get_camera(mat4 M) const
 		{
-			return std::make_unique<Camera>( 
-          camera_intrinsics, util::Placement{ M } );
+			return std::make_unique<Camera>(camera_intrinsics,
+											util::Placement{M});
 		}
 	};
-}
+}   // namespace glge::renderer::scene_graph

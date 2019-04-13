@@ -1,7 +1,7 @@
 #pragma once
 
-#include "glge/renderer/scene_graph/scene.h"
 #include "base_dispatcher.h"
+#include "glge/renderer/scene_graph/scene.h"
 
 #include <glge/common.h>
 
@@ -20,4 +20,4 @@ namespace glge::renderer::scene_graph
 			return dispatcher.dispatch(*this, cur_M);
 		}
 	};
-}
+}   // namespace glge::renderer::scene_graph
