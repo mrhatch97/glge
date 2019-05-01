@@ -1,4 +1,4 @@
-#include "glge/support/input/input_controller.h"
+#include "glge/support/event/input/input_controller.h"
 
 #include <glge/util/util.h>
 
