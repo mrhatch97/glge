@@ -78,6 +78,9 @@ namespace glge::event::input
 		KEY_UNKNOWN
 	};
 
+  /// <summary>
+  /// Type alias for a std::bitset containg key press states.
+  /// </summary>
   using key_bitset = std::bitset<MAX_KEY_DEFINED + 1>;
 
 	/// <summary>
@@ -95,29 +98,70 @@ namespace glge::event::input
 		NOT_MOD = -1
 	};
 
+  /// <summary>
+  /// Type alias for a std::bitset containg mod states.
+  /// </summary>
   using mod_bitset = std::bitset<MAX_MOD_DEFINED + 1>;
 
+  /// <summary>
+  /// Representation of a keyboard input (key + mods), e.g. CTRL + A
+  /// </summary>
   struct KeyInput
   {
+    /// <summary>Main key for the input.</summary>
     LogicalKey key;
+    /// <summary>Mods active when this input was made.</summary>
     mod_bitset mods;
 
+    /// <summary>
+    /// Default-construct a KeyInput. Provided for use with std::map only.
+    /// </summary>
     KeyInput() : key(KEY_UNKNOWN), mods() {}
 
+    /// <summary>
+    /// Construct a KeyInput representing the given key and mod combination.
+    /// </summary>
+    /// <param name="key">
+    /// Main key for the input.
+    /// </param>
+    /// <param name="mods">
+    /// Mod states at the time of the input.
+    /// </param>
     KeyInput(LogicalKey key, const mod_bitset & mods) :
       key(key), mods(mods)
     {}
 
+    /// <summary>
+    /// Less-than compare this KeyInput's key value to another KeyInput.
+    /// </summary>
+    /// <param name="other">
+    /// KeyInput to compare to.
+    /// </param>
+    /// <returns>True if this key is less than other.key.</returns>
     bool operator<(const KeyInput & other) const
     {
       return key < other.key;
     }
 
+    /// <summary>
+    /// Greater-than this KeyInput's key value to another KeyInput.
+    /// </summary>
+    /// <param name="other">
+    /// KeyInput to compare to.
+    /// </param>
+    /// <returns>True if this key is greater than other.key.</returns>
     bool operator>(const KeyInput & other) const
     {
       return key > other.key;
     }
 
+    /// <summary>
+    /// Equality-compare this KeyInput's key value to another KeyInput.
+    /// </summary>
+    /// <param name="other">
+    /// KeyInput to compare to.
+    /// </param>
+    /// <returns>True if this key is equal to other.key.</returns>
     bool operator==(const KeyInput & other) const
     {
       return key == other.key;
@@ -137,33 +181,98 @@ namespace glge::event::input
 		BUTTON_UNKNOWN
 	};
 
+  /// <summary>
+  /// Message object for a mouse button down event.
+  /// </summary>
   struct MouseDown
   {
+    /// <summary>
+    /// Button that was pressed down.
+    /// </summary>
     LogicalButton button;
+
+    /// <summary>
+    /// Mod states at the time of the event.
+    /// </summary>
     mod_bitset mods;
   };
 
+  /// <summary>
+  /// Message object for a mouse button up event.
+  /// </summary>
   struct MouseUp
   {
+    /// <summary>
+    /// Button that was released.
+    /// </summary>
     LogicalButton button;
+
+    /// <summary>
+    /// Mod states at the time of the event.
+    /// </summary>
     mod_bitset mods;
   };
 
+  /// <summary>
+  /// Message object for a mouse move event.
+  /// </summary>
   struct MouseMove
   {
-    float cur_x, cur_y;
+    /// <summary>
+    /// The x-position the mouse moved to.
+    /// </summary>
+    float cur_x;
+
+    /// <summary>
+    /// The y-position the mouse moved to.
+    /// </summary>
+    float cur_y;
+
+    /// <summary>
+    /// Mod states at the time of the event.
+    /// </summary>
     mod_bitset mods;
   };
 
+  /// <summary>
+  /// Message object for a mouse drag event.
+  /// </summary>
   struct MouseDrag
   {
-    float delta_x, delta_y;
+    /// <summary>
+    /// The x-displacement the mouse moved by.
+    /// </summary>
+    float delta_x;
+
+    /// <summary>
+    /// The y-displacement the mouse moved by.
+    /// </summary>
+    float delta_y;
+
+    /// <summary>
+    /// Mod states at the time of the event.
+    /// </summary>
     mod_bitset mods;
   };
 
+  /// <summary>
+  /// Message object for a mouse scroll event.
+  /// </summary>
   struct MouseScroll
   {
-    float delta_x, delta_y;
+    /// <summary>
+    /// The x-displacement (horizontal) the scroll wheel moved by.
+    /// </summary>
+    float delta_x;
+
+    /// <summary>
+    /// The y-displacement (vertical) the scroll wheel moved by.
+    /// </summary>
+    float delta_y;
+
+    /// <summary>
+    /// Mod states at the time of the event.
+    /// </summary>
     mod_bitset mods;
   };
 }

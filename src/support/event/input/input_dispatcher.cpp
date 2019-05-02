@@ -29,7 +29,7 @@ namespace glge::event::input
 		drag_point(0, 0)
 	{}
 
-	void InputDispatcher::notify_key_press(LogicalAction action, LogicalKey key)
+	void InputDispatcher::notify_key_input(LogicalAction action, LogicalKey key)
 	{
 		if (key == KEY_UNKNOWN)
 		{
@@ -52,7 +52,7 @@ namespace glge::event::input
 		update_inputs(key);
 	}
 
-	void InputDispatcher::notify_mod_press(LogicalAction action, LogicalMod mod)
+	void InputDispatcher::notify_mod_input(LogicalAction action, LogicalMod mod)
 	{
 		if (mod == NOT_MOD)
 		{

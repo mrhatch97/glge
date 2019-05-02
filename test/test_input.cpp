@@ -19,8 +19,8 @@ void test_single_key()
 		}
 	});
 
-	dispatcher.notify_key_press(PRESS, sent_key);
-	dispatcher.notify_key_press(RELEASE, sent_key);
+	dispatcher.notify_key_input(PRESS, sent_key);
+	dispatcher.notify_key_input(RELEASE, sent_key);
 
 	test_equal(1, recv_keys);
 }
@@ -40,10 +40,10 @@ void test_repeat_key()
 		}
 	});
 
-	dispatcher.notify_key_press(PRESS, sent_key);
+	dispatcher.notify_key_input(PRESS, sent_key);
 	dispatcher.poll_key_inputs();
 	dispatcher.poll_key_inputs();
-	dispatcher.notify_key_press(RELEASE, sent_key);
+	dispatcher.notify_key_input(RELEASE, sent_key);
 	dispatcher.poll_key_inputs();
 
 	test_equal(3, recv_keys);
@@ -170,10 +170,10 @@ void test_mouse_drag_mods()
 
 	dispatcher.notify_mouse_button(PRESS, BUTTON_LEFT, 0.0f, 0.0f);
 	dispatcher.notify_mouse_move(5.0f, 10.0f);
-  dispatcher.notify_mod_press(PRESS, MOD_CTRL);
+  dispatcher.notify_mod_input(PRESS, MOD_CTRL);
 	dispatcher.notify_mouse_move(30.0f, 50.0f);
 	dispatcher.notify_mouse_move(30.0f, 55.0f);
-  dispatcher.notify_mod_press(RELEASE, MOD_CTRL);
+  dispatcher.notify_mod_input(RELEASE, MOD_CTRL);
 	dispatcher.notify_mouse_move(60.0f, -20.0f);
 	dispatcher.notify_mouse_button(RELEASE, BUTTON_LEFT, 60.0f, -20.0f);
   
