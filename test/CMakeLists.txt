@@ -36,6 +36,7 @@ add_quick_test(parse_model)
 add_quick_test(parse_model_big)
 add_quick_test(model_to_EBO)
 add_quick_test(heightmap_gen)
+add_quick_test(l_system)
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test/resources/models)
 
