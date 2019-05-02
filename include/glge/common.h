@@ -105,7 +105,6 @@ namespace glge
 	{}
 
 	/// <summary>Namespace for mathematical utilities.</summary>
-	///
 	/// Namespace containing mathematical helper classes and functions.
 	namespace math
 	{}
@@ -114,6 +113,11 @@ namespace glge
 	/// Namespace containing support for receiving and responding to user input.
 	namespace input
 	{}
+
+  /// <summary>Namespace for event-based message passing.</summary>
+  /// Namespace containing support for raising and handling events.
+  namespace event
+  {}
 
 	/// <summary>Namespace for procedural generation functions.</summary>
 	/// Namespace containing functions for procedural generation of heightmaps
