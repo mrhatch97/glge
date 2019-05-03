@@ -270,7 +270,7 @@ namespace glge::math
 		/// </returns>
 		float distance_from(vec3 pt) const;
 
-    bool operator==(Plane other) const;
+		bool operator==(Plane other) const;
 	};
 
 	/// <summary>A geometric pyramidal frustum.</summary>
@@ -293,17 +293,17 @@ namespace glge::math
 		Frustum(const std::array<Plane, 6> & planes);
 	};
 
-  /// <summary>
-  /// Test whether a point lies on a Plane.
-  /// </summary>
-  /// <param name="plane">
-  /// Plane to test against.
-  /// </param>
-  /// <param name="point>
-  /// Point to test.
-  /// </param>
-  /// <returns>True if plane contains point.</returns>
-  bool contains(Plane plane, vec3 point);
+	/// <summary>
+	/// Test whether a point lies on a Plane.
+	/// </summary>
+	/// <param name="plane">
+	/// Plane to test against.
+	/// </param>
+	/// <param name="point>
+	/// Point to test.
+	/// </param>
+	/// <returns>True if plane contains point.</returns>
+	bool contains(Plane plane, vec3 point);
 
 	/// <summary>
 	/// Test whether a Sphere is inside a Plane.
@@ -437,41 +437,81 @@ namespace glge::math
 			   const BezierCurve::CurvePolynomial & polynomial) const;
 	};
 
+	struct Degrees;
+
+	struct Radians
+	{
+		float value;
+
+		Radians() {}
+
+		explicit constexpr Radians(float value) noexcept : value(value) {}
+
+		constexpr Radians(const Radians & other) = default;
+
+		constexpr Radians(Degrees degrees) noexcept;
+
+		constexpr operator float() const noexcept { return value; }
+	};
+
+	struct Degrees
+	{
+		float value;
+
+		Degrees() {}
+
+		explicit constexpr Degrees(float value) noexcept : value(value) {}
+
+		constexpr Degrees(const Degrees & other) = default;
+
+		constexpr Degrees(Radians radians) noexcept;
+
+		constexpr operator float() const noexcept { return value; }
+	};
+
+	constexpr Radians::Radians(Degrees degrees) noexcept :
+		value(glm::radians(static_cast<float>(degrees)))
+	{}
+
+	constexpr Degrees::Degrees(Radians radians) noexcept :
+		value(glm::degrees(static_cast<float>(radians)))
+	{}
+
 	/// <summary>Compare vectors by x-coordinate value.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_x(vec3 a, vec3 b);
 	/// <summary>Compare vectors by y-coordinate value.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_y(vec3 a, vec3 b);
 	/// <summary>Compare vectors by z-coordinate value.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_z(vec3 a, vec3 b);
 
 	/// <summary>Compare vectors by x-coordinate absolute value.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_x_abs(vec3 a, vec3 b);
 	/// <summary>Compare vectors by y-coordinate absolute value.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_y_abs(vec3 a, vec3 b);
 	/// <summary>Compare vectors by z-coordinate absolute value.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_z_abs(vec3 a, vec3 b);
 
 	/// <summary>Compare vectors by magnitude.</summary>
-  /// <param name="a">First vector.</param>
-  /// <param name="b">Second vector.</param>
+	/// <param name="a">First vector.</param>
+	/// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
 	bool compare_by_magnitude(vec3 a, vec3 b);
 

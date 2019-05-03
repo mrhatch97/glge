@@ -156,5 +156,4 @@ namespace glge::proc_gen
 			radius = radius / 2;
 		}
 	}
-
 }   // namespace glge::proc_gen

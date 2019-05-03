@@ -4,15 +4,14 @@
 #include <glge/util/compat.h>
 #include <glge/util/util.h>
 
-namespace glge::proc_gen
+namespace glge::util
 {
 	// TODO convert this to constexpr
 	/// <summary>
 	/// Converts a heightmap with the given dimensions to a list of
 	/// indices describing the heightmap as a mesh of triangles.
 	/// </summary>
-	vector<unsigned int> heightmap_indices(const size_t width,
-										   const size_t height)
+	vector<unsigned int> heightmap_indices(size_t width, size_t height)
 	{
 		// two triangles per grid quad
 		const size_t num_triangles = (width - 1) * (height - 1) * 2;
@@ -48,7 +47,7 @@ namespace glge::proc_gen
 
 	// Computes the vertex normals for a heightmap with the given indices
 	vector<vec3> heightmap_normals(const vector<vec3> & heightmap,
-								   const vector<unsigned int> indices)
+								   const vector<unsigned int> & indices)
 	{
 		vector<vec3> normals(heightmap.size());
 
@@ -72,14 +71,14 @@ namespace glge::proc_gen
 		return normals;
 	}
 
-	vector<vec2> heightmap_uvs(const vector<vec3> & heightmap,
-							   const size_t width,
-							   const size_t height)
+	vector<vec2>
+	heightmap_uvs(const vector<vec3> & heightmap, size_t width, size_t height)
 	{
 		vector<vec2> uvs(heightmap.size());
 
-		std::transform(EXECUTION_POLICY_PAR_UNSEQ 
-			heightmap.cbegin(), heightmap.cend(), uvs.begin(),
+		std::transform(
+			EXECUTION_POLICY_PAR_UNSEQ heightmap.cbegin(), heightmap.cend(),
+			uvs.begin(),
 			// HACK get rid of the hacky constant - controls the extent to which
 			// textures are tiled over the terrain (higher - more tiling)
 			[=](const vec3 & v) {
@@ -88,4 +87,4 @@ namespace glge::proc_gen
 
 		return uvs;
 	}
-}   // namespace glge::proc_gen
+}   // namespace glge::util

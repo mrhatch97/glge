@@ -8,7 +8,8 @@ namespace glge::test
 
 	void test_clip_planes()
 	{
-		CameraIntrinsics intrinsics{45.0f, 1920.0f / 1080.0f, 0.1, 10000.0f};
+		CameraIntrinsics intrinsics{math::Degrees(45.0f), 1920.0f / 1080.0f,
+									0.1, 10000.0f};
 
 		vec2 near_dim = intrinsics.near_dimensions();
 		vec2 far_dim = intrinsics.far_dimensions();
@@ -19,7 +20,8 @@ namespace glge::test
 
 	void test_V_matrix_trivial()
 	{
-		Camera cam(CameraIntrinsics{45.0f, 1920.0f / 1080.0f, 0.1f, 10000.0f},
+		Camera cam(CameraIntrinsics{math::Degrees(45.0f), 1920.0f / 1080.0f,
+									0.1f, 10000.0f},
 				   util::Placement{mat4(1.0f)});
 
 		test_assert(cam.get_V() == mat4(1.0f),
@@ -28,7 +30,8 @@ namespace glge::test
 
 	void test_V_matrix()
 	{
-		Camera cam(CameraIntrinsics{45.0f, 1920.0f / 1080.0f, 0.1f, 10000.0f},
+		Camera cam(CameraIntrinsics{math::Degrees(45.0f), 1920.0f / 1080.0f,
+									0.1f, 10000.0f},
 				   util::Placement{mat4(1.0f)});
 
 		cam.placement.transform =
@@ -40,12 +43,13 @@ namespace glge::test
 
 	void test_view_frustum()
 	{
-		Camera cam(CameraIntrinsics{45.0f, 1920.0f / 1080.0f, 0.1f, 10000.0f},
+		Camera cam(CameraIntrinsics{math::Degrees(45.0f), 1920.0f / 1080.0f,
+									0.1f, 10000.0f},
 				   util::Placement{mat4(1.0f)});
 
-    auto frustum = cam.get_view_frustum();
+		auto frustum = cam.get_view_frustum();
 
-    // eyy it didn't crash
+		// eyy it didn't crash
 	}
 }   // namespace glge::test
 
