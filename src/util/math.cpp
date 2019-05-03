@@ -40,167 +40,126 @@ namespace glge::math
 										 vec4{-3, 3, 0, 0},
 										 vec4{1, 0, 0, 0});
 
-	vec3 BezierCurve::evaluate_at(float t) const
-	{
-		if (t > 1.0f || t < 0.0f)
-		{
-			throw std::domain_error(
-				EXC_MSG("A bezier curve cannot be evaluated at a range outside "
-						"[0, 1]"));
-		}
+	BezierCurve::BezierCurve(const vec3 & p0,
+							 const vec3 & p1,
+							 const vec3 & p2,
+							 const vec3 & p3) :
+		points(vec4(p0, 1.0f), vec4(p1, 1.0f), vec4(p2, 1.0f), vec4(p3, 1.0f))
+	{}
 
-		vec4 T(t * t * t, t * t, t, 1);
+  static bool verify_domain(float value, float min, float max)
+  {
+    return value >= min && value <= max;
+  }
 
-		return points * basis * T;
-	}
+  vec3 BezierCurve::evaluate_at(float t,
+								const CurvePolynomial & polynomial) const
+  {
+	  if (!verify_domain(t, min_t, max_t))
+	  {
+		  throw std::domain_error(
+			  EXC_MSG("A bezier curve cannot be evaluated at a range outside "
+					  "[0, 1]"));
+	  }
 
-	vec3 BezierCurve::velocity_at(float t) const
-	{
-		if (t > 1.0f || t < 0.0f)
-		{
-			throw std::domain_error(
-				EXC_MSG("A bezier curve cannot be evaluated at a range outside "
-						"[0, 1]"));
-		}
+	  auto get_T_term = [t](const PolynomialTerm & term) {
+		  return term.coefficient * std::pow(t, term.power);
+	  };
 
-		vec4 T(3 * t * t, 2 * t, 1, 0);
+	  vec4 T(get_T_term(polynomial[0]), get_T_term(polynomial[1]),
+			 get_T_term(polynomial[2]), get_T_term(polynomial[3]));
 
-		return points * basis * T;
-	}
+	  return points * basis * T;
+  }
 
-	vec3 BezierPath::evaluate_at(float t) const
-	{
-		if (handles.size() < 1)
-		{
-			throw std::logic_error(EXC_MSG("A bezier path must have at least 1"
-										   "handle to define a full curve"));
-		}
+  vec3 BezierPath::evaluate_at(float t,
+							   const BezierCurve::CurvePolynomial & polynomial) const
+  {
+	  if (handles.size() < 1)
+	  {
+		  throw std::logic_error(EXC_MSG("A bezier path must have at least 1"
+										 "handle to define a full curve"));
+	  }
 
-		if (t > 1.0f || t < 0.0f)
-		{
-			throw std::domain_error(
-				EXC_MSG("A bezier path cannot be evaluated at a"
-						" range outside [0, 1]"));
-		}
+	  if (!verify_domain(t, BezierCurve::min_t, BezierCurve::max_t))
+	  {
+		  throw std::domain_error(
+			  EXC_MSG("A bezier path cannot be evaluated at a"
+					  " range outside [0, 1]"));
+	  }
 
-		size_t num_curves = static_cast<size_t>(handles.size());
+	  size_t num_curves = handles.size();
 
-		auto offset_t = t * num_curves;
-		float offset_t_floor = glm::floor(offset_t);
+	  auto offset_t = t * num_curves;
+	  float offset_t_floor = glm::floor(offset_t);
 
-		size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
-		size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
+	  size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
+	  size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
 
-#if _DEBUG
-		if (first_handle_idx == second_handle_idx)
-		{
-			throw std::logic_error(
-				EXC_MSG("Handles for path curve were identical"));
-		}
-#endif
-		const math::BezierHandle * first_handle;
-		const math::BezierHandle * second_handle;
+	  if constexpr (debug)
+	  {
+		  if (first_handle_idx == second_handle_idx)
+		  {
+			  throw std::logic_error(
+				  EXC_MSG("Handles for path curve were identical"));
+		  }
+	  }
 
-		if (second_handle_idx == handles.size())
-		{
-			first_handle = &handles.at(first_handle_idx);
-			second_handle = &handles.at(0);
-		}
-		else
-		{
-			first_handle = &handles.at(first_handle_idx);
-			second_handle = &handles.at(second_handle_idx);
-		}
+	  const math::BezierHandle * first_handle;
+	  const math::BezierHandle * second_handle;
 
-		vec3 p0 = first_handle->interp_point;
-		vec3 p1 = first_handle->opposite_control_point();
-		vec3 p2 = second_handle->control_point;
-		vec3 p3 = second_handle->interp_point;
+	  if (second_handle_idx == handles.size())
+	  {
+		  first_handle = &handles.at(first_handle_idx);
+		  second_handle = &handles.at(0);
+	  }
+	  else
+	  {
+		  first_handle = &handles.at(first_handle_idx);
+		  second_handle = &handles.at(second_handle_idx);
+	  }
 
-		return BezierCurve(p0, p1, p2, p3)
-			.evaluate_at(offset_t - offset_t_floor);
-	}
+	  vec3 p0 = first_handle->interp_point;
+	  vec3 p1 = first_handle->opposite_control_point();
+	  vec3 p2 = second_handle->control_point;
+	  vec3 p3 = second_handle->interp_point;
 
-	vec3 BezierPath::velocity_at(float t) const
-	{
-		if (handles.size() < 1)
-		{
-			throw std::logic_error(EXC_MSG("A bezier path must have at least 1 "
-										   "handle to define a full curve"));
-		}
+	  return BezierCurve(p0, p1, p2, p3)
+		  .evaluate_at(offset_t - offset_t_floor, polynomial);
+  }
 
-		if (t > 1.0f || t < 0.0f)
-		{
-			throw std::domain_error(
-				EXC_MSG("A bezier path cannot be evaluated at a "
-						"range outside [0, 1]"));
-		}
+  vector<vec3>
+  BezierPath::evaluate_at(const vector<float> & ts,
+						  const BezierCurve::CurvePolynomial & polynomial) const
+  {
+	  vector<vec3> result(ts.size());
+	  std::transform(
+		  ts.cbegin(), ts.cend(), result.begin(),
+		  [&](const float t) { return this->evaluate_at(t, polynomial); });
+	  return result;
+  }
 
-		size_t num_curves = static_cast<size_t>(handles.size());
+  vector<vec3>
+  BezierPath::sample(unsigned int samples_per_path,
+					 const BezierCurve::CurvePolynomial & polynomial) const
+  {
+	  const size_t num_samples = samples_per_path * handles.size();
+	  vector<float> ts(num_samples);
+	  const float step = 1.0f / (num_samples);
+	  std::iota(ts.begin(), ts.end(), math::Stepper(0.0f, step));
 
-		auto offset_t = t * num_curves;
-		float offset_t_floor = glm::floor(offset_t);
+	  return evaluate_at(ts, polynomial);
+  }
 
-		size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
-		size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
+  bool compare_by_x(vec3 v1, vec3 v2) { return v1.x < v2.x; }
 
-#if _DEBUG
-		if (first_handle_idx == second_handle_idx)
-		{
-			throw std::logic_error(
-				EXC_MSG("Handles for path curve were identical"));
-		}
-#endif
-		const math::BezierHandle * first_handle;
-		const math::BezierHandle * second_handle;
+  bool compare_by_y(vec3 v1, vec3 v2) { return v1.y < v2.y; }
 
-		if (second_handle_idx == handles.size())
-		{
-			first_handle = &handles.at(first_handle_idx);
-			second_handle = &handles.at(0);
-		}
-		else
-		{
-			first_handle = &handles.at(first_handle_idx);
-			second_handle = &handles.at(second_handle_idx);
-		}
+  bool compare_by_z(vec3 v1, vec3 v2) { return v1.z < v2.z; }
 
-		vec3 p0 = first_handle->interp_point;
-		vec3 p1 = first_handle->opposite_control_point();
-		vec3 p2 = second_handle->control_point;
-		vec3 p3 = second_handle->interp_point;
-
-		return BezierCurve(p0, p1, p2, p3)
-			.velocity_at(offset_t - offset_t_floor);
-	}
-
-	vector<vec3> BezierPath::evaluate_at(const vector<float> & ts) const
-	{
-		vector<vec3> result(ts.size());
-		std::transform(ts.cbegin(), ts.cend(), result.begin(),
-					   [&](const float t) { return this->evaluate_at(t); });
-		return result;
-	}
-
-	vector<vec3> BezierPath::sample(unsigned int samples_per_path) const
-	{
-		const size_t num_samples = samples_per_path * handles.size();
-		vector<float> ts(num_samples);
-		const float step = 1.0f / (num_samples);
-		std::iota(ts.begin(), ts.end(), math::Stepper(0.0f, step));
-
-		return evaluate_at(ts);
-	}
-
-	bool compare_by_x(vec3 v1, vec3 v2) { return v1.x < v2.x; }
-
-	bool compare_by_y(vec3 v1, vec3 v2) { return v1.y < v2.y; }
-
-	bool compare_by_z(vec3 v1, vec3 v2) { return v1.z < v2.z; }
-
-	bool compare_by_x_abs(vec3 v1, vec3 v2)
-	{
-		return glm::abs(v1.x) < glm::abs(v2.x);
+  bool compare_by_x_abs(vec3 v1, vec3 v2)
+  {
+	  return glm::abs(v1.x) < glm::abs(v2.x);
 	}
 
 	bool compare_by_y_abs(vec3 v1, vec3 v2)
