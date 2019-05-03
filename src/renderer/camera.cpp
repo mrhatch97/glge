@@ -2,16 +2,21 @@
 
 namespace glge::renderer
 {
+  static constexpr float plane_height(float v_fov, float distance)
+  {
+    return 2 * glm::tan(glm::radians(v_fov) / 2.0f) * distance;  
+  }
+
 	vec2 CameraIntrinsics::near_dimensions() const
 	{
-		auto height = 2 * glm::tan(glm::radians(v_fov) / 2.0f) * near_distance;
+    auto height = plane_height(v_fov, near_distance);
 
 		return vec2(height * aspect_ratio, height);
 	}
 
 	vec2 CameraIntrinsics::far_dimensions() const
 	{
-		auto height = 2 * glm::tan(glm::radians(v_fov) / 2.0f) * far_distance;
+    auto height = plane_height(v_fov, far_distance);
 
 		return vec2(height * aspect_ratio, height);
 	}

@@ -3,15 +3,19 @@
 #include <glge/util/util.h>
 
 #include <algorithm>
-
 #include <cmath>
 #include <numeric>
 
 namespace glge::math
 {
-	float Plane::distance_from(const vec3 & pt) const
+	float Plane::distance_from(vec3 pt) const
 	{
 		return glm::dot(pt, normal) - d;
+	}
+
+	bool Plane::operator==(Plane other) const
+	{
+		return other.normal == normal && contains(*this, other.point);
 	}
 
 	Frustum::Frustum(const std::array<Plane, 6> & planes) :
@@ -19,7 +23,19 @@ namespace glge::math
 		bottom(planes[4]), top(planes[5])
 	{}
 
-	bool contains(Frustum frustum, Sphere sphere)
+	bool contains(Plane plane, vec3 point)
+	{
+		// A point that lies on the plane will be perpendicular wrt the plane
+		// normal
+		return glm::dot(point - plane.point, plane.normal) == 0.0f;
+	}
+
+	bool contains(Plane plane, Sphere sphere)
+	{
+		return plane.distance_from(sphere.origin) > (-sphere.radius);
+	}
+
+	bool contains(const Frustum & frustum, Sphere sphere)
 	{
 		return contains(frustum.near, sphere) &&
 			   contains(frustum.far, sphere) &&
@@ -27,11 +43,6 @@ namespace glge::math
 			   contains(frustum.right, sphere) &&
 			   contains(frustum.bottom, sphere) &&
 			   contains(frustum.top, sphere);
-	}
-
-	bool contains(Plane plane, Sphere sphere)
-	{
-		return plane.distance_from(sphere.origin) > (-sphere.radius);
 	}
 
 	// Geometric basis matrix for a Cubic bezier curve - universally constant
@@ -47,119 +58,120 @@ namespace glge::math
 		points(vec4(p0, 1.0f), vec4(p1, 1.0f), vec4(p2, 1.0f), vec4(p3, 1.0f))
 	{}
 
-  static bool verify_domain(float value, float min, float max)
-  {
-    return value >= min && value <= max;
-  }
+	static bool verify_domain(float value, float min, float max)
+	{
+		return value >= min && value <= max;
+	}
 
-  vec3 BezierCurve::evaluate_at(float t,
-								const CurvePolynomial & polynomial) const
-  {
-	  if (!verify_domain(t, min_t, max_t))
-	  {
-		  throw std::domain_error(
-			  EXC_MSG("A bezier curve cannot be evaluated at a range outside "
-					  "[0, 1]"));
-	  }
+	vec3 BezierCurve::evaluate_at(float t,
+								  const CurvePolynomial & polynomial) const
+	{
+		if (!verify_domain(t, min_t, max_t))
+		{
+			throw std::domain_error(
+				EXC_MSG("A bezier curve cannot be evaluated at a range outside "
+						"[0, 1]"));
+		}
 
-	  auto get_T_term = [t](const PolynomialTerm & term) {
-		  return term.coefficient * std::pow(t, term.power);
-	  };
+		auto get_T_term = [t](const PolynomialTerm & term) {
+			return term.coefficient * std::pow(t, term.power);
+		};
 
-	  vec4 T(get_T_term(polynomial[0]), get_T_term(polynomial[1]),
-			 get_T_term(polynomial[2]), get_T_term(polynomial[3]));
+		vec4 T(get_T_term(polynomial[0]), get_T_term(polynomial[1]),
+			   get_T_term(polynomial[2]), get_T_term(polynomial[3]));
 
-	  return points * basis * T;
-  }
+		return points * basis * T;
+	}
 
-  vec3 BezierPath::evaluate_at(float t,
-							   const BezierCurve::CurvePolynomial & polynomial) const
-  {
-	  if (handles.size() < 1)
-	  {
-		  throw std::logic_error(EXC_MSG("A bezier path must have at least 1"
-										 "handle to define a full curve"));
-	  }
+	vec3 BezierPath::evaluate_at(
+		float t,
+		const BezierCurve::CurvePolynomial & polynomial) const
+	{
+		if (handles.size() < 1)
+		{
+			throw std::logic_error(EXC_MSG("A bezier path must have at least 1"
+										   "handle to define a full curve"));
+		}
 
-	  if (!verify_domain(t, BezierCurve::min_t, BezierCurve::max_t))
-	  {
-		  throw std::domain_error(
-			  EXC_MSG("A bezier path cannot be evaluated at a"
-					  " range outside [0, 1]"));
-	  }
+		if (!verify_domain(t, BezierCurve::min_t, BezierCurve::max_t))
+		{
+			throw std::domain_error(
+				EXC_MSG("A bezier path cannot be evaluated at a"
+						" range outside [0, 1]"));
+		}
 
-	  size_t num_curves = handles.size();
+		size_t num_curves = handles.size();
 
-	  auto offset_t = t * num_curves;
-	  float offset_t_floor = glm::floor(offset_t);
+		auto offset_t = t * num_curves;
+		float offset_t_floor = glm::floor(offset_t);
 
-	  size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
-	  size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
+		size_t first_handle_idx = static_cast<size_t>(offset_t_floor);
+		size_t second_handle_idx = static_cast<size_t>(offset_t_floor + 1.0f);
 
-	  if constexpr (debug)
-	  {
-		  if (first_handle_idx == second_handle_idx)
-		  {
-			  throw std::logic_error(
-				  EXC_MSG("Handles for path curve were identical"));
-		  }
-	  }
+		if constexpr (debug)
+		{
+			if (first_handle_idx == second_handle_idx)
+			{
+				throw std::logic_error(
+					EXC_MSG("Handles for path curve were identical"));
+			}
+		}
 
-	  const math::BezierHandle * first_handle;
-	  const math::BezierHandle * second_handle;
+		const math::BezierHandle * first_handle;
+		const math::BezierHandle * second_handle;
 
-	  if (second_handle_idx == handles.size())
-	  {
-		  first_handle = &handles.at(first_handle_idx);
-		  second_handle = &handles.at(0);
-	  }
-	  else
-	  {
-		  first_handle = &handles.at(first_handle_idx);
-		  second_handle = &handles.at(second_handle_idx);
-	  }
+		if (second_handle_idx == handles.size())
+		{
+			first_handle = &handles.at(first_handle_idx);
+			second_handle = &handles.at(0);
+		}
+		else
+		{
+			first_handle = &handles.at(first_handle_idx);
+			second_handle = &handles.at(second_handle_idx);
+		}
 
-	  vec3 p0 = first_handle->interp_point;
-	  vec3 p1 = first_handle->opposite_control_point();
-	  vec3 p2 = second_handle->control_point;
-	  vec3 p3 = second_handle->interp_point;
+		vec3 p0 = first_handle->interp_point;
+		vec3 p1 = first_handle->opposite_control_point();
+		vec3 p2 = second_handle->control_point;
+		vec3 p3 = second_handle->interp_point;
 
-	  return BezierCurve(p0, p1, p2, p3)
-		  .evaluate_at(offset_t - offset_t_floor, polynomial);
-  }
+		return BezierCurve(p0, p1, p2, p3)
+			.evaluate_at(offset_t - offset_t_floor, polynomial);
+	}
 
-  vector<vec3>
-  BezierPath::evaluate_at(const vector<float> & ts,
-						  const BezierCurve::CurvePolynomial & polynomial) const
-  {
-	  vector<vec3> result(ts.size());
-	  std::transform(
-		  ts.cbegin(), ts.cend(), result.begin(),
-		  [&](const float t) { return this->evaluate_at(t, polynomial); });
-	  return result;
-  }
+	vector<vec3> BezierPath::evaluate_at(
+		const vector<float> & ts,
+		const BezierCurve::CurvePolynomial & polynomial) const
+	{
+		vector<vec3> result(ts.size());
+		std::transform(
+			ts.cbegin(), ts.cend(), result.begin(),
+			[&](const float t) { return this->evaluate_at(t, polynomial); });
+		return result;
+	}
 
-  vector<vec3>
-  BezierPath::sample(unsigned int samples_per_path,
-					 const BezierCurve::CurvePolynomial & polynomial) const
-  {
-	  const size_t num_samples = samples_per_path * handles.size();
-	  vector<float> ts(num_samples);
-	  const float step = 1.0f / (num_samples);
-	  std::iota(ts.begin(), ts.end(), math::Stepper(0.0f, step));
+	vector<vec3>
+	BezierPath::sample(unsigned int samples_per_path,
+					   const BezierCurve::CurvePolynomial & polynomial) const
+	{
+		const size_t num_samples = samples_per_path * handles.size();
+		vector<float> ts(num_samples);
+		const float step = 1.0f / (num_samples);
+		std::iota(ts.begin(), ts.end(), math::Stepper(0.0f, step));
 
-	  return evaluate_at(ts, polynomial);
-  }
+		return evaluate_at(ts, polynomial);
+	}
 
-  bool compare_by_x(vec3 v1, vec3 v2) { return v1.x < v2.x; }
+	bool compare_by_x(vec3 v1, vec3 v2) { return v1.x < v2.x; }
 
-  bool compare_by_y(vec3 v1, vec3 v2) { return v1.y < v2.y; }
+	bool compare_by_y(vec3 v1, vec3 v2) { return v1.y < v2.y; }
 
-  bool compare_by_z(vec3 v1, vec3 v2) { return v1.z < v2.z; }
+	bool compare_by_z(vec3 v1, vec3 v2) { return v1.z < v2.z; }
 
-  bool compare_by_x_abs(vec3 v1, vec3 v2)
-  {
-	  return glm::abs(v1.x) < glm::abs(v2.x);
+	bool compare_by_x_abs(vec3 v1, vec3 v2)
+	{
+		return glm::abs(v1.x) < glm::abs(v2.x);
 	}
 
 	bool compare_by_y_abs(vec3 v1, vec3 v2)
@@ -174,7 +186,8 @@ namespace glge::math
 
 	bool compare_by_magnitude(vec3 v1, vec3 v2)
 	{
-		return glm::length(v1) < glm::length(v2);
+		// Cheaper to compare length squared (no square root needed)
+		return glm::length2(v1) < glm::length2(v2);
 	}
 
 	vec3
@@ -187,42 +200,9 @@ namespace glge::math
 		// Distance from ball center must be at least 1
 		float d = std::max(glm::length(v), 1.0f);
 
-		v.z = glm::sqrt(1.001f - d * d);
+		// Remaining component is in z-direction
+		v.z = glm::sqrt(std::nextafter(1.0f, 2.0f) - d * d);
 
 		return glm::normalize(v);
-	}
-
-	quat rotation_between_vectors(vec3 start, vec3 target)
-	{
-		start = normalize(start);
-		target = normalize(target);
-
-		float cos_theta = glm::dot(start, target);
-		vec3 rotation_axis;
-
-		if (cos_theta < std::nextafter(-1.0f, 0.0f))
-		{
-			// special case when vectors in opposite directions:
-			// there is no "ideal" rotation axis
-			// So guess one; any will do as long as it's perpendicular to start
-			rotation_axis = cross(vec3(0.0f, 0.0f, 1.0f), start);
-
-			if (glm::length2(rotation_axis) < std::nextafter(0.0f, 1.0f))
-			{
-				// parallel - try again
-				rotation_axis = cross(vec3(1.0f, 0.0f, 0.0f), start);
-			}
-
-			rotation_axis = glm::normalize(rotation_axis);
-			return glm::angleAxis(glm::radians(180.0f), rotation_axis);
-		}
-
-		rotation_axis = cross(start, target);
-
-		float s = sqrt((1 + cos_theta) * 2);
-		float invs = 1 / s;
-
-		return quat(s * 0.5f, rotation_axis.x * invs, rotation_axis.y * invs,
-					rotation_axis.z * invs);
 	}
 }   // namespace glge::math

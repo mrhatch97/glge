@@ -9,6 +9,13 @@
 constexpr int test_fail_code = -1;
 constexpr std::uint32_t test_rand_seed = 1754195816U;
 
+constexpr float fp_epsilon = 0.001f;
+
+static bool vec3_eq(glm::vec3 a, glm::vec3 b)
+{
+	return glm::all(glm::lessThan(glm::abs(a - b), glm::vec3(fp_epsilon)));
+}
+
 template<typename T = void (*)()>
 class Test
 {

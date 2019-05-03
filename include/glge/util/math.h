@@ -268,7 +268,9 @@ namespace glge::math
 		/// Distance from the nearest point on the plane to the given point.
 		/// Negative if the point is "outside" the plane.
 		/// </returns>
-		float distance_from(const vec3 & pt) const;
+		float distance_from(vec3 pt) const;
+
+    bool operator==(Plane other) const;
 	};
 
 	/// <summary>A geometric pyramidal frustum.</summary>
@@ -291,6 +293,18 @@ namespace glge::math
 		Frustum(const std::array<Plane, 6> & planes);
 	};
 
+  /// <summary>
+  /// Test whether a point lies on a Plane.
+  /// </summary>
+  /// <param name="plane">
+  /// Plane to test against.
+  /// </param>
+  /// <param name="point>
+  /// Point to test.
+  /// </param>
+  /// <returns>True if plane contains point.</returns>
+  bool contains(Plane plane, vec3 point);
+
 	/// <summary>
 	/// Test whether a Sphere is inside a Plane.
 	/// The normal vector of a plane points towards the "inside" direction.
@@ -301,150 +315,165 @@ namespace glge::math
 	/// <summary>
 	/// Test whether a Sphere is inside a Frustum.
 	/// </summary>
-	bool contains(Frustum frustum, Sphere sphere);
+	bool contains(const Frustum & frustum, Sphere sphere);
 
-  struct PolynomialTerm
-  {
-    float coefficient;
-    float power;
-  };
+	struct PolynomialTerm
+	{
+		float coefficient;
+		float power;
+	};
 
-  /// <summary>
-  /// Representation of a cubic Bezier curve.
-  /// </summary>
-  class BezierCurve
-  {
-  private:
-	  const mat4 points;
-	  static const mat4 basis;
+	/// <summary>
+	/// Representation of a cubic Bezier curve.
+	/// </summary>
+	class BezierCurve
+	{
+	private:
+		const mat4 points;
+		static const mat4 basis;
 
-  public:
-	  static constexpr float min_t = 0.0f;
-	  static constexpr float max_t = 1.0f;
+	public:
+		static constexpr float min_t = 0.0f;
+		static constexpr float max_t = 1.0f;
 
-	  using CurvePolynomial = std::array<PolynomialTerm, 4>;
+		using CurvePolynomial = std::array<PolynomialTerm, 4>;
 
-	  static constexpr CurvePolynomial value_polynomial = {
-		  PolynomialTerm{1.0f, 3.0f}, PolynomialTerm{1.0f, 2.0f},
-		  PolynomialTerm{1.0f, 1.0f}, PolynomialTerm{1.0f, 0.0f}};
+		static constexpr CurvePolynomial value_polynomial = {
+			PolynomialTerm{1.0f, 3.0f}, PolynomialTerm{1.0f, 2.0f},
+			PolynomialTerm{1.0f, 1.0f}, PolynomialTerm{1.0f, 0.0f}};
 
-	  static constexpr CurvePolynomial velocity_polynomial = {
-		  PolynomialTerm{3.0f, 2.0f}, PolynomialTerm{2.0f, 1.0f},
-		  PolynomialTerm{1.0f, 0.0f}, PolynomialTerm{0.0f, 0.0f}};
+		static constexpr CurvePolynomial velocity_polynomial = {
+			PolynomialTerm{3.0f, 2.0f}, PolynomialTerm{2.0f, 1.0f},
+			PolynomialTerm{1.0f, 0.0f}, PolynomialTerm{0.0f, 0.0f}};
 
-	  /// <summary>
-	  /// Constructs a BezierCurve with the given 4 control points.
-	  /// </summary>
-	  BezierCurve(const vec3 & p0,
-				  const vec3 & p1,
-				  const vec3 & p2,
-				  const vec3 & p3);
+		/// <summary>
+		/// Constructs a BezierCurve with the given 4 control points.
+		/// </summary>
+		BezierCurve(const vec3 & p0,
+					const vec3 & p1,
+					const vec3 & p2,
+					const vec3 & p3);
 
-	  /// <summary>
-	  /// Compute the point on the curve for the given value of t.
-	  /// </summary>
-	  /// <param name="t">
-	  /// Control parameter; must be in the range [0, 1]. Describes the
-	  /// progress along the curve of the point.
-	  /// </param>
-	  /// <returns>Computed point.</returns>
-	  vec3 evaluate_at(const float t, const CurvePolynomial & polynomial) const;
-  };
+		/// <summary>
+		/// Compute the point on the curve for the given value of t.
+		/// </summary>
+		/// <param name="t">
+		/// Control parameter; must be in the range [0, 1]. Describes the
+		/// progress along the curve of the point.
+		/// </param>
+		/// <returns>Computed point.</returns>
+		vec3 evaluate_at(const float t,
+						 const CurvePolynomial & polynomial) const;
+	};
 
-  /// <summary>
-  /// Handle on a Bezier path to enforce C1 continuity.
-  /// </summary>
-  struct BezierHandle
-  {
-	  /// <summary>Interpolating point; point on the curve.</summary>
-	  vec3 interp_point;
-	  /// <summary>Control point; one side of the handle.</summary>
-	  vec3 control_point;
+	/// <summary>
+	/// Handle on a Bezier path to enforce C1 continuity.
+	/// </summary>
+	struct BezierHandle
+	{
+		/// <summary>Interpolating point; point on the curve.</summary>
+		vec3 interp_point;
+		/// <summary>Control point; one side of the handle.</summary>
+		vec3 control_point;
 
-	  /// <summary>Control point on the opposite side of the handle.</summary>
-	  /// <returns>
-	  /// Control point on the line between the interpolating point
-	  /// and concrete control point.
-	  /// </returns>
-	  vec3 opposite_control_point() const
-	  {
-		  return interp_point - (control_point - interp_point);
-	  }
-  };
+		/// <summary>Control point on the opposite side of the handle.</summary>
+		/// <returns>
+		/// Control point on the line between the interpolating point
+		/// and concrete control point.
+		/// </returns>
+		vec3 opposite_control_point() const
+		{
+			return interp_point - (control_point - interp_point);
+		}
+	};
 
-  /// <summary>
-  /// A series of one or more BezierHandles defining a
-  /// composite Bezier curve. The curve is automatically closed; an implicit
-  /// extra handle is added that links the last specified handle to the first 
-  /// handle.
-  /// </summary>
-  class BezierPath
-  {
-  public:
-	  /// <summary>
-	  /// Collection of control handles. Must be at least 1.
-	  /// </summary>
-	  std::vector<BezierHandle> handles;
+	/// <summary>
+	/// A series of one or more BezierHandles defining a
+	/// composite Bezier curve. The curve is automatically closed; an implicit
+	/// extra handle is added that links the last specified handle to the first
+	/// handle.
+	/// </summary>
+	class BezierPath
+	{
+	public:
+		/// <summary>
+		/// Collection of control handles. Must be at least 1.
+		/// </summary>
+		std::vector<BezierHandle> handles;
 
-	  /// <summary>
-	  /// Compute the point on the composite curve for the given value of t.
-	  /// </summary>
-	  /// <param name="t">
-	  /// Control parameter; must be in the range [0, 1]. Describes the
-	  /// progress along the curve of the point.
-	  /// </param>
-	  /// <returns>Computed point.</returns>
-	  vec3 evaluate_at(float t,
-					   const BezierCurve::CurvePolynomial & polynomial) const;
+		/// <summary>
+		/// Compute the point on the composite curve for the given value of t.
+		/// </summary>
+		/// <param name="t">
+		/// Control parameter; must be in the range [0, 1]. Describes the
+		/// progress along the curve of the point.
+		/// </param>
+		/// <returns>Computed point.</returns>
+		vec3 evaluate_at(float t,
+						 const BezierCurve::CurvePolynomial & polynomial) const;
 
-	  /// <summary>
-	  /// Compute a set of points on the composite curve for the given
-	  /// values of t.
-	  /// </summary>
-	  /// <param name="ts">
-	  /// Control parameters; must be in the range [0, 1]. Each describes the
-	  /// progress along the curve of the point.
-	  /// </param>
-	  /// <returns>Computed points.</returns>
-	  vector<vec3>
-	  evaluate_at(const vector<float> & ts,
-				  const BezierCurve::CurvePolynomial & polynomial) const;
+		/// <summary>
+		/// Compute a set of points on the composite curve for the given
+		/// values of t.
+		/// </summary>
+		/// <param name="ts">
+		/// Control parameters; must be in the range [0, 1]. Each describes the
+		/// progress along the curve of the point.
+		/// </param>
+		/// <returns>Computed points.</returns>
+		vector<vec3>
+		evaluate_at(const vector<float> & ts,
+					const BezierCurve::CurvePolynomial & polynomial) const;
 
-	  /// <summary>
-	  /// Compute a set of equidistant points on the composite curve.
-	  /// </summary>
-	  /// <param name="samples_per_path">
-	  /// Number of sample points to compute.
-	  /// </param>
-	  /// <returns>Computed points.</returns>
-	  vector<vec3>
-	  sample(unsigned int samples_per_path,
-			 const BezierCurve::CurvePolynomial & polynomial) const;
-  };
+		/// <summary>
+		/// Compute a set of equidistant points on the composite curve.
+		/// </summary>
+		/// <param name="samples_per_path">
+		/// Number of sample points to compute.
+		/// </param>
+		/// <returns>Computed points.</returns>
+		vector<vec3>
+		sample(unsigned int samples_per_path,
+			   const BezierCurve::CurvePolynomial & polynomial) const;
+	};
 
 	/// <summary>Compare vectors by x-coordinate value.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_x(vec3, vec3);
+	bool compare_by_x(vec3 a, vec3 b);
 	/// <summary>Compare vectors by y-coordinate value.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_y(vec3, vec3);
+	bool compare_by_y(vec3 a, vec3 b);
 	/// <summary>Compare vectors by z-coordinate value.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_z(vec3, vec3);
+	bool compare_by_z(vec3 a, vec3 b);
 
 	/// <summary>Compare vectors by x-coordinate absolute value.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_x_abs(vec3, vec3);
+	bool compare_by_x_abs(vec3 a, vec3 b);
 	/// <summary>Compare vectors by y-coordinate absolute value.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_y_abs(vec3, vec3);
+	bool compare_by_y_abs(vec3 a, vec3 b);
 	/// <summary>Compare vectors by z-coordinate absolute value.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_z_abs(vec3, vec3);
+	bool compare_by_z_abs(vec3 a, vec3 b);
 
 	/// <summary>Compare vectors by magnitude.</summary>
+  /// <param name="a">First vector.</param>
+  /// <param name="b">Second vector.</param>
 	/// <returns>True if first vector is less than second.</returns>
-	bool compare_by_magnitude(vec3, vec3);
+	bool compare_by_magnitude(vec3 a, vec3 b);
 
 	/// <summary>
 	/// Compute a normalized vector from the center of a virtual ball
@@ -454,16 +483,7 @@ namespace glge::math
 	/// <param name="window_height">Height of the window.</param>
 	/// <param name="x">x-coordinate in window.</param>
 	/// <param name="y">y-coordinate in window.</param>
-  /// <returns>Computed trackball point.</returns>
+	/// <returns>Computed trackball point.</returns>
 	vec3
 	trackball_point(float window_width, float window_height, float x, float y);
-
-	/// <summary>
-	/// Compute a rotation quaternion to rotate from one direction vector to
-	/// another.
-	/// </summary>
-	/// <param name="start">Vector to rotate from.</param>
-	/// <param name="target">Vector to rotate to.</param>
-  /// <returns>Computed rotation quaternion between vectors.</returns>
-	quat rotation_between_vectors(vec3 start, vec3 target);
 }   // namespace glge::math
