@@ -10,13 +10,10 @@
 
 #include <cstdio>
 #include <chrono>
-#include <forward_list>
 #include <functional>
 #include <sstream>
 #include <stack>
 #include <stdexcept>
-#include <string>
-#include <tuple>
 
 /// <summary>Get an exception message formatted with extra debug info.</summary>
 /// Produces an exception message with extra source file information

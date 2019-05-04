@@ -2,23 +2,28 @@
 
 namespace glge::renderer
 {
+	static constexpr float plane_height(math::Radians v_fov, float distance)
+	{
+		return 2 * glm::tan(static_cast<float>(v_fov) / 2.0f) * distance;
+	}
+
 	vec2 CameraIntrinsics::near_dimensions() const
 	{
-		auto height = 2 * glm::tan(glm::radians(v_fov) / 2.0f) * near_distance;
+		auto height = plane_height(v_fov, near_distance);
 
 		return vec2(height * aspect_ratio, height);
 	}
 
 	vec2 CameraIntrinsics::far_dimensions() const
 	{
-		auto height = 2 * glm::tan(glm::radians(v_fov) / 2.0f) * far_distance;
+		auto height = plane_height(v_fov, far_distance);
 
 		return vec2(height * aspect_ratio, height);
 	}
 
 	mat4 CameraIntrinsics::get_P() const
 	{
-		return glm::perspective(glm::radians(v_fov), aspect_ratio,
+		return glm::perspective(static_cast<float>(v_fov), aspect_ratio,
 								near_distance, far_distance);
 	}
 
@@ -49,9 +54,28 @@ namespace glge::renderer
 		return world2cam;
 	}
 
+	// TODO Switch this to a templated lambda with C++20
+    /*              ___far clip__
+     *              \     |     /
+     *               \    |    /
+     *                \   |   /
+     *     near clip-->\_____/<-- Computes the directional vector to this intersection
+     *                  \ | /     (example for right axis)
+     *                   \|/
+     *                    c
+     */
+	template<typename AxisT>
+	static vec3 compute_corner(const Camera & cam, vec3 near_center)
+	{
+		return glm::normalize(
+			near_center + 
+			(AxisT::signum * vec3(cam.placement.transform[AxisT::idx]) *
+			 cam.intrinsics.near_dimensions()[AxisT::idx] / 2.0f) -
+			cam.placement.get_position());
+	}
+
 	math::Frustum Camera::get_view_frustum() const
 	{
-		auto near_dimensions = intrinsics.near_dimensions();
 		auto right_vec = placement.get_right_direction();
 		auto camera_vec = placement.get_forward_direction();
 		auto up_vec = placement.get_up_direction();
@@ -63,20 +87,20 @@ namespace glge::renderer
 		math::Plane near(near_center, camera_vec);
 		math::Plane far(far_center, -camera_vec);
 
-		auto right_plane_normal = glm::normalize(
-			(near_center + right_vec * near_dimensions.x / 2.0f) - cam_pos);
-		auto left_plane_normal = glm::normalize(
-			(near_center - right_vec * near_dimensions.x / 2.0f) - cam_pos);
-		auto top_plane_normal = glm::normalize(
-			(near_center + up_vec * near_dimensions.y / 2.0f) - cam_pos);
-		auto bottom_plane_normal = glm::normalize(
-			(near_center - up_vec * near_dimensions.y / 2.0f) - cam_pos);
+		auto right_corner =
+			compute_corner<util::CoordSys::Right>(*this, near_center);
+		auto left_corner =
+			compute_corner<util::CoordSys::Left>(*this, near_center);
+		auto top_corner =
+			compute_corner<util::CoordSys::Up>(*this, near_center);
+		auto bottom_corner =
+			compute_corner<util::CoordSys::Down>(*this, near_center);
 
-		math::Plane right(cam_pos, glm::cross(up_vec, right_plane_normal));
-		math::Plane left(cam_pos, -glm::cross(up_vec, left_plane_normal));
-		math::Plane top(cam_pos, -glm::cross(right_vec, top_plane_normal));
-		math::Plane bottom(cam_pos, glm::cross(right_vec, bottom_plane_normal));
+		math::Plane right(cam_pos, -glm::cross(up_vec, right_corner));
+		math::Plane left(cam_pos, glm::cross(up_vec, left_corner));
+		math::Plane top(cam_pos, glm::cross(right_vec, top_corner));
+		math::Plane bottom(cam_pos, -glm::cross(right_vec, bottom_corner));
 
-		return std::array<math::Plane, 6>{near, far, right, left, top, bottom};
+		return math::Frustum({near, far, left, right, bottom, top});
 	}
 }   // namespace glge::renderer

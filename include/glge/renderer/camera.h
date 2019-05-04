@@ -19,9 +19,9 @@ namespace glge::renderer
 	struct CameraIntrinsics
 	{
 		/// <summary>
-		/// Vertical Field of View; how high the view area is, in degrees.
+		/// Vertical Field of View; how high the view area is.
 		/// </summary>
-		float v_fov;
+        math::Radians v_fov;
 		/// <summary>Aspect ratio; ratio of width to height of image.</summary>
 		float aspect_ratio;
 		/// <summary>Distance to the camera's near clip plane.</summary>
