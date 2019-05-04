@@ -2,7 +2,8 @@
 
 #include "test_utils.h"
 
-using namespace glge;
+namespace glge::test
+{
 using namespace glge::renderer::primitive;
 
 void test_load()
@@ -17,6 +18,9 @@ void test_load()
 	test_equal(178U * 3, data.normal_data.indices.size());
 	test_equal(178U * 3, data.uv_data.indices.size());
 }
+}
+
+using namespace glge::test;
 
 int main()
 {

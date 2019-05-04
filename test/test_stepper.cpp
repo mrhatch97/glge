@@ -2,54 +2,58 @@
 
 #include "test_utils.h"
 
-using namespace glge;
-using namespace glge::math;
-
-void test_0_step()
+namespace glge::test
 {
-	Stepper<int> stepper(3, 0);
+	using namespace glge::math;
 
-	stepper++;
-	stepper++;
+	void test_0_step()
+	{
+		Stepper<int> stepper(3, 0);
 
-	test_equal(3, stepper);
+		stepper++;
+		stepper++;
 
-	stepper--;
+		test_equal(3, stepper);
 
-	test_equal(3, stepper);
-}
+		stepper--;
 
-void test_positive_step()
-{
-	Stepper<int> stepper(0, 3);
+		test_equal(3, stepper);
+	}
 
-	stepper++;
-	stepper++;
+	void test_positive_step()
+	{
+		Stepper<int> stepper(0, 3);
 
-	test_equal(6, stepper);
+		stepper++;
+		stepper++;
 
-	stepper--;
-	stepper--;
-	stepper--;
+		test_equal(6, stepper);
 
-	test_equal(-3, stepper);
-}
+		stepper--;
+		stepper--;
+		stepper--;
 
-void test_negative_step()
-{
-	Stepper<int> stepper(0, -3);
+		test_equal(-3, stepper);
+	}
 
-	stepper++;
-	stepper++;
+	void test_negative_step()
+	{
+		Stepper<int> stepper(0, -3);
 
-	test_equal(-6, stepper);
+		stepper++;
+		stepper++;
 
-	stepper--;
-	stepper--;
-	stepper--;
+		test_equal(-6, stepper);
 
-	test_equal(3, stepper);
-}
+		stepper--;
+		stepper--;
+		stepper--;
+
+		test_equal(3, stepper);
+	}
+}   // namespace glge::test
+
+using namespace glge::test;
 
 int main()
 {

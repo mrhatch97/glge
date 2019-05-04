@@ -2,71 +2,76 @@
 
 #include "test_utils.h"
 
-using namespace glge::event;
-
-static const int test_val = 30;
-
-void test_basic()
+namespace glge::test
 {
-	bool success = false;
-	Event<int> event;
+	using namespace glge::event;
 
-	event.register_handler([&](int arg) {
-		if (arg == test_val)
-		{
-			success = true;
-		}
-	});
+	static const int test_val = 30;
 
-	event.raise(30);
+	void test_basic()
+	{
+		bool success = false;
+		Event<int> event;
 
-	test_assert(success, "Value was not set");
-}
+		event.register_handler([&](int arg) {
+			if (arg == test_val)
+			{
+				success = true;
+			}
+		});
 
-void test_unsubscribe()
-{
-	bool success = true;
-	Event<int> event;
+		event.raise(30);
 
-	auto subscription = event.register_handler([&](int arg) {
-		if (arg == test_val)
-		{
-			success = false;
-		}
-	});
+		test_assert(success, "Value was not set");
+	}
 
-	subscription.release();
+	void test_unsubscribe()
+	{
+		bool success = true;
+		Event<int> event;
 
-	event.raise(30);
+		auto subscription = event.register_handler([&](int arg) {
+			if (arg == test_val)
+			{
+				success = false;
+			}
+		});
 
-	test_assert(success, "Event was not unsubscribed");
-}
+		subscription.release();
 
-void test_multiple()
-{
-	int call_count = 0;
-	Event<int> event;
+		event.raise(30);
 
-	auto handler = [&](int arg) {
-		if (arg == test_val)
-		{
-			call_count++;
-		}
-	};
+		test_assert(success, "Event was not unsubscribed");
+	}
 
-	auto sub1 = event.register_handler(handler);
-	event.register_handler(handler);
-	auto sub3 = event.register_handler(handler);
-	event.register_handler(handler);
-	event.register_handler(handler);
+	void test_multiple()
+	{
+		int call_count = 0;
+		Event<int> event;
 
-	sub1.release();
-	sub3.release();
+		auto handler = [&](int arg) {
+			if (arg == test_val)
+			{
+				call_count++;
+			}
+		};
 
-	event.raise(test_val);
+		auto sub1 = event.register_handler(handler);
+		event.register_handler(handler);
+		auto sub3 = event.register_handler(handler);
+		event.register_handler(handler);
+		event.register_handler(handler);
 
-	test_equal(3, call_count);
-}
+		sub1.release();
+		sub3.release();
+
+		event.raise(test_val);
+
+		test_equal(3, call_count);
+	}
+}   // namespace glge::test
+
+using namespace glge::test;
 
 int main()
 {

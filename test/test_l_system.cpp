@@ -2,54 +2,59 @@
 
 #include "test_utils.h"
 
-using namespace glge::proc_gen;
-
-// Examples taken from: 
-// https://en.wikipedia.org/wiki/L-system#Example_1:_Algae
-
-void test_trivial()
+namespace glge::test
 {
-	const LString init = {'A'};
-	const std::unordered_map<Variable, LString> rules{{'A', {'A', 'B'}},
-												{'B', {'A'}}};
+	using namespace glge::proc_gen;
 
-	const LString result = d0L_system(init, rules, 0);
+	// Examples taken from:
+	// https://en.wikipedia.org/wiki/L-system#Example_1:_Algae
 
-	const LString expected = {'A'};
+	void test_trivial()
+	{
+		const LString init = {'A'};
+		const std::unordered_map<Variable, LString> rules{{'A', {'A', 'B'}},
+														  {'B', {'A'}}};
 
-	test_assert(expected == result, "Unexpected trivial result");
-}
+		const LString result = d0L_system(init, rules, 0);
 
-void test_step()
-{
-	const LString init = {'A'};
-	const std::unordered_map<Variable, LString> rules{{'A', {'A', 'B'}},
-												{'B', {'A'}}};
+		const LString expected = {'A'};
 
-	const LString result = d0L_system(init, rules, 1);
+		test_assert(expected == result, "Unexpected trivial result");
+	}
 
-	const LString expected = {'A', 'B'};
+	void test_step()
+	{
+		const LString init = {'A'};
+		const std::unordered_map<Variable, LString> rules{{'A', {'A', 'B'}},
+														  {'B', {'A'}}};
 
-	test_assert(expected == result, "Unexpected step result");
-}
+		const LString result = d0L_system(init, rules, 1);
 
-void test_algae()
-{
-	const LString init = {'A'};
-	const std::unordered_map<Variable, LString> rules{{'A', {'A', 'B'}},
-												{'B', {'A'}}};
+		const LString expected = {'A', 'B'};
 
-	const LString result = d0L_system(init, rules, 5);
+		test_assert(expected == result, "Unexpected step result");
+	}
 
-	const LString expected = {'A', 'B', 'A', 'A', 'B', 'A', 'B',
-						'A', 'A', 'B', 'A', 'A', 'B'};
+	void test_algae()
+	{
+		const LString init = {'A'};
+		const std::unordered_map<Variable, LString> rules{{'A', {'A', 'B'}},
+														  {'B', {'A'}}};
 
-	test_assert(expected == result, "Unexpected algae result");
-}
+		const LString result = d0L_system(init, rules, 5);
+
+		const LString expected = {'A', 'B', 'A', 'A', 'B', 'A', 'B',
+								  'A', 'A', 'B', 'A', 'A', 'B'};
+
+		test_assert(expected == result, "Unexpected algae result");
+	}
+}   // namespace glge::test
+
+using namespace glge::test;
 
 int main()
 {
-  Test(test_trivial).run();
-  Test(test_step).run();
+	Test(test_trivial).run();
+	Test(test_step).run();
 	Test(test_algae).run();
 }

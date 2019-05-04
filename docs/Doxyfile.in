@@ -779,7 +779,7 @@ WARN_IF_DOC_ERROR      = YES
 # EXTRACT_ALL is set to YES then this flag will automatically be disabled.
 # The default value is: NO.
 
-WARN_NO_PARAMDOC       = NO
+WARN_NO_PARAMDOC       = YES
 
 # If the WARN_AS_ERROR tag is set to YES then doxygen will immediately stop when
 # a warning is encountered.
@@ -814,6 +814,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = @PROJECT_SOURCE_DIR@/README.md \
+                         @PROJECT_SOURCE_DIR@/test \
                          @PROJECT_SOURCE_DIR@/include
 
 # This tag can be used to specify the character encoding of the source files

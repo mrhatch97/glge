@@ -8,6 +8,8 @@ namespace glge::test
 {
 	using namespace glge::math;
 
+	/// \test Tests whether a BezierCurve is correctly evaluated under normal
+	/// conditions.
 	void test_eval()
 	{
 		BezierCurve curve(vec3(0, 0, 0), vec3(0, 4.0f, 0), vec3(6.0f, 4.0f, 0),
@@ -19,6 +21,8 @@ namespace glge::test
 					"Result was incorrect");
 	}
 
+	/// \test Tests whether a BezierCurve rejects evaluation at invalid values
+	/// of t.
 	void test_eval_bad()
 	{
 		BezierCurve curve(vec3(0, 0, 0), vec3(0, 4.0f, 0), vec3(6.0f, 4.0f, 0),
@@ -32,6 +36,8 @@ namespace glge::test
 		});
 	}
 
+	/// \test Tests whether a BezierPath is correctly evaluated under normal
+	/// conditions.
 	void test_path_eval()
 	{
 		BezierPath path{{{vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, -4.0f, 0.0f)},
@@ -47,6 +53,8 @@ namespace glge::test
 					"Path result_2 was incorrect");
 	}
 
+	/// \test Tests whether a BezierPath rejects evaluation at invalid values
+	/// of t.
 	void test_path_eval_bad()
 	{
 		BezierPath path{{{vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, -4.0f, 0.0f)},

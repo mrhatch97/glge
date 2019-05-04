@@ -2,184 +2,189 @@
 
 #include "test_utils.h"
 
-using namespace glge::event::input;
-
-void test_single_key()
+namespace glge::test
 {
-	InputDispatcher dispatcher;
+	using namespace glge::event::input;
 
-	int recv_keys = 0;
+	void test_single_key()
+	{
+		InputDispatcher dispatcher;
 
-	const LogicalKey sent_key = KEY_J;
+		int recv_keys = 0;
 
-	dispatcher.key_press.register_handler([&](KeyInput input) {
-		if (input.key == sent_key)
-		{
-			recv_keys++;
-		}
-	});
+		const LogicalKey sent_key = KEY_J;
 
-	dispatcher.notify_key_input(PRESS, sent_key);
-	dispatcher.notify_key_input(RELEASE, sent_key);
+		dispatcher.key_press.register_handler([&](KeyInput input) {
+			if (input.key == sent_key)
+			{
+				recv_keys++;
+			}
+		});
 
-	test_equal(1, recv_keys);
-}
+		dispatcher.notify_key_input(PRESS, sent_key);
+		dispatcher.notify_key_input(RELEASE, sent_key);
 
-void test_repeat_key()
-{
-	InputDispatcher dispatcher;
+		test_equal(1, recv_keys);
+	}
 
-	int recv_keys = 0;
+	void test_repeat_key()
+	{
+		InputDispatcher dispatcher;
 
-	const LogicalKey sent_key = KEY_J;
+		int recv_keys = 0;
 
-	dispatcher.key_press.register_handler([&](KeyInput input) {
-		if (input.key == sent_key)
-		{
-			recv_keys++;
-		}
-	});
+		const LogicalKey sent_key = KEY_J;
 
-	dispatcher.notify_key_input(PRESS, sent_key);
-	dispatcher.poll_key_inputs();
-	dispatcher.poll_key_inputs();
-	dispatcher.notify_key_input(RELEASE, sent_key);
-	dispatcher.poll_key_inputs();
+		dispatcher.key_press.register_handler([&](KeyInput input) {
+			if (input.key == sent_key)
+			{
+				recv_keys++;
+			}
+		});
 
-	test_equal(3, recv_keys);
-}
+		dispatcher.notify_key_input(PRESS, sent_key);
+		dispatcher.poll_key_inputs();
+		dispatcher.poll_key_inputs();
+		dispatcher.notify_key_input(RELEASE, sent_key);
+		dispatcher.poll_key_inputs();
 
-void test_mouse_button()
-{
-	InputDispatcher dispatcher;
+		test_equal(3, recv_keys);
+	}
 
-	int recv_down = 0;
-	int recv_up = 0;
+	void test_mouse_button()
+	{
+		InputDispatcher dispatcher;
 
-	const LogicalButton sent_button = BUTTON_RIGHT;
+		int recv_down = 0;
+		int recv_up = 0;
 
-	dispatcher.mouse_down.register_handler([&](MouseDown input) {
-		if (input.button == sent_button)
-		{
-			recv_down++;
-		}
-	});
+		const LogicalButton sent_button = BUTTON_RIGHT;
 
-	dispatcher.mouse_up.register_handler([&](MouseUp input) {
-		if (input.button == sent_button)
-		{
-			recv_up++;
-		}
-	});
+		dispatcher.mouse_down.register_handler([&](MouseDown input) {
+			if (input.button == sent_button)
+			{
+				recv_down++;
+			}
+		});
 
-	dispatcher.notify_mouse_button(PRESS, sent_button, 0.0f, 0.0f);
-	dispatcher.notify_mouse_button(RELEASE, sent_button, 0.0f, 0.0f);
-	dispatcher.notify_mouse_button(PRESS, sent_button, 0.0f, 0.0f);
-	dispatcher.notify_mouse_button(RELEASE, sent_button, 0.0f, 0.0f);
+		dispatcher.mouse_up.register_handler([&](MouseUp input) {
+			if (input.button == sent_button)
+			{
+				recv_up++;
+			}
+		});
 
-	test_equal(2, recv_down);
-	test_equal(2, recv_up);
-}
+		dispatcher.notify_mouse_button(PRESS, sent_button, 0.0f, 0.0f);
+		dispatcher.notify_mouse_button(RELEASE, sent_button, 0.0f, 0.0f);
+		dispatcher.notify_mouse_button(PRESS, sent_button, 0.0f, 0.0f);
+		dispatcher.notify_mouse_button(RELEASE, sent_button, 0.0f, 0.0f);
 
-void test_mouse_move()
-{
-	InputDispatcher dispatcher;
+		test_equal(2, recv_down);
+		test_equal(2, recv_up);
+	}
 
-	int move_ct = 0;
-	float last_x = 0.0f, last_y = 0.0f;
+	void test_mouse_move()
+	{
+		InputDispatcher dispatcher;
 
-	dispatcher.mouse_move.register_handler([&](MouseMove input) {
-		move_ct++;
-		last_x = input.cur_x;
-		last_y = input.cur_y;
-	});
+		int move_ct = 0;
+		float last_x = 0.0f, last_y = 0.0f;
 
-	dispatcher.notify_mouse_move(5.0f, 10.0f);
-	dispatcher.notify_mouse_move(30.0f, 50.0f);
-	dispatcher.notify_mouse_move(60.0f, -20.0f);
+		dispatcher.mouse_move.register_handler([&](MouseMove input) {
+			move_ct++;
+			last_x = input.cur_x;
+			last_y = input.cur_y;
+		});
 
-	test_equal(3, move_ct);
-	test_equal(60.0f, last_x);
-	test_equal(-20.0f, last_y);
-}
+		dispatcher.notify_mouse_move(5.0f, 10.0f);
+		dispatcher.notify_mouse_move(30.0f, 50.0f);
+		dispatcher.notify_mouse_move(60.0f, -20.0f);
 
-void test_mouse_drag()
-{
-	InputDispatcher dispatcher;
+		test_equal(3, move_ct);
+		test_equal(60.0f, last_x);
+		test_equal(-20.0f, last_y);
+	}
 
-	int drag_ct = 0;
-	float dist_x = 0.0f, dist_y = 0.0f;
+	void test_mouse_drag()
+	{
+		InputDispatcher dispatcher;
 
-	dispatcher.mouse_drag.register_handler([&](MouseDrag input) {
-		drag_ct++;
-		dist_x += input.delta_x;
-		dist_y += input.delta_y;
-	});
+		int drag_ct = 0;
+		float dist_x = 0.0f, dist_y = 0.0f;
 
-	dispatcher.notify_mouse_button(PRESS, BUTTON_LEFT, 0.0f, 0.0f);
-	dispatcher.notify_mouse_move(5.0f, 10.0f);
-	dispatcher.notify_mouse_move(30.0f, 50.0f);
-	dispatcher.notify_mouse_move(60.0f, -20.0f);
-	dispatcher.notify_mouse_button(RELEASE, BUTTON_LEFT, 60.0f, -20.0f);
-	dispatcher.notify_mouse_move(80.0f, 0.0f);
+		dispatcher.mouse_drag.register_handler([&](MouseDrag input) {
+			drag_ct++;
+			dist_x += input.delta_x;
+			dist_y += input.delta_y;
+		});
 
-	test_equal(3, drag_ct);
-	test_equal(60.0f, dist_x);
-	test_equal(-20.0f, dist_y);
-}
+		dispatcher.notify_mouse_button(PRESS, BUTTON_LEFT, 0.0f, 0.0f);
+		dispatcher.notify_mouse_move(5.0f, 10.0f);
+		dispatcher.notify_mouse_move(30.0f, 50.0f);
+		dispatcher.notify_mouse_move(60.0f, -20.0f);
+		dispatcher.notify_mouse_button(RELEASE, BUTTON_LEFT, 60.0f, -20.0f);
+		dispatcher.notify_mouse_move(80.0f, 0.0f);
 
-void test_mouse_scroll()
-{
-	InputDispatcher dispatcher;
+		test_equal(3, drag_ct);
+		test_equal(60.0f, dist_x);
+		test_equal(-20.0f, dist_y);
+	}
 
-	int scroll_ct = 0;
-	float dist_x = 0.0f, dist_y = 0.0f;
+	void test_mouse_scroll()
+	{
+		InputDispatcher dispatcher;
 
-	dispatcher.mouse_scroll.register_handler([&](MouseScroll input) {
-		scroll_ct++;
-		dist_x += input.delta_x;
-		dist_y += input.delta_y;
-	});
+		int scroll_ct = 0;
+		float dist_x = 0.0f, dist_y = 0.0f;
 
-	dispatcher.notify_mouse_scroll(5.0f, 10.0f);
-	dispatcher.notify_mouse_scroll(25.0f, 40.0f);
-	dispatcher.notify_mouse_scroll(30.0f, -70.0f);
+		dispatcher.mouse_scroll.register_handler([&](MouseScroll input) {
+			scroll_ct++;
+			dist_x += input.delta_x;
+			dist_y += input.delta_y;
+		});
 
-	test_equal(3, scroll_ct);
-	test_equal(60.0f, dist_x);
-	test_equal(-20.0f, dist_y);
-}
+		dispatcher.notify_mouse_scroll(5.0f, 10.0f);
+		dispatcher.notify_mouse_scroll(25.0f, 40.0f);
+		dispatcher.notify_mouse_scroll(30.0f, -70.0f);
 
-void test_mouse_drag_mods()
-{
-	InputDispatcher dispatcher;
+		test_equal(3, scroll_ct);
+		test_equal(60.0f, dist_x);
+		test_equal(-20.0f, dist_y);
+	}
 
-  int none_ct = 0;
-  int ctrl_ct = 0;
+	void test_mouse_drag_mods()
+	{
+		InputDispatcher dispatcher;
 
-	dispatcher.mouse_drag.register_handler([&](MouseDrag input) {
-      if(input.mods.none())
-      {
-        none_ct++; 
-      }
-      else if(input.mods[MOD_CTRL])
-      {
-        ctrl_ct++;
-      }
-	});
+		int none_ct = 0;
+		int ctrl_ct = 0;
 
-	dispatcher.notify_mouse_button(PRESS, BUTTON_LEFT, 0.0f, 0.0f);
-	dispatcher.notify_mouse_move(5.0f, 10.0f);
-  dispatcher.notify_mod_input(PRESS, MOD_CTRL);
-	dispatcher.notify_mouse_move(30.0f, 50.0f);
-	dispatcher.notify_mouse_move(30.0f, 55.0f);
-  dispatcher.notify_mod_input(RELEASE, MOD_CTRL);
-	dispatcher.notify_mouse_move(60.0f, -20.0f);
-	dispatcher.notify_mouse_button(RELEASE, BUTTON_LEFT, 60.0f, -20.0f);
-  
-  test_equal(2, none_ct);
-  test_equal(2, ctrl_ct);
-}
+		dispatcher.mouse_drag.register_handler([&](MouseDrag input) {
+			if (input.mods.none())
+			{
+				none_ct++;
+			}
+			else if (input.mods[MOD_CTRL])
+			{
+				ctrl_ct++;
+			}
+		});
+
+		dispatcher.notify_mouse_button(PRESS, BUTTON_LEFT, 0.0f, 0.0f);
+		dispatcher.notify_mouse_move(5.0f, 10.0f);
+		dispatcher.notify_mod_input(PRESS, MOD_CTRL);
+		dispatcher.notify_mouse_move(30.0f, 50.0f);
+		dispatcher.notify_mouse_move(30.0f, 55.0f);
+		dispatcher.notify_mod_input(RELEASE, MOD_CTRL);
+		dispatcher.notify_mouse_move(60.0f, -20.0f);
+		dispatcher.notify_mouse_button(RELEASE, BUTTON_LEFT, 60.0f, -20.0f);
+
+		test_equal(2, none_ct);
+		test_equal(2, ctrl_ct);
+	}
+}   // namespace glge::test
+
+using namespace glge::test;
 
 int main()
 {

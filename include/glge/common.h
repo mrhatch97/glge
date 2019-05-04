@@ -99,7 +99,6 @@ namespace glge
 	overloaded(Ts...)->overloaded<Ts...>;
 
 	/// <summary>Namespace for programming utilities.</summary>
-	///
 	/// Namespace containing various utility classes and functions used by glge.
 	namespace util
 	{}
@@ -109,15 +108,16 @@ namespace glge
 	namespace math
 	{}
 
-	/// <summary>Namespace for user input handling.</summary>
-	/// Namespace containing support for receiving and responding to user input.
-	namespace input
-	{}
-
-  /// <summary>Namespace for event-based message passing.</summary>
-  /// Namespace containing support for raising and handling events.
-  namespace event
-  {}
+	/// <summary>Namespace for event-based message passing.</summary>
+	/// Namespace containing support for raising and handling events.
+	namespace event
+	{
+		/// <summary>Namespace for user input handling.</summary>
+		/// Namespace containing support for receiving and responding to user
+		/// input.
+		namespace input
+		{}
+	}   // namespace event
 
 	/// <summary>Namespace for procedural generation functions.</summary>
 	/// Namespace containing functions for procedural generation of heightmaps
@@ -146,4 +146,8 @@ namespace glge
 		namespace scene_graph
 		{}
 	}   // namespace renderer
+
+    /// <summary>Namespace for glge tests.</summary>
+    /// Namespace for all test components for the glge library.
+    namespace test {}
 }   // namespace glge
