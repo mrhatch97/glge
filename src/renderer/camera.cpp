@@ -55,11 +55,20 @@ namespace glge::renderer
 	}
 
 	// TODO Switch this to a templated lambda with C++20
+    /*              ___far clip__
+     *              \     |     /
+     *               \    |    /
+     *                \   |   /
+     *     near clip-->\_____/<-- Computes the directional vector to this intersection
+     *                  \ | /     (example for right axis)
+     *                   \|/
+     *                    c
+     */
 	template<typename AxisT>
 	static vec3 compute_corner(const Camera & cam, vec3 near_center)
 	{
 		return glm::normalize(
-			near_center +
+			near_center + 
 			(AxisT::signum * vec3(cam.placement.transform[AxisT::idx]) *
 			 cam.intrinsics.near_dimensions()[AxisT::idx] / 2.0f) -
 			cam.placement.get_position());
