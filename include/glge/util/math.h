@@ -270,6 +270,16 @@ namespace glge::math
 		/// </returns>
 		float distance_from(vec3 pt) const;
 
+		/// <summary>
+		/// Test for mathematical equality with another plane.
+		/// </summary>
+		/// For planes to be considered equal, they must have equal normal
+		/// vectors and the point of the second must be coplanar with the first
+		/// plane.
+		/// <param name="other">
+		/// Plane to check equality with.
+		/// </param>
+		/// <returns>True if planes are equal.</returns>
 		bool operator==(Plane other) const;
 	};
 
@@ -299,7 +309,7 @@ namespace glge::math
 	/// <param name="plane">
 	/// Plane to test against.
 	/// </param>
-	/// <param name="point>
+	/// <param name="point">
 	/// Point to test.
 	/// </param>
 	/// <returns>True if plane contains point.</returns>
@@ -317,9 +327,20 @@ namespace glge::math
 	/// </summary>
 	bool contains(const Frustum & frustum, Sphere sphere);
 
+	/// <summary>
+	/// A term in a polynomial, e.g. 4x^2, where 4 is the coefficient and 2 is
+	/// the power.
+	/// </summary>
 	struct PolynomialTerm
 	{
+		/// <summary>
+		/// Coefficient of the term.
+		/// </summary>
 		float coefficient;
+
+		/// <summary>
+		/// Power to raise the term's base to.
+		/// </summary>
 		float power;
 	};
 
@@ -333,15 +354,29 @@ namespace glge::math
 		static const mat4 basis;
 
 	public:
+		/// <summary>Minimum value of t a curve can be evaluated at.</summary>
 		static constexpr float min_t = 0.0f;
+		/// <summary>Maximum value of t a curve can be evaluated at.</summary>
 		static constexpr float max_t = 1.0f;
 
+		/// <summary>
+		/// Type alias for an array of 4 polynomial terms.
+		/// </summary>
+		/// A Bezier curve is able to be described by a polynomial of 4 terms,
+		/// e.g. t^3 + t^2 + t + 1.
 		using CurvePolynomial = std::array<PolynomialTerm, 4>;
 
+		/// <summary>
+		/// The polynomial for evaluating a point on a Bezier curve.
+		/// </summary>
 		static constexpr CurvePolynomial value_polynomial = {
 			PolynomialTerm{1.0f, 3.0f}, PolynomialTerm{1.0f, 2.0f},
 			PolynomialTerm{1.0f, 1.0f}, PolynomialTerm{1.0f, 0.0f}};
 
+		/// <summary>
+		/// The first derivative of the value polynomial. Can be used to
+		/// evaluate e.g. the velocity along a Bezier curve.
+		/// </summary>
 		static constexpr CurvePolynomial velocity_polynomial = {
 			PolynomialTerm{3.0f, 2.0f}, PolynomialTerm{2.0f, 1.0f},
 			PolynomialTerm{1.0f, 0.0f}, PolynomialTerm{0.0f, 0.0f}};
@@ -360,6 +395,9 @@ namespace glge::math
 		/// <param name="t">
 		/// Control parameter; must be in the range [0, 1]. Describes the
 		/// progress along the curve of the point.
+		/// </param>
+		/// <param name="polynomial">
+		/// The polynomial to use to combine the points of the curve.
 		/// </param>
 		/// <returns>Computed point.</returns>
 		vec3 evaluate_at(const float t,
@@ -408,6 +446,9 @@ namespace glge::math
 		/// Control parameter; must be in the range [0, 1]. Describes the
 		/// progress along the curve of the point.
 		/// </param>
+		/// <param name="polynomial">
+		/// The polynomial to use to combine the points of the curve.
+		/// </param>
 		/// <returns>Computed point.</returns>
 		vec3 evaluate_at(float t,
 						 const BezierCurve::CurvePolynomial & polynomial) const;
@@ -420,6 +461,9 @@ namespace glge::math
 		/// Control parameters; must be in the range [0, 1]. Each describes the
 		/// progress along the curve of the point.
 		/// </param>
+		/// <param name="polynomial">
+		/// The polynomial to use to combine the points of the curve.
+		/// </param>
 		/// <returns>Computed points.</returns>
 		vector<vec3>
 		evaluate_at(const vector<float> & ts,
@@ -431,6 +475,9 @@ namespace glge::math
 		/// <param name="samples_per_path">
 		/// Number of sample points to compute.
 		/// </param>
+		/// <param name="polynomial">
+		/// The polynomial to use to combine the points of the curve.
+		/// </param>
 		/// <returns>Computed points.</returns>
 		vector<vec3>
 		sample(unsigned int samples_per_path,
@@ -439,33 +486,97 @@ namespace glge::math
 
 	struct Degrees;
 
+	/// <summary>
+	/// A strong typedef for float to a radian angle measurement.
+	/// </summary>
 	struct Radians
 	{
+		/// <summary>
+		/// Value of the angle, in radians.
+		/// </summary>
 		float value;
 
+		/// <summary>
+		/// Default-constructs a Radians wrapper; no initialization is performed
+		/// on the value.
+		/// </summary>
 		Radians() {}
 
+		/// <summary>
+		/// Constructs a Radians wrapper around the given float value.
+		/// </summary>
+		/// <param name="value">
+		/// Float value in radians.
+		/// </param>
 		explicit constexpr Radians(float value) noexcept : value(value) {}
 
+		/// <summary>
+		/// Constructs a Radians wrapper by copying another Radians object.
+		/// </summary>
+		/// <param name="other">
+		/// Radians to copy.
+		/// </param>
 		constexpr Radians(const Radians & other) = default;
 
+		/// <summary>
+		/// Constructs a Radians wrapper by converting a Degrees wrapper object.
+		/// </summary>
+		/// <param name="degrees">
+		/// Degrees object to convert from.
+		/// </param>
 		constexpr Radians(Degrees degrees) noexcept;
 
+		/// <summary>
+		/// Conversion operator to unwrap the radian float value.
+		/// </summary>
+		/// <returns>Radian value, as float.</returns>
 		constexpr operator float() const noexcept { return value; }
 	};
 
+	/// <summary>
+	/// A strong typedef for float to a degree angle measurement.
+	/// </summary>
 	struct Degrees
 	{
+		/// <summary>
+		/// Value of the angle, in degrees.
+		/// </summary>
 		float value;
 
+		/// <summary>
+		/// Default-constructs a Degrees wrapper; no initialization is performed
+		/// on the value.
+		/// </summary>
 		Degrees() {}
 
+		/// <summary>
+		/// Constructs a Degrees wrapper around the given float value.
+		/// </summary>
+		/// <param name="value">
+		/// Float value in degrees.
+		/// </param>
 		explicit constexpr Degrees(float value) noexcept : value(value) {}
 
+		/// <summary>
+		/// Constructs a Degrees wrapper by copying another Degrees object.
+		/// </summary>
+		/// <param name="other">
+		/// Degrees to copy.
+		/// </param>
 		constexpr Degrees(const Degrees & other) = default;
 
+		/// <summary>
+		/// Constructs a Degrees wrapper by converting a Radians wrapper object.
+		/// </summary>
+		/// <param name="radians">
+		/// Radians object to convert from.
+		/// </param>
 		constexpr Degrees(Radians radians) noexcept;
 
+		/// <summary>
+		/// Conversion operator to unwrap the degree float value.
+		/// </summary>
+		/// <returns>Degree value, as float.</returns>
 		constexpr operator float() const noexcept { return value; }
 	};
 
