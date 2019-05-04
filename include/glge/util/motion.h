@@ -25,6 +25,13 @@ namespace glge::util
 		/// orientation to the specified position and orientation.
 		mat4 transform;
 
+		Placement() noexcept : transform(1.0f) {}
+
+		explicit Placement(mat4 transform) noexcept : transform(transform) {}
+
+		Placement(const Placement & other) noexcept : transform(other.transform)
+		{}
+
 		/// <summary>
 		/// Get the right orientation vector.
 		/// </summary>
