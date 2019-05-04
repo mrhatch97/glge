@@ -8,17 +8,17 @@ namespace glge::test
 	{
 		util::Placement placement;
 
-		test_assert(vec3_eq(vec3(0.0f, 0.0f, 0.0f), placement.get_position()),
+		test_assert(vec_eq(vec3(0.0f, 0.0f, 0.0f), placement.get_position()),
 					"Default position was incorrect");
 
 		test_assert(
-			vec3_eq(vec3(1.0f, 0.0f, 0.0f), placement.get_right_direction()),
+			vec_eq(vec3(1.0f, 0.0f, 0.0f), placement.get_right_direction()),
 			"Default right vector was incorrect");
 		test_assert(
-			vec3_eq(vec3(0.0f, 1.0f, 0.0f), placement.get_up_direction()),
+			vec_eq(vec3(0.0f, 1.0f, 0.0f), placement.get_up_direction()),
 			"Default up vector was incorrect");
 		test_assert(
-			vec3_eq(vec3(0.0f, 0.0f, 1.0f), placement.get_forward_direction()),
+			vec_eq(vec3(0.0f, 0.0f, 1.0f), placement.get_forward_direction()),
 			"Default forward vector was incorrect");
 	}
 
@@ -33,17 +33,17 @@ namespace glge::test
 
 		placement.transform = rotation_matrix * placement.transform;
 
-		test_assert(vec3_eq(vec3(0.0f, 0.0f, 0.0f), placement.get_position()),
+		test_assert(vec_eq(vec3(0.0f, 0.0f, 0.0f), placement.get_position()),
 					"Position was incorrect after rotation");
 
 		test_assert(
-			vec3_eq(vec3(0.0f, 0.0f, -1.0f), placement.get_right_direction()),
+			vec_eq(vec3(0.0f, 0.0f, -1.0f), placement.get_right_direction()),
 			"Right vector was incorrect after rotation");
 		test_assert(
-			vec3_eq(vec3(0.0f, 1.0f, 0.0f), placement.get_up_direction()),
+			vec_eq(vec3(0.0f, 1.0f, 0.0f), placement.get_up_direction()),
 			"Up vector was incorrect after rotation");
 		test_assert(
-			vec3_eq(vec3(1.0f, 0.0f, 0.0f), placement.get_forward_direction()),
+			vec_eq(vec3(1.0f, 0.0f, 0.0f), placement.get_forward_direction()),
 			"Forward vector was incorrect after rotation");
 
 		// Test translation
@@ -51,17 +51,17 @@ namespace glge::test
 		placement.transform =
 			glm::translate(vec3(-5.0f, 3.0f, 8.0f)) * placement.transform;
 
-		test_assert(vec3_eq(vec3(-5.0f, 3.0f, 8.0f), placement.get_position()),
+		test_assert(vec_eq(vec3(-5.0f, 3.0f, 8.0f), placement.get_position()),
 					"Position was incorrect after translation");
 
 		test_assert(
-			vec3_eq(vec3(0.0f, 0.0f, -1.0f), placement.get_right_direction()),
+			vec_eq(vec3(0.0f, 0.0f, -1.0f), placement.get_right_direction()),
 			"Right vector was incorrect after translation");
 		test_assert(
-			vec3_eq(vec3(0.0f, 1.0f, 0.0f), placement.get_up_direction()),
+			vec_eq(vec3(0.0f, 1.0f, 0.0f), placement.get_up_direction()),
 			"Up vector was incorrect after translation");
 		test_assert(
-			vec3_eq(vec3(1.0f, 0.0f, 0.0f), placement.get_forward_direction()),
+			vec_eq(vec3(1.0f, 0.0f, 0.0f), placement.get_forward_direction()),
 			"Forward vector was incorrect after translation");
 	}
 }   // namespace glge::test

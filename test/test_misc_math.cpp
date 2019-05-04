@@ -12,7 +12,7 @@ namespace glge::test
 
     const vec3 expected(0.0f, 0.0f, 1.0f);
 
-    test_assert(vec3_eq(result, expected), "Result was not correct");
+    test_assert(vec_eq(result, expected), "Result was not correct");
   }
 
 	void test_trackball_right() 
@@ -21,7 +21,7 @@ namespace glge::test
 
     const vec3 expected(1.0f, 0.0f, 0.0f);
 
-    test_assert(vec3_eq(result, expected), "Result was not correct");
+    test_assert(vec_eq(result, expected), "Result was not correct");
   }
 
 	void test_trackball_up() 
@@ -30,7 +30,7 @@ namespace glge::test
 
     const vec3 expected(0.0f, 1.0f, 0.0f);
 
-    test_assert(vec3_eq(result, expected), "Result was not correct");
+    test_assert(vec_eq(result, expected), "Result was not correct");
   }
 }   // namespace glge::test
 

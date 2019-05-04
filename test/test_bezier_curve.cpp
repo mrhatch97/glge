@@ -15,7 +15,7 @@ namespace glge::test
 
 		auto result = curve.evaluate_at(0.50f, BezierCurve::value_polynomial);
 
-		test_assert(vec3_eq(vec3(3.0f, 3.0f, 0.0f), result),
+		test_assert(vec_eq(vec3(3.0f, 3.0f, 0.0f), result),
 					"Result was incorrect");
 	}
 
@@ -40,10 +40,10 @@ namespace glge::test
 		auto result_1 = path.evaluate_at(0.25f, BezierCurve::value_polynomial);
 		auto result_2 = path.evaluate_at(0.75f, BezierCurve::value_polynomial);
 
-		test_assert(vec3_eq(vec3(3.0f, 3.0f, 0.0f), result_1),
+		test_assert(vec_eq(vec3(3.0f, 3.0f, 0.0f), result_1),
 					"Path result_1 was incorrect");
 
-		test_assert(vec3_eq(vec3(3.0f, -3.0f, 0.0f), result_2),
+		test_assert(vec_eq(vec3(3.0f, -3.0f, 0.0f), result_2),
 					"Path result_2 was incorrect");
 	}
 

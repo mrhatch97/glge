@@ -11,9 +11,23 @@ constexpr std::uint32_t test_rand_seed = 1754195816U;
 
 constexpr float fp_epsilon = 0.001f;
 
-static bool vec3_eq(glm::vec3 a, glm::vec3 b)
+template<typename VecT>
+static bool vec_eq(VecT a, VecT b)
 {
-	return glm::all(glm::lessThan(glm::abs(a - b), glm::vec3(fp_epsilon)));
+    return glm::all(glm::epsilonEqual(a, b, fp_epsilon));
+}
+
+static bool mat4_eq(glm::mat4 a, glm::mat4 b)
+{
+	for (int i = 0; i < 4; i++)
+	{
+        if(!vec_eq(a[i], a[i]))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 template<typename T = void (*)()>
