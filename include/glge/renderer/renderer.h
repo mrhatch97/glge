@@ -75,6 +75,15 @@ namespace glge::renderer
 		/// Add a new render task with the given target, shader, and Model
 		/// matrix.
 		/// </summary>
+        /// <param name="target">
+        /// Renderable object to be drawn.
+        /// </param>
+        /// <param name="shader_instance">
+        /// Shader to use to draw the object.
+        /// </param>
+        /// <param name="M">
+        /// Model matrix of the object.
+        /// </param>
 		void enqueue(const primitive::Renderable & target,
 					 const primitive::ShaderInstanceBase & shader_instance,
 					 mat4 M);

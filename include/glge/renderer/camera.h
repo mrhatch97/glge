@@ -21,7 +21,7 @@ namespace glge::renderer
 		/// <summary>
 		/// Vertical Field of View; how high the view area is.
 		/// </summary>
-        math::Radians v_fov;
+		math::Radians v_fov;
 		/// <summary>Aspect ratio; ratio of width to height of image.</summary>
 		float aspect_ratio;
 		/// <summary>Distance to the camera's near clip plane.</summary>
@@ -78,6 +78,12 @@ namespace glge::renderer
 		/// Construct a new Camera with the given intrinsic properties and
 		/// placement.
 		/// </summary>
+        /// <param name="intrinsics">
+        /// Intrinsic properties of the camera.
+        /// </param>
+        /// <param name="placement">
+        /// Initial Placement of the camera in space.
+        /// </param>
 		Camera(const CameraIntrinsics & intrinsics,
 			   const util::Placement & placement);
 

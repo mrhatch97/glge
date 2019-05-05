@@ -3,4 +3,5 @@ target_sources(glge
 		math.cpp
 		util.cpp
         heightmap.cpp
+        motion.cpp
 )

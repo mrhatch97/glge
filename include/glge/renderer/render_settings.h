@@ -48,6 +48,12 @@ namespace glge::renderer
 		/// Construct a new parameter set with the given settings and Model
 		/// matrix.
 		/// </summary>
+        /// <param name="settings">
+        /// RenderSettings to use to render with.
+        /// </param>
+        /// <param name="M">
+        /// Model matrix to render with.
+        /// </param>
 		RenderParameters(const RenderSettings & settings, mat4 M);
 	};
 }   // namespace glge::renderer

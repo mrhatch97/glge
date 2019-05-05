@@ -2,58 +2,68 @@
 
 #include "test_utils.h"
 
-using namespace glge;
-using namespace glge::math;
-
-void test_0_step()
+namespace glge::test::cases
 {
-	Stepper<int> stepper(3, 0);
+	using namespace glge::math;
 
-	stepper++;
-	stepper++;
+	/// \test Tests that a Stepper with a step of 0 does nothing.
+	void test_0_step()
+	{
+		Stepper<int> stepper(3, 0);
 
-	test_equal(3, stepper);
+		stepper++;
+		stepper++;
 
-	stepper--;
+		test_equal(3, stepper);
 
-	test_equal(3, stepper);
-}
+		stepper--;
 
-void test_positive_step()
-{
-	Stepper<int> stepper(0, 3);
+		test_equal(3, stepper);
+	}
 
-	stepper++;
-	stepper++;
+	/// \test Tests that a Stepper with a positive step correctly increments
+	/// and decrements.
+	void test_positive_step()
+	{
+		Stepper<int> stepper(0, 3);
 
-	test_equal(6, stepper);
+		stepper++;
+		stepper++;
 
-	stepper--;
-	stepper--;
-	stepper--;
+		test_equal(6, stepper);
 
-	test_equal(-3, stepper);
-}
+		stepper--;
+		stepper--;
+		stepper--;
 
-void test_negative_step()
-{
-	Stepper<int> stepper(0, -3);
+		test_equal(-3, stepper);
+	}
 
-	stepper++;
-	stepper++;
+	/// \test Tests that a Stepper with a negative step correctly increments
+	/// and decrements.
+	void test_negative_step()
+	{
+		Stepper<int> stepper(0, -3);
 
-	test_equal(-6, stepper);
+		stepper++;
+		stepper++;
 
-	stepper--;
-	stepper--;
-	stepper--;
+		test_equal(-6, stepper);
 
-	test_equal(3, stepper);
-}
+		stepper--;
+		stepper--;
+		stepper--;
+
+		test_equal(3, stepper);
+	}
+}   // namespace glge::test::cases
 
 int main()
 {
-	Test(test_0_step).run();
-	Test(test_positive_step).run();
-	Test(test_negative_step).run();
+	using glge::test::Test;
+	using namespace glge::test::cases;
+
+	Test::run(test_0_step);
+	Test::run(test_positive_step);
+	Test::run(test_negative_step);
 }
