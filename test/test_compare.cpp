@@ -2,12 +2,11 @@
 
 #include "test_utils.h"
 
-#include <cmath>
-
-namespace glge::test
+namespace glge::test::cases
 {
 	using namespace glge::math;
 
+	/// \test Tests comparison of vectors by value of coordinates.
 	void test_compare()
 	{
 		vec3 v1(3.0f, 2.0f, 6.0f);
@@ -32,6 +31,7 @@ namespace glge::test
 		test_assert(!compare_by_z(v2, v1));
 	}
 
+	/// \test Tests comparison of vectors by absolute value of coordinates.
 	void test_compare_abs()
 	{
 		vec3 v1(-3.0f, 2.0f, -6.0f);
@@ -56,6 +56,7 @@ namespace glge::test
 		test_assert(!compare_by_z_abs(v2, v1));
 	}
 
+	/// \test Tests comparison of vectors by magnitude.
 	void test_compare_mag()
 	{
 		vec3 v1(-3.0f, 2.0f, -7.0f);
@@ -67,13 +68,14 @@ namespace glge::test
 
 		test_assert(!compare_by_magnitude(v2, v1));
 	}
-}   // namespace glge::test
-
-using namespace glge::test;
+}   // namespace glge::test::cases
 
 int main()
 {
-	Test(test_compare).run();
-	Test(test_compare_abs).run();
-	Test(test_compare_mag).run();
+	using glge::test::Test;
+	using namespace glge::test::cases;
+
+	Test::run(test_compare);
+	Test::run(test_compare_abs);
+	Test::run(test_compare_mag);
 }

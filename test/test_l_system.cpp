@@ -2,13 +2,15 @@
 
 #include "test_utils.h"
 
-namespace glge::test
+namespace glge::test::cases
 {
 	using namespace glge::proc_gen;
 
 	// Examples taken from:
 	// https://en.wikipedia.org/wiki/L-system#Example_1:_Algae
 
+	/// \test Tests that a system iterated 0 times returns the original
+	/// input.
 	void test_trivial()
 	{
 		const LString init = {'A'};
@@ -22,6 +24,8 @@ namespace glge::test
 		test_assert(expected == result, "Unexpected trivial result");
 	}
 
+	/// \test Tests that a system iterated once correctly applies the expected
+	/// rule.
 	void test_step()
 	{
 		const LString init = {'A'};
@@ -35,6 +39,8 @@ namespace glge::test
 		test_assert(expected == result, "Unexpected step result");
 	}
 
+	/// \test Tests that the system produces the expected result after a
+	/// specified number of iterations.
 	void test_algae()
 	{
 		const LString init = {'A'};
@@ -48,13 +54,15 @@ namespace glge::test
 
 		test_assert(expected == result, "Unexpected algae result");
 	}
-}   // namespace glge::test
+}   // namespace glge::test::cases
 
-using namespace glge::test;
 
 int main()
 {
-	Test(test_trivial).run();
-	Test(test_step).run();
-	Test(test_algae).run();
+	using glge::test::Test;
+	using namespace glge::test::cases;
+
+    Test::run(test_trivial);
+    Test::run(test_step);
+    Test::run(test_algae);
 }

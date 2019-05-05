@@ -33,6 +33,15 @@ namespace glge::renderer::scene_graph
 		/// Constructs a new NodeHandle with the given parent,
 		/// node, and scene.
 		/// </summary>
+        /// <param name="parent">
+        /// Pointer to parent of the pointed-to node.
+        /// </param>
+        /// <param name="node">
+        /// The pointed-to node.
+        /// </param>
+        /// <param name="scene">
+        /// The scene containing the node.
+        /// </param>
 		NodeHandle(observer_ptr<Node> parent, Node & node, Scene & scene);
 
 		/// <summary>
@@ -78,6 +87,15 @@ namespace glge::renderer::scene_graph
 		/// Constructs a new CameraHandle with the given parent,
 		/// node, and scene.
 		/// </summary>
+        /// <param name="parent">
+        /// Pointer to parent of the pointed-to node.
+        /// </param>
+        /// <param name="node">
+        /// The pointed-to node.
+        /// </param>
+        /// <param name="scene">
+        /// The scene containing the node.
+        /// </param>
 		CameraHandle(observer_ptr<Node> parent,
 					 SceneCamera & node,
 					 Scene & scene);

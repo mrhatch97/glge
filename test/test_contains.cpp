@@ -2,10 +2,11 @@
 
 #include "test_utils.h"
 
-namespace glge::test
+namespace glge::test::cases
 {
 	using namespace glge::math;
 
+	/// \test Tests contains function on Plane and Sphere and Plane and point.
 	void test_plane()
 	{
 		Plane p(vec3(0, 0, 0), vec3(0, 1, 0));
@@ -25,6 +26,7 @@ namespace glge::test
 					"Plane should not contain points not on the ground plane");
 	}
 
+	/// \test Tests contains function on Frustum and Sphere.
 	void test_frustum()
 	{
 		Frustum f({Plane(vec3(0, 0, -2), vec3(0, 0, 1)),
@@ -44,12 +46,14 @@ namespace glge::test
 					"Sphere should not be inside frustum");
 	}
 
-}   // namespace glge::test
+}   // namespace glge::test::cases
 
-using namespace glge::test;
 
 int main()
 {
-	Test(test_plane).run();
-	Test(test_frustum).run();
+	using glge::test::Test;
+	using namespace glge::test::cases;
+
+	Test::run(test_plane);
+	Test::run(test_frustum);
 }

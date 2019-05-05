@@ -75,6 +75,12 @@ namespace glge::math
 		/// <summary>
 		/// Constructs a new Stepper with the given start value and step.
 		/// </summary>
+		/// <param name="start">
+		/// Initial value for the Stepper.
+		/// </param>
+		/// <param name="step">
+		/// Amount to change value by per step.
+		/// </param>
 		Stepper(const T & start, const T & step) : val(start), step(step) {}
 	};
 
@@ -176,6 +182,18 @@ namespace glge::math
 		/// Constructs a new Oscillator with the given start value, step, min,
 		/// and max.
 		/// </summary>
+		/// <param name="start">
+		/// Initial value for the Oscillator.
+		/// </param>
+		/// <param name="delta">
+		/// Amount to change value by per step.
+		/// </param>
+		/// <param name="min">
+		/// Minimum value of the oscillation range.
+		/// </param>
+		/// <param name="max">
+		/// Maximum value of the oscillation range.
+		/// </param>
 		Oscillator(const T & start,
 				   const T & delta,
 				   const T & min,
@@ -203,6 +221,9 @@ namespace glge::math
 	/// <param name="min">Minimum allowed value.</param>
 	/// <param name="max">Maximum allowed value.</param>
 	/// <typeparam name="T">Type of value to clamp.</typeparam>
+	/// <returns>
+	/// Value wrapped into the given range, multiple times if needed.
+	/// </returns>
 	template<typename T>
 	T wrap_range(const T & val, const T & min, const T & max)
 	{
@@ -319,12 +340,25 @@ namespace glge::math
 	/// Test whether a Sphere is inside a Plane.
 	/// The normal vector of a plane points towards the "inside" direction.
 	/// </summary>
+	/// <param name="plane">
+	/// Plane to test against.
+	/// </param>
+	/// <param name="sphere">
+	/// Sphere to test.
+	/// </param>
 	/// <returns>True if the sphere is inside the plane.</returns>
 	bool contains(Plane plane, Sphere sphere);
 
 	/// <summary>
 	/// Test whether a Sphere is inside a Frustum.
 	/// </summary>
+	/// <param name="frustum">
+	/// Frustum to test against.
+	/// </param>
+	/// <param name="sphere">
+	/// Sphere to test.
+	/// </param>
+	/// <returns>True if the sphere is inside the frustum.</returns>
 	bool contains(const Frustum & frustum, Sphere sphere);
 
 	/// <summary>
@@ -384,6 +418,18 @@ namespace glge::math
 		/// <summary>
 		/// Constructs a BezierCurve with the given 4 control points.
 		/// </summary>
+		/// <param name="p0">
+		/// First point of the curve; interpolating point.
+		/// </param>
+		/// <param name="p1">
+		/// Second point of the curve; control point.
+		/// </param>
+		/// <param name="p2">
+		/// Third point of the curve; control point.
+		/// </param>
+		/// <param name="p3">
+		/// Fourth point of the curve; interpolating point.
+		/// </param>
 		BezierCurve(const vec3 & p0,
 					const vec3 & p1,
 					const vec3 & p2,

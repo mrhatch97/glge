@@ -1,3 +1,9 @@
+/// <summary>
+/// Utilities and helpers for running unit tests on code
+/// using OpenGL.
+/// </summary>
+/// \file ogl_test_utils.h
+
 #pragma once
 
 #include <glge/renderer/renderer.h>
@@ -35,6 +41,10 @@ namespace glge::test::opengl
 		EGL_WIDTH, pbuffer_width, EGL_HEIGHT, pbuffer_height, EGL_NONE,
 	};
 
+	/// <summary>
+	/// Creates an OpenGL context for a test to run under.
+	/// </summary>
+	/// <returns>UniqueHandle managing the disposal of the context.</returns>
 	glge::util::UniqueHandle create_ogl_context()
 	{
 		// TODO this won't work - display will be freed at the end of this
@@ -88,6 +98,10 @@ namespace glge::test::opengl
 #else
 #include <GLFW/glfw3.h>
 
+	/// <summary>
+	/// Creates an OpenGL context for a test to run under.
+	/// </summary>
+	/// <returns>UniqueHandle managing the disposal of the context.</returns>
 	glge::util::UniqueHandle create_ogl_context()
 	{
 		return glge::util::UniqueHandle(
@@ -112,13 +126,18 @@ namespace glge::test::opengl
 	}
 #endif
 
-	template<typename T = void (*)()>
-	class OGLTest : public Test<T>
+	/// <summary>
+	/// Context for tests using OpenGL.
+	/// </summary>
+	class OGLTest : public Test
 	{
 	private:
 		glge::util::UniqueHandle opengl_context;
 
 	protected:
+		/// <summary>
+		/// Function to run before the main test.
+		/// </summary>
 		void pre_test() override
 		{
 			opengl_context = create_ogl_context();
@@ -126,14 +145,13 @@ namespace glge::test::opengl
 			glge::renderer::configure_environment();
 		};
 
+		/// <summary>
+		/// Function to run after the main test.
+		/// </summary>
 		void post_test() override { opengl_context.reset(); };
 
 	public:
-		OGLTest(T test) : Test<T>(test) {}
-
+		/// <summary>Default destructor.</summary>
 		virtual ~OGLTest() = default;
 	};
-
-	template<typename T>
-	OGLTest(T test)->OGLTest<T>;
 }   // namespace glge::test::opengl

@@ -6,32 +6,48 @@
 
 #include "ogl_test_utils.h"
 
-using namespace glge;
-using namespace glge::renderer;
-using namespace glge::renderer::primitive;
-using namespace glge::renderer::scene_graph;
-
-void test_render()
+namespace glge::test::opengl::cases
 {
-	auto color_shader = ColorShader::load();
-	auto color_instance = color_shader->instance(vec3(1.0f, 0.0f, 0.0f));
+	using namespace glge::renderer;
+	using namespace glge::renderer::primitive;
+	using namespace glge::renderer::scene_graph;
 
-	auto model =
-		Model::from_file(ModelFileInfo{"./resources/models/test.obj", true});
+    /// <summary>
+    /// Context for Scene rendering tests.
+    /// </summary>
+	class SceneRenderTest : public OGLTest
+	{
+	public:
+        /// \test Tests whether a Scene can be successfully rendered by a
+        /// Renderer.
+		void test_render()
+		{
+			auto color_shader = ColorShader::load();
+			auto color_instance =
+				color_shader->instance(vec3(1.0f, 0.0f, 0.0f));
 
-	Scene scene;
+			auto model = Model::from_file(
+				ModelFileInfo{"./resources/models/test.obj", true});
 
-	auto root_handle = scene.get_root_handle();
-	root_handle.add_geometry(*model, color_instance);
-	auto camera_handle = root_handle.add_camera(CameraIntrinsics());
-	camera_handle.activate();
+			Scene scene;
 
-	auto renderer = scene.prepare_renderer();
+			auto root_handle = scene.get_root_handle();
+			root_handle.add_geometry(*model, color_instance);
+			auto camera_handle = root_handle.add_camera(CameraIntrinsics());
+			camera_handle.activate();
 
-	renderer.render();
-}
+			auto renderer = scene.prepare_renderer();
+
+			renderer.render();
+		}
+	};
+
+}   // namespace glge::test::opengl::cases
 
 int main()
 {
-	OGLTest(test_render).run();
+    using glge::test::Test;
+    using glge::test::opengl::cases::SceneRenderTest;
+
+	Test::run(&SceneRenderTest::test_render);
 }

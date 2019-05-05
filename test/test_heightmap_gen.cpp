@@ -2,10 +2,12 @@
 
 #include "test_utils.h"
 
-namespace glge::test
+namespace glge::test::cases
 {
 	using namespace glge::proc_gen;
 
+    /// \test Tests that diamond_square_gen produces a matrix of values in the
+    /// expected range, with correct corner values.
 	void test_gen()
 	{
 		float variation = 10.0f;
@@ -40,22 +42,24 @@ namespace glge::test
 		test_assert(all_in_range, "Generated value was outside expected range");
 	}
 
+    /// \test Tests that negative variation is rejected by diamond_square_gen.
 	void test_bad()
 	{
 		float variation = -10.0f;   // disallowed
 		test_fails(
 			[=] {
-				(void)diamond_square_gen(test_rand_seed, 10, variation, 0.0f,
-										 0.0f, 0.0f, 0.0f);
+				diamond_square_gen(test_rand_seed, 10, variation, 0.0f, 0.0f,
+								   0.0f, 0.0f);
 			},
 			"Variation allowed to be negative");
 	}
-}   // namespace glge::test
-
-using namespace glge::test;
+}   // namespace glge::test::cases
 
 int main()
 {
-	Test(test_gen).run();
-	Test(test_bad).run();
+	using glge::test::Test;
+	using namespace glge::test::cases;
+
+	Test::run(test_gen);
+	Test::run(test_bad);
 }

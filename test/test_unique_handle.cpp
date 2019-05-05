@@ -2,10 +2,12 @@
 
 #include "test_utils.h"
 
-namespace glge::test
+namespace glge::test::cases
 {
-    using namespace glge::util;
+	using namespace glge::util;
 
+	/// \test Tests that a UniqueHandle correctly invokes its entry and exit
+	/// functions.
 	void test_basic()
 	{
 		bool enter = false, exit = false;
@@ -19,6 +21,8 @@ namespace glge::test
 		test_assert(exit);
 	}
 
+	/// \test Tests that a UniqueHandle invokes chained exit functions in
+	/// the correct order.
 	void test_chain()
 	{
 		int enter = 0, exit = 0;
@@ -40,6 +44,8 @@ namespace glge::test
 		test_equal(2, exit);
 	}
 
+	/// \test Tests that a UniqueHandle invokes its exit function immediately
+	/// when reset is invoked.
 	void test_reset()
 	{
 		bool enter = false, exit = false;
@@ -52,6 +58,8 @@ namespace glge::test
 		test_assert(!handle);
 	}
 
+	/// \test Tests that a UniqueHandle invokes its exit function immediately
+	/// when reset is invoked, and properly manages the replacement function.
 	void test_reset_f()
 	{
 		bool enter = false, exit = false, exit_2 = false;
@@ -61,6 +69,7 @@ namespace glge::test
 		handle.reset([&] { exit_2 = true; });
 
 		test_assert(exit);
+		test_assert(!exit_2);
 		test_assert(handle);
 
 		handle.reset();
@@ -68,18 +77,25 @@ namespace glge::test
 		test_assert(exit_2);
 	}
 
+	/// \test Tests that a UniqueHandle does not invoke its exit function
+	/// when release is invoked.
 	void test_release()
 	{
 		bool enter = false, exit = false;
 
-		UniqueHandle handle([&] { enter = true; }, [&] { exit = true; });
+		{
+			UniqueHandle handle([&] { enter = true; }, [&] { exit = true; });
 
-		handle.release();
+			handle.release();
+
+			test_assert(!handle);
+		}
 
 		test_assert(!exit);
-		test_assert(!handle);
 	}
 
+    /// \test Tests that a UniqueHandle properly transfers its exit
+    /// responsibility when moved.
 	void test_move()
 	{
 		bool enter = false, exit = false;
@@ -97,16 +113,18 @@ namespace glge::test
 		}
 		test_assert(exit);
 	}
-}   // namespace glge::test
+}   // namespace glge::test::cases
 
-using namespace glge::test;
 
 int main()
 {
-	Test(test_basic).run();
-	Test(test_chain).run();
-	Test(test_reset).run();
-	Test(test_reset_f).run();
-	Test(test_release).run();
-	Test(test_move).run();
+	using glge::test::Test;
+	using namespace glge::test::cases;
+
+	Test::run(test_basic);
+	Test::run(test_chain);
+	Test::run(test_reset);
+	Test::run(test_reset_f);
+	Test::run(test_release);
+	Test::run(test_move);
 }

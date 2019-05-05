@@ -1,3 +1,8 @@
+/// <summary>
+/// Test class and miscellaneous helpers for running CTest unit tests.
+/// </summary>
+/// \file test_utils.h
+
 #pragma once
 
 #include <glge/common.h>
@@ -70,12 +75,9 @@ namespace glge::test
 	/// Helper class for executing a test function with optional pre and post
 	/// conditions.
 	/// </summary>
-	template<typename T = void (*)()>
 	class Test
 	{
 	private:
-		T test;
-
 		void pre()
 		{
 			try
@@ -104,55 +106,69 @@ namespace glge::test
 		}
 
 	protected:
-        /// <summary>
-        /// Function to run before the main test.
-        /// </summary>
+		/// <summary>
+		/// Function to run before the main test.
+		/// </summary>
 		virtual void pre_test(){};
 
-        /// <summary>
-        /// Function to run after the main test.
-        /// </summary>
+		/// <summary>
+		/// Function to run after the main test.
+		/// </summary>
 		virtual void post_test(){};
 
 	public:
-        /// <summary>
-        /// Construct a new Test wrapping the given callable test function.
-        /// </summary>
-        /// <param name="test">
-        /// Callable object to be invoked as the test function.
-        /// </param>
-		Test(T test) : test(test) {}
-
-        /// <summary>
-        /// Run the pre-test, test, and post-test. std::exit is invoked if an
-        /// exception is thrown.
-        /// </summary>
-		void run()
+		/// <summary>
+		/// Run a test case derived from Test. Calls std::exit upon failure.
+		/// </summary>
+		/// <param name="test_fn">
+		/// Pointer to member function of Test derivative to run as the main
+		/// test.
+		/// </param>
+		/// <param name="args">
+		/// Optional arguments to forward to the constructor of the Test class.
+		/// </param>
+		template<typename DerivedTest, typename... Args>
+		static void run(void (DerivedTest::*test_fn)(), Args &&... args)
 		{
-			pre();
+			DerivedTest test(std::forward<Args>(args)...);
+
+			test.pre();
 			try
 			{
-				test();
+				(test.*test_fn)();
 			}
 			catch (const std::exception & e)
 			{
 				glge::util::print_nested_exception(e);
 				std::exit(test_fail_code);
 			}
-			post();
+			test.post();
 		}
 
-        /// <summary>
-        /// Default destructor.
-        /// </summary>
+		/// <summary>
+		/// Run a simple function as a test case.
+		/// </summary>
+		/// <param name="test_fn">
+		/// Pointer to test function.
+		/// </param>
+		static void run(std::function<void()> test_fn)
+		{
+			try
+			{
+				test_fn();
+			}
+			catch (const std::exception & e)
+			{
+				glge::util::print_nested_exception(e);
+				std::exit(test_fail_code);
+			}
+		}
+
+		/// <summary>
+		/// Default destructor.
+		/// </summary>
 		virtual ~Test() = default;
 	};
-
-	/// <summary>
-	/// Deduction guide for inferring the callable type T in Test.
-	/// </summary>
-	template<typename T>
-	Test(T test)->Test<T>;
 
 	/// <summary>
 	/// Asserts that the given function, when executed, throws std::logic_error.

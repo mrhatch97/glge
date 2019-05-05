@@ -147,7 +147,23 @@ namespace glge
 		{}
 	}   // namespace renderer
 
-    /// <summary>Namespace for glge tests.</summary>
-    /// Namespace for all test components for the glge library.
-    namespace test {}
+	/// <summary>Namespace for glge tests.</summary>
+	/// Namespace for all tests for the glge library.
+	namespace test
+	{
+		/// <summary>Namespace for glge test cases.</summary>
+		/// Namespace for all general test cases for the glge library.
+		namespace cases
+		{};
+
+		/// <summary>Namespace for glge OpenGL tests.</summary>
+		/// Namespace for all OpenGL tests for the glge library.
+		namespace opengl
+		{
+			/// <summary>Namespace for glge OpenGL test cases.</summary>
+			/// Namespace for all OpenGL test cases for the glge library.
+			namespace cases
+			{};
+		}   // namespace opengl
+	}       // namespace test
 }   // namespace glge

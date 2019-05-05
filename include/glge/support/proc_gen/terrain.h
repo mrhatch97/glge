@@ -29,16 +29,16 @@ namespace glge::proc_gen
 	/// <param name="top_right">Value for top-right corner of the map.</param>
 	/// <param name="bottom_left">
 	/// Value for bottom-left corner of the map.
-	/// </param> 
+	/// </param>
 	/// <param name="bottom_right">
 	/// Value for bottom-right corner of the map.
 	/// </param>
-	[[nodiscard]] util::Matrix<float>
-	diamond_square_gen(std::uint32_t seed,
-					   size_t n,
-					   float variation,
-					   float top_left = 0.0f,
-					   float top_right = 0.0f,
-					   float bottom_left = 0.0f,
-					   float bottom_right = 0.0f);
+	/// <returns>Heightmap as a Matrix of elevation values.</returns>
+	util::Matrix<float> diamond_square_gen(std::uint32_t seed,
+										   size_t n,
+										   float variation,
+										   float top_left = 0.0f,
+										   float top_right = 0.0f,
+										   float bottom_left = 0.0f,
+										   float bottom_right = 0.0f);
 }   // namespace glge::proc_gen

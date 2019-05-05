@@ -3,15 +3,29 @@
 
 #include "ogl_test_utils.h"
 
-using namespace glge;
 using namespace glge::renderer::primitive;
 
-void test_load()
+namespace glge::test::opengl::cases
 {
-	Texture::from_file(TextureFileInfo{"./resources/textures/test.png"});
-}
+    /// <summary>Context for Texture load tests.</summary>
+	class TextureLoadTest : public OGLTest
+	{
+	public:
+		/// \test Tests whether a Texture can be loaded from a .png file on
+		/// disk.
+		void test_load()
+		{
+			Texture::from_file(
+				TextureFileInfo{"./resources/textures/test.png"});
+		}
+	};
+}   // namespace glge::test::opengl::cases
+
 
 int main()
 {
-	OGLTest(test_load).run();
+	using glge::test::Test;
+	using glge::test::opengl::cases::TextureLoadTest;
+
+	Test::run(&TextureLoadTest::test_load);
 }

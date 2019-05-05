@@ -65,8 +65,9 @@ namespace glge::renderer::primitive
 		/// future rendering operations. Data object is copied.
 		/// </summary>
 		/// <param name="render">Parameters from the Renderer.</param>
-		/// <param name="data">Data object used to parameterize the
-		/// shader.</param>
+		/// <param name="data">
+		/// Data object used to parameterize the shader.
+		/// </param>
 		virtual void parameterize(const RenderParameters & render,
 								  const DataT & data) = 0;
 
@@ -174,6 +175,9 @@ namespace glge::renderer::primitive
 		/// <summary>
 		/// Constructs a new ShaderInstanceBase pointing to the given shader.
 		/// </summary>
+        /// <param name="shader">
+        /// Shader to instance.
+        /// </param>
 		ShaderInstanceBase(ShaderBase & shader);
 
 		/// <summary>
@@ -181,6 +185,10 @@ namespace glge::renderer::primitive
 		/// </summary>
 		/// Note that this does not bind the associated shader; the caller
 		/// must ensure the shader is bound before invoking this function.
+        /// <param name="render">
+        /// RenderParameters containing information used to parameterize
+        /// the shader.
+        /// </param>
 		virtual void operator()(const RenderParameters & render) const = 0;
 
 		virtual ~ShaderInstanceBase() = default;
@@ -206,6 +214,12 @@ namespace glge::renderer::primitive
 		/// Constructs a new ShaderInstance binding the given Shader
 		/// and data object. The data object is copied.
 		/// </summary>
+		/// <param name="shader">
+		/// Shader to instance. Copied.
+		/// </param>
+		/// <param name="data">
+		/// Data to bind to the created instance.
+		/// </param>
 		ShaderInstance(Shader<DataT> & shader, const DataT & data) :
 			ShaderInstanceBase(shader), data(data)
 		{}
@@ -214,6 +228,12 @@ namespace glge::renderer::primitive
 		/// Constructs a new ShaderInstance binding the given Shader
 		/// and data object. Takes ownership of the data object.
 		/// </summary>
+		/// <param name="shader">
+		/// Shader to instance. Moved.
+		/// </param>
+		/// <param name="data">
+		/// Data to bind to the created instance.
+		/// </param>
 		ShaderInstance(Shader<DataT> & shader, DataT && data) :
 			ShaderInstanceBase(shader), data(std::move(data))
 		{}
@@ -223,6 +243,10 @@ namespace glge::renderer::primitive
 		/// </summary>
 		/// Note that this does not bind the associated shader; the caller
 		/// must ensure the shader is bound before invoking this function.
+        /// <param name="render">
+        /// RenderParameters containing information used to parameterize
+        /// the shader.
+        /// </param>
 		void operator()(const RenderParameters & render) const override
 		{
 			static_cast<Shader<DataT> &>(shader).parameterize(render, data);

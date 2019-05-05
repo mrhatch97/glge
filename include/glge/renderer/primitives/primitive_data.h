@@ -82,15 +82,19 @@ namespace glge::renderer::primitive
 
 		/// <summary>Load a set of ModelData from a file on disk.</summary>
 		/// <param name="file_info">Descriptor for the model file.</param>
+		/// <returns>Loaded ModelData.</returns>
 		static ModelData from_file(const ModelFileInfo & file_info);
 
 		/// <summary>Convert a ModelData to an EBOModelData.</summary>
-		/// <param name="data">ModelData to be converted. Data is
-		/// copied.</param>
+		/// <param name="data">
+		/// ModelData to be converted. Data is copied.
+		/// </param>
+		/// <returns>Produced EBOModelData.</summary>
 		static EBOModelData to_EBO_data(const ModelData & data);
 
 		/// <summary>Convert a ModelData to an EBOModelData.</summary>
 		/// <param name="data">ModelData to be converted. Data is moved.</param>
+		/// <returns>Produced EBOModelData.</summary>
 		static EBOModelData to_EBO_data(ModelData && data);
 	};
 
@@ -129,7 +133,8 @@ namespace glge::renderer::primitive
 	{
 		TextureFileInfo
 			top,      ///< <summary>The top (up) cubemap file info.</summary>
-			bottom,   ///< <summary>The bottom (down) cubemap file info.</summary>
+			bottom,   ///< <summary>The bottom (down) cubemap file
+					  ///< info.</summary>
 			left,     ///< <summary>The left cubemap file info.</summary>
 			right,    ///< <summary>The right cubemap file info.</summary>
 			front,    ///< <summary>The front cubemap file info.</summary>
