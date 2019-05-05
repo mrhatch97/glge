@@ -2,16 +2,23 @@
 
 #include "ogl_test_utils.h"
 
-using namespace glge;
-
-void test_configure()
+namespace glge::test::opengl::cases
 {
-	auto context = create_ogl_context();
+	/// \test Tests that the OpenGL environment (GLEW, etc.) is
+	/// able to be created and configured without error.
+	void test_configure()
+	{
+		auto context = create_ogl_context();
 
-	renderer::configure_environment();
-}
+		renderer::configure_environment();
+	}
+}   // namespace glge::test::opengl::cases
+
 
 int main()
 {
-	Test(test_configure).run();
+	using glge::test::Test;
+	using namespace glge::test::opengl::cases;
+
+	Test::run(test_configure);
 }

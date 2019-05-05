@@ -1,15 +1,29 @@
 #include <glge/util/util.h>
 
-using namespace glge::util;
+#include "test_utils.h"
+
+namespace glge::test::cases
+{
+	using namespace glge::util;
+
+	/// \test Tests whether returns_void correctly identifies the return type of
+	/// lambda expressions.
+	void test_returns()
+	{
+		auto f_1 = [] { return; };
+		auto f_2 = [] { return 1; };
+
+		static_assert(returns_void_v<decltype(f_1)>);
+
+		static_assert(!returns_void_v<decltype(f_2)>);
+	}
+}   // namespace glge::test::cases
+
 
 int main()
 {
-	auto f_1 = [] { return; };
-	auto f_2 = [] { return 1; };
+    using glge::test::Test;
+	using namespace glge::test::cases;
 
-	static_assert(returns_void_v<decltype(f_1)>);
-
-	static_assert(!returns_void_v<decltype(f_2)>);
-
-	return 0;
+	Test::run(test_returns);
 }

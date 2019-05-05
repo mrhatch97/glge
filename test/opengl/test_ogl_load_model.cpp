@@ -3,15 +3,29 @@
 
 #include "ogl_test_utils.h"
 
-using namespace glge;
-using namespace glge::renderer::primitive;
-
-void test_load()
+namespace glge::test::opengl::cases
 {
-	Model::from_file(ModelFileInfo{"./resources/models/test.obj", true});
-}
+	using namespace glge::renderer::primitive;
+
+    /// <summary>Context for Model load tests.</summary>
+	class ModelLoadTest : public OGLTest
+	{
+	public:
+        /// \test Tests that a Model can be loaded into VRAM from a file
+        /// on disk.
+		void test_load()
+		{
+			Model::from_file(
+				ModelFileInfo{"./resources/models/test.obj", true});
+		}
+	};
+
+}   // namespace glge::test::opengl::cases
 
 int main()
 {
-	OGLTest(test_load).run();
+	using glge::test::Test;
+	using glge::test::opengl::cases::ModelLoadTest;
+
+	Test::run(&ModelLoadTest::test_load);
 }

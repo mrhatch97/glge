@@ -8,8 +8,8 @@
 
 #include <glge/common.h>
 
-#include <cstdio>
 #include <chrono>
+#include <cstdio>
 #include <functional>
 #include <sstream>
 #include <stack>
@@ -139,6 +139,7 @@ namespace glge::util
 	/// <exception cref="std::logic_error">
 	/// Throws if narrowing conversion changes value.
 	/// </exception>
+	/// <returns>The converted value.</returns>
 	template<typename From, typename To>
 	std::enable_if_t<
 		std::conjunction_v<std::is_scalar<From>, std::is_scalar<To>>,
@@ -192,7 +193,14 @@ namespace glge::util
 		/// <param name="exit">Exit function; run on object destruction.</param>
 		UniqueHandle(std::function<void()> enter, FunctionType exit);
 
-		UniqueHandle(const UniqueHandle &) = delete;
+		/// <summary>
+		/// Construct a new UniqueHandle by copying another handle.
+		/// Deleted.
+		/// </summary>
+		/// <param name="other">
+		/// Handle to copy from.
+		/// </param>
+		UniqueHandle(const UniqueHandle & other) = delete;
 
 		/// <summary>
 		/// Construct a new UniqueHandle by moving an existing
@@ -201,7 +209,14 @@ namespace glge::util
 		/// <param name="other">Other UniqueHandle to be moved from</param>
 		UniqueHandle(UniqueHandle && other) noexcept;
 
-		UniqueHandle & operator=(const UniqueHandle &) = delete;
+		/// <summary>
+		/// Copy another UniqueHandle into this handle. Deleted.
+		/// </summary>
+		/// <param name="other">
+		/// Handle to copy from.
+		/// </param>
+		/// <returns>Reference to the copied-to handle.</returns>
+		UniqueHandle & operator=(const UniqueHandle & other) = delete;
 
 		/// <summary>
 		/// Move the exit responsibilities of another UniqueHandle into this
@@ -213,6 +228,7 @@ namespace glge::util
 		/// <param name="other">
 		/// The UniqueHandle to move responsibility from.
 		/// </param>
+		/// <returns>Reference to the moved-to handle.</returns>
 		UniqueHandle & operator=(UniqueHandle && other);
 
 		/// <summary>
@@ -244,6 +260,7 @@ namespace glge::util
 		///
 		/// <param name="enter">Entry function; run immediately.</param>
 		/// <param name="exit">Exit function; run on object destruction.</param>
+		/// <returns>Reference to the target of this invocation.</returns>
 		UniqueHandle & chain(std::function<void()> enter, FunctionType exit);
 
 		/// <summary>
@@ -280,19 +297,41 @@ namespace glge::util
 			mat(new T[width * height]()), _width(width), _height(height)
 		{}
 
-		Matrix(const Matrix &) = delete;
+		/// <summary>
+		/// Construct a new Matrix by copying the given Matrix. Deleted.
+		/// </summary>
+		/// <param name="other">
+		/// Matrix to copy from.
+		/// </param>
+		Matrix(const Matrix & other) = delete;
 
 		/// <summary>
 		/// Construct a new Matrix by moving the data from
 		/// another Matrix.
 		/// </summary>
-		Matrix(Matrix &&) = default;
+		/// <param name="other">
+		/// Matrix to move from.
+		/// </param>
+		Matrix(Matrix && other) = default;
 
-		Matrix & operator=(const Matrix &) = delete;
+		/// <summary>
+		/// Copy the data from another Matrix into this Matrix.
+		/// Deleted.
+		/// </summary>
+		/// <param name="other">
+		/// Matrix to copy from.
+		/// </param>
+		/// <returns>Reference to the copied-to Matrix.</returns>
+		Matrix & operator=(const Matrix & other) = delete;
+
 		/// <summary>
 		/// Move another Matrix into this Matrix.
 		/// </summary>
-		Matrix & operator=(Matrix &&) = default;
+		/// <param name="other">
+		/// Matrix to move from.
+		/// </param>
+		/// <returns>Reference to the moved-to Matrix.</returns>
+		Matrix & operator=(Matrix && other) = default;
 
 		/// <summary>
 		/// Get a reference to the object in the Matrix at the given 1D
@@ -415,6 +454,9 @@ namespace glge::util
 	/// string and optional arguments. Return value indicates whether expected
 	/// count matches actual count. Use FMT_STRING_ARG(buf) for MSVC
 	/// compatibility.
+	/// <typeparam name="Args">
+	/// Variadic parameter pack forwarded to sscanf.
+	/// </typeparam>
 	/// <param name="count">
 	/// Expected number of matched format variables.
 	/// </param>
@@ -427,6 +469,7 @@ namespace glge::util
 	/// <param name="args">
 	/// Variadic arguments for C IO format string.
 	/// </param>
+	/// <returns>True if count matched expected.</returns>
 	template<typename... Args>
 	bool
 	checked_sscanf(int count, const char * buf, czstring fmt, Args &&... args)

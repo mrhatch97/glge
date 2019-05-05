@@ -1,3 +1,9 @@
+/// <summary>Support for dispatching events based on user input.</summary>
+///
+/// Classes for tracking user input state and dispatching events based on input.
+///
+/// \file input_dispatcher.h
+
 #pragma once
 
 #include <glge/common.h>

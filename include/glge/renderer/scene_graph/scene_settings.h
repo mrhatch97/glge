@@ -34,6 +34,18 @@ namespace glge::renderer::scene_graph
 		/// <summary>
 		/// Constructs a new SceneSettings with the given settings.
 		/// </summary>
+		/// <param name="active_camera">
+		/// Pointer to the active scene camera.
+		/// </param>
+		/// <param name="draw_bounding_spheres">
+		/// Controls whether bounding spheres in the scene should be drawn.
+		/// CURRENTLY UNUSED.
+		/// </param>
+		/// <param name="enable_VF_culling">
+		/// Controls whether the scene traversal should use view frustum
+		/// culling when rendering.
+		/// CURRENTLY UNUSED.
+		/// </param>
 		SceneSettings(observer_ptr<const SceneCamera> active_camera,
 					  bool draw_bounding_spheres,
 					  bool enable_VF_culling);

@@ -146,7 +146,7 @@ namespace glge::util
 		/// <summary>
 		/// Constructs a Placement with the given initial transform.
 		/// </summary>
-		/// <param name="transform>
+		/// <param name="transform">
 		/// Initial transform for the Placement.
 		/// </param>
 		explicit Placement(mat4 transform) noexcept : transform(transform) {}
@@ -161,12 +161,16 @@ namespace glge::util
 		{}
 
 		/// <summary>
-		/// Get the orientation vector corresponding to the given model-space axis,
-        /// in world-space coordinates.
+		/// Get the orientation vector corresponding to the given model-space
+		/// axis, in world-space coordinates.
 		/// </summary>
-        /// <typeparam name="AxisT">
-        /// Directional axis; must be one of the types specified in a CoordinateSystem struct.
-        /// </typeparam>
+		/// <typeparam name="AxisT">
+		/// Directional axis; must be one of the types specified in a
+		/// CoordinateSystem struct.
+		/// </typeparam>
+		/// <returns>
+		/// vec3 representation of the specified orientation vector.
+		/// </returns>
 		template<typename AxisT>
 		vec3 get_direction() const
 		{
