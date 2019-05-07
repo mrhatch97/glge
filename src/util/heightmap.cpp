@@ -65,19 +65,20 @@ namespace glge::util
 		return normals;
 	}
 
-	vector<vec2>
-	heightmap_uvs(const vector<vec3> & heightmap, size_t width, size_t height)
+	vector<vec2> heightmap_uvs(size_t width, size_t height)
 	{
-		vector<vec2> uvs(heightmap.size());
+		vector<vec2> uvs(width * height);
 
-		std::transform(
-			EXECUTION_POLICY_PAR_UNSEQ heightmap.cbegin(), heightmap.cend(),
-			uvs.begin(),
-			// HACK get rid of the hacky constant - controls the extent to which
-			// textures are tiled over the terrain (higher - more tiling)
-			[=](const vec3 & v) {
-				return vec2(v.x / width / 60.0f, v.z / height / 60.0f);
-			});
+		for (size_t z = 0; z < (height - 1); z++)
+		{
+			for (size_t x = 0; x < (width - 1); x++)
+			{
+				float z_f = static_cast<float>(z);
+				float x_f = static_cast<float>(x);
+
+				uvs[z * height + x] = vec2(z_f / width, x_f / height);
+			}
+		}
 
 		return uvs;
 	}
