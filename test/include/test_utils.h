@@ -27,6 +27,12 @@ namespace glge::test
 	/// </summary>
 	constexpr float fp_epsilon = 0.001f;
 
+	template<typename FloatT>
+	static bool float_eq(FloatT a, FloatT b)
+	{
+		return glm::epsilonEqual(a, b, fp_epsilon);
+	}
+
 	/// <summary>
 	/// Tests whether two glm vectors are equal within fp_epsilon margin of
 	/// error.
