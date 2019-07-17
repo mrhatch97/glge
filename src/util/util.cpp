@@ -104,44 +104,4 @@ namespace glge::util
 			call_exits();
 		}
 	}
-
-	IdGenerator::Id::Id(IdGenerator & parent, unsigned long value) :
-		parent(parent), value(value)
-	{}
-
-	void IdGenerator::Id::release()
-	{
-		parent.released.push(*this);
-		released = true;
-	}
-
-	IdGenerator::Id::~Id()
-	{
-		if (!released)
-		{
-			try
-			{
-				release();
-			}
-			catch (...)
-			{
-			}
-		}
-	}
-
-	IdGenerator::IdGenerator() : next_value(0) {}
-
-	auto IdGenerator::next() -> Id
-	{
-		if (released.empty())
-		{
-			return Id{*this, next_value++};
-		}
-		else
-		{
-			auto val = released.top();
-			released.pop();
-			return val;
-		}
-	}
 }   // namespace glge::util
