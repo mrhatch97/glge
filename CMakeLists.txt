@@ -44,7 +44,8 @@ target_compile_features(glge
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(glge
         PUBLIC
-            $<$<CONFIG:Test>:--coverage -g -fPIC -O0> # Set up test flags for gcc test coverage report generation
+			# Set up test flags for gcc test coverage report generation
+            $<$<CONFIG:Test>:--coverage -g -fPIC -O0> 
         PRIVATE
             -Wall -Wextra -Werror
     )
@@ -52,13 +53,22 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         PUBLIC
             $<$<CONFIG:Test>:--coverage>
     )
+
+	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 9.1)
+		target_link_libraries(glge
+			PRIVATE
+				tbb
+		)
+	endif()
 endif()
 
 target_compile_definitions(glge
 	PRIVATE
-        $<$<CONFIG:Debug>:GLGE_DEBUG>   # Enable debug info for Debug and Test builds
+		# Enable debug info for Debug and Test builds
+        $<$<CONFIG:Debug>:GLGE_DEBUG>   
         $<$<CONFIG:Test>:GLGE_DEBUG>
-        GLM_FORCE_SILENT_WARNINGS       # I don't care about warnings in glm's code
+		# I don't care about warnings in glm's code
+        GLM_FORCE_SILENT_WARNINGS       
 )
 
 find_package(Doxygen)
