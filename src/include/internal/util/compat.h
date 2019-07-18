@@ -18,18 +18,18 @@ namespace glge
 	};
 
 #if _WIN32
-	constexpr OperatingSystem OperatingSystem = OperatingSystem::Windows;
+	constexpr OperatingSystem operating_system = OperatingSystem::Windows;
 #elif __linux__
-	constexpr OperatingSystem OperatingSystem = OperatingSystem::Linux;
+	constexpr OperatingSystem operating_system = OperatingSystem::Linux;
 #elif __APPLE__
-	constexpr OperatingSystem OperatingSystem = OperatingSystem::OSX;
+	constexpr OperatingSystem operating_system = OperatingSystem::OSX;
 #else
 #error "Could not identify platform for compatibility"
 #endif
 
-	constexpr bool OnWindows = OperatingSystem == OperatingSystem::Windows;
-	constexpr bool OnLinux = OperatingSystem == OperatingSystem::Linux;
-	constexpr bool OnOSX = OperatingSystem == OperatingSystem::OSX;
+	constexpr bool on_windows = operating_system == OperatingSystem::Windows;
+	constexpr bool on_linux = operating_system == OperatingSystem::Linux;
+	constexpr bool on_osx = operating_system == OperatingSystem::OSX;
 }   // namespace glge
 
 /// \def FMT_STRING_ARG(buf)
@@ -142,7 +142,7 @@ namespace glge::util
 
 #else
 
-#if OnWindows
+#if _WIN32
 #include <direct.h>
 #define getcwd _getcwd
 #else
