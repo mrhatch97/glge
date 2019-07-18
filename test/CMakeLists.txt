@@ -4,18 +4,22 @@ message("-- glge tests enabled")
 add_custom_target(build_tests)
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS build_tests)
 
+add_library(glge_test INTERFACE)
+
+target_include_directories(glge_test
+	INTERFACE
+		${CMAKE_CURRENT_LIST_DIR}/include
+		${PROJECT_SOURCE_DIR}/src/include
+)
+
 macro(add_quick_test test_name)
 	add_executable(test_${test_name}
 		test_${test_name}.cpp)
 
 	target_link_libraries(test_${test_name}
 		PRIVATE
-			glge)
-
-	target_include_directories(test_${test_name}
-		PRIVATE
-			${PROJECT_SOURCE_DIR}/test/include
-			${PROJECT_SOURCE_DIR}/src/include)
+			glge
+			glge_test)
 
 	add_test(NAME ${test_name}
 		COMMAND test_${test_name}

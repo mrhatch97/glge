@@ -11,7 +11,6 @@ set(GLGE_DRIVER "OPENGL" CACHE STRING "GLGE backend driver; currently only OPENG
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
@@ -56,14 +55,17 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
             $<$<CONFIG:Test>:--coverage>
     )
 
+	# Use of <filesystem> requires this library on gcc 8.x
 	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 8
-			AND CMAKE_CXX_COMPILER VERSION_LESS 9)
+		AND CMAKE_CXX_COMPILER VERSION_LESS 9)
 		target_link_libraries(glge
 			PRIVATE
 				stdc++fs
 		)
 	endif()
 
+	# Use of parallel standard algorithms requires this library
+	# on gcc 9.1+
 	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 9.1)
 		target_link_libraries(glge
 			PRIVATE
