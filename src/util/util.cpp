@@ -3,10 +3,26 @@
 #include <algorithm>
 #include <cerrno>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 namespace glge::util
 {
+	string
+	exception_message(string msg, czstring filename, size_t line, czstring func)
+	{
+		if constexpr (debug)
+		{
+			std::ostringstream ss;
+			ss << msg << " (" << filename << ":" << line << "@" << func << ")";
+			return ss.str();
+		}
+		else
+		{
+			return msg;
+		}
+	}
+
 	void print_nested_exception(const std::exception & e, unsigned int level)
 	{
 		std::cerr << std::string(level, ' ') << "exception: " << e.what()

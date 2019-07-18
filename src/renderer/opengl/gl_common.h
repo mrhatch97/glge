@@ -1,7 +1,6 @@
 #pragma once
 
-#include <glge/util/compat.h>
-#include <glge/util/util.h>
+#include <glge/common.h>
 
 #if GLGE_APPLE
 #include <OpenGL/gl3.h>
@@ -12,7 +11,7 @@
 
 namespace glge::renderer::opengl
 {
-	inline void throw_if_gl_error(std::string msg)
+	inline void throw_if_gl_error(string msg)
 	{
 		if (GLenum err; (err = glGetError()) != GL_NO_ERROR)
 		{

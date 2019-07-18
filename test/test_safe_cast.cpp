@@ -1,4 +1,4 @@
-#include <glge/util/util.h>
+#include <internal/util/util.h>
 
 #include "test_utils.h"
 

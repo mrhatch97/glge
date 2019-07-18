@@ -1,6 +1,7 @@
 #include "gl_common.h"
 
 #include <glge/common.h>
+#include <glge/util/util.h>
 #include <glge/renderer/primitives/texture.h>
 
 #include <SOIL.h>
