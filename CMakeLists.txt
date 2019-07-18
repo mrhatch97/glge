@@ -56,6 +56,14 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
             $<$<CONFIG:Test>:--coverage>
     )
 
+	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 8
+			AND CMAKE_CXX_COMPILER VERSION_LESS 9)
+		target_link_libraries(glge
+			PRIVATE
+				stdc++fs
+		)
+	endif()
+
 	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 9.1)
 		target_link_libraries(glge
 			PRIVATE
