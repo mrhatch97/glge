@@ -1,6 +1,6 @@
 #include "glge/renderer/primitives/primitive_data.h"
 
-#include <glge/util/compat.h>
+#include <internal/util/compat.h>
 #include <glge/util/util.h>
 
 #include <algorithm>

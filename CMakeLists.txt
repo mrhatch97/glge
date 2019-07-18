@@ -34,6 +34,8 @@ target_include_directories(glge
 	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 		$<INSTALL_INTERFACE:include>
+	PRIVATE
+		${PROJECT_SOURCE_DIR}/src/include
 )
 
 target_compile_features(glge

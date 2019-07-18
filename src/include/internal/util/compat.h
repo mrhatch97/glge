@@ -1,29 +1,38 @@
 /// <summary>Support for cross-platform capability.</summary>
-///
-/// Contains utility macros and variables for cross compatibility between
+/// /// Contains utility macros and variables for cross compatibility between
 /// Windows, Linux, and OSX.
 ///
 /// \file compat.h
 
 #pragma once
 
+#include "glge/util/compat.h"
+
 #include <glge/common.h>
 
+namespace glge
+{
+	enum class OperatingSystem
+	{
+		Windows,
+		Linux,
+		OSX
+	};
+
 #if _WIN32
-#define GLGE_WINDOWS 1
-#define GLGE_LINUX 0
-#define GLGE_APPLE 0
+	constexpr OperatingSystem OperatingSystem = OperatingSystem::Windows;
 #elif __linux__
-#define GLGE_WINDOWS 0
-#define GLGE_LINUX 1
-#define GLGE_APPLE 0
+	constexpr OperatingSystem OperatingSystem = OperatingSystem::Linux;
 #elif __APPLE__
-#define GLGE_WINDOWS 0
-#define GLGE_LINUX 0
-#define GLGE_APPLE 1
+	constexpr OperatingSystem OperatingSystem = OperatingSystem::OSX;
 #else
 #error "Could not identify platform for compatibility"
 #endif
+
+	constexpr bool OnWindows = OperatingSystem == OperatingSystem::Windows;
+	constexpr bool OnLinux = OperatingSystem == OperatingSystem::Linux;
+	constexpr bool OnOSX = OperatingSystem == OperatingSystem::OSX;
+}   // namespace glge
 
 /// \def FMT_STRING_ARG(buf)
 /// <summary>Helper for format string arguments.</summary>
@@ -110,30 +119,32 @@ namespace glge::util
 
 		return file;
 	}
+
+	/// <summary>
+	/// Platform-independent function for getting the current working directory.
+	/// </summary>
+	///
+	/// Gets the current working directory. Prefers std::filesystem if
+	/// available, falls back to platform specific cwd functions if not.
+	/// <returns>
+	/// Current working directory, as a string, or empty string if retrieval
+	/// failed.
+	/// </returns>
+	string getcwd();
 }   // namespace glge::util
 
-/// \def GET_CWD()
-/// <summary>
-/// Platform-independent macro for getting the current working directory.
-/// </summary>
-///
-/// Gets the current working directory. Prefers std::filesystem if available,
-/// falls back to platform specific cwd functions if not.
-/// <returns>
-/// Current working directory, as a string, or empty string if retrieval
-/// failed.
-/// </returns>
 #if __has_include(<filesystem>)
 
 #include <filesystem>
 
-#define GET_CWD() std::filesystem::current_path().string()
+namespace glge::util
+{
+	string getcwd() { return std::filesystem::current_path().string(); }
+}   // namespace glge::util
 
 #else
 
-#define GET_CWD() glge::util::getcwd_safe()
-
-#if GLGE_WINDOWS
+#if OnWindows
 #include <direct.h>
 #define getcwd _getcwd
 #else
@@ -142,15 +153,7 @@ namespace glge::util
 
 namespace glge::util
 {
-	/// <summary>Helper for GET_CWD().</summary>
-	///
-	/// Uses system-provided getcwd to return the current working directory, or
-	/// an empty string if it could not be retrieved.
-	/// <returns>
-	/// Current working directory, as a string, or empty string if retrieval
-	/// failed.
-	/// </returns>
-	inline string getcwd_safe()
+	string getcwd()
 	{
 		char buf[256];
 		czstring cwd = getcwd(buf, sizeof(buf));
@@ -166,5 +169,4 @@ namespace glge::util
 		}
 	}
 }   // namespace glge::util
-
 #endif
