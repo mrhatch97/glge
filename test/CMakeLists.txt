@@ -14,7 +14,8 @@ macro(add_quick_test test_name)
 
 	target_include_directories(test_${test_name}
 		PRIVATE
-			${PROJECT_SOURCE_DIR}/test/include)
+			${PROJECT_SOURCE_DIR}/test/include
+			${PROJECT_SOURCE_DIR}/src/include)
 
 	add_test(NAME ${test_name}
 		COMMAND test_${test_name}

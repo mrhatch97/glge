@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include "glge/util/compat.h"
-
 #include <glge/common.h>
 
 namespace glge

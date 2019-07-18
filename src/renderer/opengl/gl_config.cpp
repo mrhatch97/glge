@@ -1,6 +1,8 @@
 #include "gl_common.h"
 #include "glge/renderer/renderer.h"
 
+#include <glge/util/util.h>
+
 namespace glge::renderer
 {
 	namespace opengl

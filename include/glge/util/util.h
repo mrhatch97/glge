@@ -8,12 +8,8 @@
 
 #include <glge/common.h>
 
-#include <chrono>
-#include <cstdio>
 #include <functional>
-#include <sstream>
 #include <stack>
-#include <stdexcept>
 
 /// <summary>Get an exception message formatted with extra debug info.</summary>
 /// Produces an exception message with extra source file information
@@ -29,16 +25,6 @@
 
 namespace glge::util
 {
-	/// <summary>Tests whether type F returns void when invoked.</summary>
-	/// <typeparam name="F">Callable type to test.</typeparam>
-	template<typename F>
-	using returns_void = std::is_same<std::invoke_result_t<F>, void>;
-
-	/// <summary>Tests whether type F returns void when invoked.</summary>
-	/// <typeparam name="F">Callable type to test.</typeparam>
-	template<typename F>
-	constexpr bool returns_void_v = returns_void<F>::value;
-
 	/// <summary>
 	/// Get an exception message formatted with extra debug info.
 	/// </summary>
@@ -58,20 +44,10 @@ namespace glge::util
 	/// <returns>
 	/// <c>std::string</c> formatted exception message.
 	/// </returns>
-	inline string
-	exception_message(string msg, czstring filename, size_t line, czstring func)
-	{
-		if constexpr (debug)
-		{
-			std::ostringstream ss;
-			ss << msg << " (" << filename << ":" << line << "@" << func << ")";
-			return ss.str();
-		}
-		else
-		{
-			return msg;
-		}
-	}
+	string exception_message(string msg,
+							 czstring filename,
+							 size_t line,
+							 czstring func);
 
 	/// <summary>Pretty printer for nested std::exception.</summary>
 	/// Prints the message in the given exception at the given indentation
@@ -83,78 +59,6 @@ namespace glge::util
 	/// </param>
 	void print_nested_exception(const std::exception & e,
 								unsigned int level = 0);
-
-	/// <summary>
-	/// Call the given function with the given arguments and return
-	/// its value as well as the time it took to execute.
-	/// </summary>
-	/// Invokes the given callable f with the given args; times the operation
-	/// and returns the result of f in a tuple with the duration the call took.
-	/// If f returns void, returns the duration the call took directly.
-	/// <param name="f">Callable object to invoke.</param>
-	/// <param name="args">
-	/// Optional parameter pack to pass to the invocation of f.
-	/// </param>
-	/// <typeparam name="F">Type of f. Must be callable.</typeparam>
-	/// <typeparam name="Args">Parameter pack of args to pass to F.</typeparam>
-	/// <returns>
-	/// Tuple of (result, duration) or duration if result is void.
-	/// </returns>
-	template<typename F,
-			 typename Clock = std::chrono::steady_clock,
-			 typename... Args>
-	std::conditional_t<
-		returns_void_v<F>,
-		typename Clock::duration,
-		std::tuple<std::invoke_result_t<F>, typename Clock::duration>>
-	time_op(const F & f, Args &&... args)
-	{
-		auto start = Clock::now();
-		if constexpr (returns_void_v<F>)
-		{
-			f(std::forward<Args>(args)...);
-			return Clock::now() - start;
-		}
-		else
-		{
-			auto result = f(std::forward<Args>(args)...);
-			return {result, Clock::now() - start};
-		}
-	}
-
-	// Based on https://stackoverflow.com/q/36834799
-	/// <summary>
-	/// Converts from one scalar type to another, checking for data loss.
-	/// </summary>
-	/// Converts from From to To. If the conversion is widening, this is
-	/// identical to <c>static_cast</c>. If the conversion is narrowing, checks
-	/// to see that no data is lost and throws <c>std::logic_error</c> if the
-	/// value
-	/// changes.
-	/// <param name="value">Value to convert from.</param>
-	/// <typeparam name="From">
-	/// Type of value to convert from. Must be scalar.
-	/// </typeparam>
-	/// <typeparam name="To">Type to convert to. Must be scalar.</typeparam>
-	/// <exception cref="std::logic_error">
-	/// Throws if narrowing conversion changes value.
-	/// </exception>
-	/// <returns>The converted value.</returns>
-	template<typename From, typename To>
-	std::enable_if_t<
-		std::conjunction_v<std::is_scalar<From>, std::is_scalar<To>>,
-		To>
-	safe_cast(const From & value)
-	{
-		To new_value = static_cast<To>(value);
-
-		if (value != static_cast<From>(new_value))
-		{
-			throw std::logic_error(EXC_MSG("Cast altered the target value"));
-		}
-
-		return new_value;
-	}
 
 	/// <summary>
 	/// Helper for lifting bracket pattern code into RAII code.
@@ -445,41 +349,4 @@ namespace glge::util
 		/// <returns>Height of the Matrix.</returns>
 		[[nodiscard]] size_t height() const { return _height; }
 	};
-
-	/// <summary>
-	/// Wrapper for fscanf IO that checks whether the count of
-	/// matched variables equals the expected count.
-	/// </summary>
-	/// Runs scanf pattern match on the given buffer with the given format
-	/// string and optional arguments. Return value indicates whether expected
-	/// count matches actual count. Use FMT_STRING_ARG(buf) for MSVC
-	/// compatibility.
-	/// <typeparam name="Args">
-	/// Variadic parameter pack forwarded to sscanf.
-	/// </typeparam>
-	/// <param name="count">
-	/// Expected number of matched format variables.
-	/// </param>
-	/// <param name="buf">
-	/// Pointer to character buffer to read from.
-	/// </param>
-	/// <param name="fmt">
-	/// C IO format string.
-	/// </param>
-	/// <param name="args">
-	/// Variadic arguments for C IO format string.
-	/// </param>
-	/// <returns>True if count matched expected.</returns>
-	template<typename... Args>
-	bool
-	checked_sscanf(int count, const char * buf, czstring fmt, Args &&... args)
-	{
-#ifdef _MSC_VER
-		int matchCt = sscanf_s(buf, fmt, std::forward<Args>(args)...);
-#else
-		int matchCt = sscanf(buf, fmt, args...);
-#endif
-
-		return count == matchCt;
-	}
 }   // namespace glge::util
