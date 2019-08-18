@@ -32,19 +32,6 @@ namespace glge
 	constexpr bool on_osx = operating_system == OperatingSystem::OSX;
 }   // namespace glge
 
-/// \def FMT_STRING_ARG(buf)
-/// <summary>Helper for format string arguments.</summary>
-///
-/// Supports passing same format string argument to standard C IO functions and
-/// MSVC _s variant by automatically adding sizeof(buf) when compiled under
-/// MSVC.
-/// <param name="buf">Buffer used to store the read format string value.</param>
-#ifdef _MSC_VER
-#define FMT_STRING_ARG(buf) buf, sizeof(buf)
-#else
-#define FMT_STRING_ARG(buf) buf
-#endif
-
 /// \def EXECUTION_POLICY_SEQ
 /// <summary>
 /// Function argument equivalent to std::execution::seq. Do not follow with 
@@ -87,37 +74,6 @@ namespace glge
 
 namespace glge::util
 {
-	/// <summary>
-	/// Attempt to open the given file path in the given mode.
-	/// If this fails for any reason, throws an exception.
-	/// </summary>
-	/// <param name="file_name">Path to file to open.</param>
-	/// <param name="mode">Mode string to open file with; as in fopen.</param>
-	/// <returns>Handle to opened file.</returns>
-	/// <exception cref="std::runtime_error">
-	/// Thrown if file fails to open.
-	/// </exception>
-	inline FILE * try_fopen(czstring file_name, czstring mode)
-	{
-		FILE * file;
-
-#ifdef _MSC_VER
-		if (fopen_s(&file, file_name, mode) != 0)
-#else
-		errno = 0;
-
-		file = std::fopen(file_name, mode);
-
-		if (errno)
-#endif
-		{
-			throw std::runtime_error("Failed to open file " +
-									 string(file_name));
-		}
-
-		return file;
-	}
-
 	/// <summary>
 	/// Platform-independent function for getting the current working directory.
 	/// </summary>

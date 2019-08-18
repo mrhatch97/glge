@@ -27,7 +27,7 @@ namespace glge::test::opengl::cases
 				color_shader->instance(vec3(1.0f, 0.0f, 0.0f));
 
 			auto model = Model::from_file(
-				ModelFileInfo{"./resources/models/test.obj", true});
+				ModelFileInfo{"./resources/models/test.obj"});
 
 			Scene scene;
 

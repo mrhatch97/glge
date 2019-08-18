@@ -119,6 +119,113 @@ namespace glge::util
 	};
 
 	/// <summary>
+	/// Static descriptors for a left-handed coordinate system.
+	/// </summary>
+	struct LeftHandCoordinateSystem
+	{
+		/// <summary>
+		/// The right (positive X) axis.
+		/// </summary>
+		struct Right
+		{
+			/// <summary>
+			/// 1.0f if axis is in positive direction, else -1.0f.
+			/// </summary>
+			static constexpr float signum = 1.0f;
+
+			/// <summary>
+			/// Index of this axis' coordinate in 3-tuples.
+			/// </summary>
+			static constexpr size_t idx = 0;
+		};
+
+		/// <summary>
+		/// The left (negative X) axis.
+		/// </summary>
+		struct Left
+		{
+			/// <summary>
+			/// 1.0f if axis is in positive direction, else -1.0f.
+			/// </summary>
+			static constexpr float signum = -Right::signum;
+
+			/// <summary>
+			/// Index of this axis' coordinate in 3-tuples.
+			/// </summary>
+			static constexpr size_t idx = Right::idx;
+		};
+
+		/// <summary>
+		/// The up (positive Y) axis.
+		/// </summary>
+		struct Up
+		{
+			/// <summary>
+			/// 1.0f if axis is in positive direction, else -1.0f.
+			/// </summary>
+			static constexpr float signum = 1.0f;
+
+			/// <summary>
+			/// Index of this axis' coordinate in 3-tuples.
+			/// </summary>
+			static constexpr size_t idx = 1;
+		};
+
+		/// <summary>
+		/// The down (negative Y) axis.
+		/// </summary>
+		struct Down
+		{
+			/// <summary>
+			/// 1.0f if axis is in positive direction, else -1.0f.
+			/// </summary>
+			static constexpr float signum = -Up::signum;
+
+			/// <summary>
+			/// Index of this axis' coordinate in 3-tuples.
+			/// </summary>
+			static constexpr size_t idx = Up::idx;
+		};
+
+		/// <summary>
+		/// The forward (negative Z) axis.
+		/// </summary>
+		struct Forward
+		{
+			/// <summary>
+			/// 1.0f if axis is in positive direction, else -1.0f.
+			/// </summary>
+			static constexpr float signum = -1.0f;
+
+			/// <summary>
+			/// Index of this axis' coordinate in 3-tuples.
+			/// </summary>
+			static constexpr size_t idx = 2;
+		};
+
+		/// <summary>
+		/// The back (positive Z) axis.
+		/// </summary>
+		struct Back
+		{
+			/// <summary>
+			/// 1.0f if axis is in positive direction, else -1.0f.
+			/// </summary>
+			static constexpr float signum = -Forward::signum;
+
+			/// <summary>
+			/// Index of this axis' coordinate in 3-tuples.
+			/// </summary>
+			static constexpr size_t idx = Forward::idx;
+		};
+
+		/// <summary>
+		/// The homogenous basis for this coordinate system.
+		/// </summary>
+		static const mat4 basis;
+	};
+
+	/// <summary>
 	/// Type alias for the coordinate system used throughout the library.
 	/// </summary>
 	using CoordSys = RightHandCoordinateSystem;

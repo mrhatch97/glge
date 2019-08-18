@@ -7,9 +7,18 @@
 #pragma once
 
 #include <glge/common.h>
+#include <glge/obj_parser/obj_parser.h>
 
 namespace glge::renderer::primitive
 {
+	using obj_parser::Vertices;
+	using obj_parser::Normals;
+	using obj_parser::TexCoords;
+	using obj_parser::Indices;
+	using obj_parser::VertexData;
+	using obj_parser::NormalData;
+	using obj_parser::UVData;
+
 	/// <summary>
 	/// File information data object for model files.
 	/// </summary>
@@ -17,53 +26,6 @@ namespace glge::renderer::primitive
 	{
 		/// <summary>Path to model file.</summary>
 		string filename;
-		/// <summary>Whether or not model file includes uvs.</summary>
-		bool is_textured;
-	};
-
-	/// <summary>Type alias for collection of vertices.</summary>
-	using VertexPoints = vector<vec3>;
-	/// <summary>Type alias for collection of normals.</summary>
-	using NormalPoints = vector<vec3>;
-	/// <summary>Type alias for collection of uvs.</summary>
-	using UVPoints = vector<vec2>;
-	/// <summary>Type alias for collection of indices.</summary>
-	using Indices = vector<unsigned int>;
-
-	/// <summary>
-	/// Data object containing a set of vertex points and their
-	/// mapped indices.
-	/// </summary>
-	struct VertexData
-	{
-		/// <summary>Collection of vertices.</summary>
-		VertexPoints points;
-		/// <summary>Indices for the set of vertices.</summary>
-		Indices indices;
-	};
-
-	/// <summary>
-	/// Data object containing a set of model normals and their
-	/// mapped indices.
-	/// </summary>
-	struct NormalData
-	{
-		/// <summary>Collection of normal vectors.</summary>
-		NormalPoints points;
-		/// <summary>Indices for the set of normals.</summary>
-		Indices indices;
-	};
-
-	/// <summary>
-	/// Data object containing a set of model uvs and their
-	/// mapped indices.
-	/// </summary>
-	struct UVData
-	{
-		/// <summary>Collection of uvs.</summary>
-		UVPoints points;
-		/// <summary>Indices for the set of uvs.</summary>
-		Indices indices;
 	};
 
 	struct EBOModelData;
@@ -108,11 +70,11 @@ namespace glge::renderer::primitive
 	struct EBOModelData
 	{
 		/// <summary>Vertex list.</summary>
-		VertexPoints vertices;
+		Vertices vertices;
 		/// <summary>Normal vector list.</summary>
-		NormalPoints normals;
+		Normals normals;
 		/// <summary>Uv list.</summary>
-		UVPoints uvs;
+		TexCoords uvs;
 		/// <summary>Index list. Indexes into all collections.</summary>
 		Indices indices;
 	};

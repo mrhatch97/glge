@@ -95,41 +95,4 @@ namespace glge::util
 
 		return new_value;
 	}
-
-	/// <summary>
-	/// Wrapper for fscanf IO that checks whether the count of
-	/// matched variables equals the expected count.
-	/// </summary>
-	/// Runs scanf pattern match on the given buffer with the given format
-	/// string and optional arguments. Return value indicates whether expected
-	/// count matches actual count. Use FMT_STRING_ARG(buf) for MSVC
-	/// compatibility.
-	/// <typeparam name="Args">
-	/// Variadic parameter pack forwarded to sscanf.
-	/// </typeparam>
-	/// <param name="count">
-	/// Expected number of matched format variables.
-	/// </param>
-	/// <param name="buf">
-	/// Pointer to character buffer to read from.
-	/// </param>
-	/// <param name="fmt">
-	/// C IO format string.
-	/// </param>
-	/// <param name="args">
-	/// Variadic arguments for C IO format string.
-	/// </param>
-	/// <returns>True if count matched expected.</returns>
-	template<typename... Args>
-	bool
-	checked_sscanf(int count, const char * buf, czstring fmt, Args &&... args)
-	{
-#ifdef _MSC_VER
-		int matchCt = sscanf_s(buf, fmt, std::forward<Args>(args)...);
-#else
-		int matchCt = sscanf(buf, fmt, args...);
-#endif
-
-		return count == matchCt;
-	}
 }   // namespace glge::util

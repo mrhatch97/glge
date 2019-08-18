@@ -148,6 +148,11 @@ namespace glge::test
 				glge::util::print_nested_exception(e);
 				std::exit(test_fail_code);
 			}
+			catch(...)
+			{
+				std::cerr << "Caught non-exception object!" << std::endl;
+				std::exit(test_fail_code);
+			}
 			test.post();
 		}
 
@@ -166,6 +171,11 @@ namespace glge::test
 			catch (const std::exception & e)
 			{
 				glge::util::print_nested_exception(e);
+				std::exit(test_fail_code);
+			}
+			catch(...)
+			{
+				std::cerr << "Caught non-exception object!" << std::endl;
 				std::exit(test_fail_code);
 			}
 		}

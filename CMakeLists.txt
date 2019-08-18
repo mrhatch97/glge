@@ -23,6 +23,7 @@ add_library (glge STATIC
 add_subdirectory(src/support)
 add_subdirectory(src/util)
 add_subdirectory(src/renderer)
+add_subdirectory(src/obj_parser)
 
 target_link_libraries(glge
 	PUBLIC
@@ -49,6 +50,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
             $<$<CONFIG:Test>:--coverage -g -fPIC -O0> 
         PRIVATE
             -Wall -Wextra -Werror
+			$<$<CONFIG:Debug>:-Og>
     )
     target_link_options(glge
         PUBLIC
@@ -93,7 +95,7 @@ if(BUILD_DOCUMENTATION)
 		set(DOXYGEN_OUT ${PROJECT_BINARY_DIR}/Doxyfile)
 
 		configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-		message("Doxygen build enabled")
+		message("-- Doxygen build enabled")
 
 		add_custom_target(docs ALL
 			COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}

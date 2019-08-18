@@ -11,7 +11,7 @@ namespace glge::test::cases
 	void test_move()
 	{
 		ModelData data = ModelData::from_file(
-			ModelFileInfo{"./resources/models/test.obj", true});
+			ModelFileInfo{"./resources/models/test.obj"});
 
 		EBOModelData ebo_data = ModelData::to_EBO_data(std::move(data));
 
@@ -26,7 +26,7 @@ namespace glge::test::cases
 	void test_copy()
 	{
 		ModelData data = ModelData::from_file(
-			ModelFileInfo{"./resources/models/test.obj", true});
+			ModelFileInfo{"./resources/models/test.obj"});
 
 		EBOModelData ebo_data = ModelData::to_EBO_data(data);
 

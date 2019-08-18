@@ -11,7 +11,7 @@ namespace glge::test::cases
 	void test_load()
 	{
 		ModelData data = ModelData::from_file(
-			ModelFileInfo{"./resources/models/big.obj", false});
+			ModelFileInfo{"./resources/models/big.obj"});
 
 		test_equal(34835U, data.vertex_data.points.size());
 		test_equal(34835U, data.normal_data.points.size());

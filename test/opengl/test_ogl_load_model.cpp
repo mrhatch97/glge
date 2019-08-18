@@ -16,7 +16,7 @@ namespace glge::test::opengl::cases
 		void test_load()
 		{
 			Model::from_file(
-				ModelFileInfo{"./resources/models/test.obj", true});
+				ModelFileInfo{"./resources/models/test.obj"});
 		}
 	};
 

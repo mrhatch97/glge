@@ -23,9 +23,11 @@ namespace glge::util
 		}
 	}
 
-	void print_nested_exception(const std::exception & e, unsigned int level)
+	void print_nested_exception(const std::exception & e,
+								unsigned int level,
+								std::ostream & stream)
 	{
-		std::cerr << std::string(level, ' ') << "exception: " << e.what()
+		stream << std::string(level, ' ') << "exception: " << e.what()
 				  << '\n';
 		try
 		{
@@ -33,11 +35,11 @@ namespace glge::util
 		}
 		catch (const std::exception & e)
 		{
-			print_nested_exception(e, level + 1);
+			print_nested_exception(e, level + 1, stream);
 		}
 		catch (...)
 		{
-			std::cerr << "Unknown object thrown" << std::endl;
+			stream << "Unknown object thrown" << std::endl;
 		}
 	}
 

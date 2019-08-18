@@ -9,6 +9,8 @@
 #include <glge/common.h>
 
 #include <functional>
+#include <iostream>
+#include <ostream>
 #include <stack>
 
 /// <summary>Get an exception message formatted with extra debug info.</summary>
@@ -57,8 +59,145 @@ namespace glge::util
 	/// <param name="level">
 	/// Exception nesting level; should usually be defaulted by the caller.
 	/// </param>
+	/// <param name="stream">
+	/// Stream to print to. Defaults to std::cerr.
+	/// </param>
 	void print_nested_exception(const std::exception & e,
-								unsigned int level = 0);
+								unsigned int level = 0,
+								std::ostream & stream = std::cerr);
+
+	/// <summary>
+	/// Force a conversion from Parent to Child type without
+	/// checking type constraints.
+	/// </summary>
+	/// <param name="value">
+	/// Value to treat as the Child type.
+	/// </param>
+	/// <typeparam name="Child">Type to convert to.</typeparam>
+	/// <typeparam name="Parent">Type to convert from.</typeparam>
+	/// <returns>The converted subtype value.</returns>
+	template<typename Child, typename Parent>
+	constexpr Child unchecked_conversion(Parent value);
+
+	/// <summary>
+	/// A type that can be inherited from to create a strong typedef of
+	/// type that would not normally allow inheritance, e.g. primitives.
+	/// </summary>
+	/// <typeparam name="Child">The new type to create.</typeparam>
+	/// <typeparam name="Parent">The type to create a subtype of.</typeparam>
+	template<typename Child, typename Parent>
+	class Newtype
+	{
+		Parent value;
+
+	protected:
+		/// <summary>
+		/// Default constructor. Required to allow unchecked conversion.
+		/// </summary>
+		constexpr Newtype() noexcept = default;
+
+		/// <summary>
+		/// Explicitly create an instance of the subtype from the supertype.
+		/// To be invoked by child classes after subtype constraints are
+		/// checked.
+		/// </summary>
+		/// <param name="value">Value to initialize newtype with.</param>
+		explicit constexpr Newtype(Parent value) noexcept : value(value) {}
+
+		/// <summary>
+		/// Default copy constructor to allow copying of newtypes.
+		/// </summary>
+		/// <param name="other">Value to copy.</param>
+		constexpr Newtype(const Newtype & other) = default;
+
+	public:
+		/// <summary>
+		/// Widening conversion from subtype to supertype. Implicitly allowed.
+		/// </summary>
+		/// <returns>Reference to this value as its parent type.</returns>
+		constexpr operator Parent &() noexcept { return value; }
+
+		/// <summary>
+		/// Widening conversion from subtype to supertype. Implicitly allowed.
+		/// </summary>
+		/// <returns>Const reference to this value as its parent type.</returns>
+		constexpr operator const Parent &() const noexcept { return value; }
+
+		friend constexpr Child
+		unchecked_conversion<Child, Parent>(Parent value);
+	};
+
+	template<typename Child, typename Parent>
+	constexpr Child unchecked_conversion(Parent value)
+	{
+		Child child;
+		child.value = value;
+		return child;
+	}
+
+	/// <summary>
+	/// A specialized newtype for types with ordering. Allows
+	/// enforcing a range constraint at compile-time on values
+	/// of a type.
+	/// </summary>
+	/// <typeparam name="Child">
+	/// The new range-constrained type to create.
+	/// </typeparam>
+	/// <typeparam name="Parent">
+	/// The supertype to constrain.
+	/// </typeparam>
+	/// <typeparam name="lower_bound">
+	/// The minimum (inclusive) value to allow for the range.
+	/// </typeparam>
+	/// <typeparam name="upper_bound">
+	/// The maximum (inclusive) value to allow for the range.
+	/// </typeparam>
+	template<typename Child,
+			 typename Parent,
+			 Parent lower_bound,
+			 Parent upper_bound>
+	class Range : public Newtype<Child, Parent>
+	{
+	public:
+		/// <summary>
+		/// The minimum (inclusive) value allowed for this range.
+		/// </summary>
+		static constexpr Parent min = lower_bound;
+		/// <summary>
+		/// The maximum (inclusive) value allowed for this range.
+		/// </summary>
+		static constexpr Parent max = upper_bound;
+
+	protected:
+		/// <summary>
+		/// Default constructor. Required to allow unchecked conversion.
+		/// </summary>
+		constexpr Range() noexcept {}
+
+		/// <summary>
+		/// Explicitly create an instance of the subtype from the supertype.
+		/// To be invoked by child classes after subtype constraints are
+		/// checked.
+		/// </summary>
+		/// <param name="value">Value to initialize newtype with.</param>
+		explicit constexpr Range(Parent value) : Newtype<Child, Parent>(value)
+		{
+			if (value < lower_bound)
+			{
+				throw std::range_error("value was below the allowed range");
+			}
+			else if (value > upper_bound)
+			{
+				throw std::range_error("value was above the allowed range");
+			}
+		}
+
+		/// <summary>
+		/// Default copy constructor to allow copying of ranges.
+		/// </summary>
+		/// <param name="other">Value to copy.</param>
+		constexpr Range(const Range & other) = default;
+	};
 
 	/// <summary>
 	/// Helper for lifting bracket pattern code into RAII code.
