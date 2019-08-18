@@ -94,7 +94,7 @@ namespace glge::util
 		/// <summary>
 		/// Default constructor. Required to allow unchecked conversion.
 		/// </summary>
-		constexpr Newtype() noexcept = default;
+		Newtype() = default;
 
 		/// <summary>
 		/// Explicitly create an instance of the subtype from the supertype.
@@ -172,7 +172,7 @@ namespace glge::util
 		/// <summary>
 		/// Default constructor. Required to allow unchecked conversion.
 		/// </summary>
-		constexpr Range() noexcept {}
+		Range() = default;
 
 		/// <summary>
 		/// Explicitly create an instance of the subtype from the supertype.

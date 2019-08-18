@@ -2,7 +2,7 @@
 /// Data representations for object files and object file
 /// parsing functions.
 /// </summary>
-/// 
+///
 /// \file obj_parser.h
 
 #pragma once
@@ -20,20 +20,26 @@ namespace glge::obj_parser
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		constexpr Vertex() noexcept {}
+		Vertex() = default;
 
 		/// <summary>
 		/// Constructs a Vertex from the given vec3.
 		/// </summary>
 		/// <param name="value">vec3 to wrap.</param>
-		explicit constexpr Vertex(vec3 value) : Newtype<Vertex, vec3>(value)
+		explicit constexpr Vertex(vec3 value) noexcept :
+			Newtype<Vertex, vec3>(value)
 		{}
 
 		/// <summary>
 		/// Re-exposure of glm::vec3::length()
 		/// </summary>
 		/// <returns>Number of vector components.</returns>
-		constexpr static size_t length() { return vec3::length(); }
+		constexpr static size_t length()
+		{
+			// Why is this not constexpr? Ask GLM
+			// return vec3::length();
+			return 3;
+		}
 	};
 
 	/// <summary>
@@ -44,24 +50,30 @@ namespace glge::obj_parser
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		constexpr Normal() noexcept {}
+		Normal() = default;
 
 		/// <summary>
 		/// Constructs a Normal from the given vec3.
 		/// </summary>
 		/// <param name="value">vec3 to wrap.</param>
-		explicit constexpr Normal(vec3 value) : Newtype<Normal, vec3>(value)
+		explicit constexpr Normal(vec3 value) noexcept :
+			Newtype<Normal, vec3>(value)
 		{}
 
 		/// <summary>
 		/// Re-exposure of glm::vec3::length()
 		/// </summary>
 		/// <returns>Number of vector components.</returns>
-		constexpr static size_t length() { return vec3::length(); }
+		constexpr static size_t length()
+		{
+			// Why is this not constexpr? Ask GLM
+			// return vec3::length();
+			return 3;
+		}
 	};
 
 	/// <summary>
-	/// Strong typedef of glm::vec2 representing a texture coordinate in a 3D 
+	/// Strong typedef of glm::vec2 representing a texture coordinate in a 3D
 	/// model.
 	/// </summary>
 	struct TexCoord : public util::Newtype<TexCoord, vec2>
@@ -69,20 +81,26 @@ namespace glge::obj_parser
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		constexpr TexCoord() noexcept {}
+		TexCoord() = default;
 
 		/// <summary>
 		/// Constructs a Normal from the given vec2.
 		/// </summary>
 		/// <param name="value">vec2 to wrap.</param>
-		explicit constexpr TexCoord(vec2 value) : Newtype<TexCoord, vec2>(value)
+		explicit constexpr TexCoord(vec2 value) noexcept :
+			Newtype<TexCoord, vec2>(value)
 		{}
 
 		/// <summary>
 		/// Re-exposure of glm::vec2::length()
 		/// </summary>
 		/// <returns>Number of vector components.</returns>
-		constexpr static size_t length() { return vec2::length(); }
+		constexpr static size_t length()
+		{
+			// Why is this not constexpr? Ask GLM
+			// return vec2::length();
+			return 2;
+		}
 	};
 
 	/// <summary>Type alias for collection of vertices.</summary>
@@ -117,7 +135,7 @@ namespace glge::obj_parser
 	/// mapped indices.
 	/// </summary>
 	using VertexData = Indexed<Vertices>;
-	
+
 	/// <summary>
 	/// Data object containing a set of model normals and their
 	/// mapped indices.
@@ -151,4 +169,4 @@ namespace glge::obj_parser
 	/// </param>
 	/// <returns>Parsed representation of the file contents.</returns>
 	Object parse_object_file(czstring filepath);
-}
+}   // namespace glge::obj_parser
