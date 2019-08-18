@@ -5,6 +5,7 @@
 #pragma once
 
 #include <glge/common.h>
+#include <glge/util/util.h>
 
 #include <array>
 
@@ -531,22 +532,18 @@ namespace glge::math
 	};
 
 	struct Degrees;
+	struct Radians;
 
 	/// <summary>
 	/// A strong typedef for float to a radian angle measurement.
 	/// </summary>
-	struct Radians
+	struct Radians : public util::Newtype<Radians, float>
 	{
-		/// <summary>
-		/// Value of the angle, in radians.
-		/// </summary>
-		float value;
-
 		/// <summary>
 		/// Default-constructs a Radians wrapper; no initialization is performed
 		/// on the value.
 		/// </summary>
-		Radians() {}
+		Radians() = default;
 
 		/// <summary>
 		/// Constructs a Radians wrapper around the given float value.
@@ -554,15 +551,9 @@ namespace glge::math
 		/// <param name="value">
 		/// Float value in radians.
 		/// </param>
-		explicit constexpr Radians(float value) noexcept : value(value) {}
-
-		/// <summary>
-		/// Constructs a Radians wrapper by copying another Radians object.
-		/// </summary>
-		/// <param name="other">
-		/// Radians to copy.
-		/// </param>
-		constexpr Radians(const Radians & other) = default;
+		explicit constexpr Radians(float value) :
+			util::Newtype<Radians, float>(value)
+		{}
 
 		/// <summary>
 		/// Constructs a Radians wrapper by converting a Degrees wrapper object.
@@ -573,27 +564,28 @@ namespace glge::math
 		constexpr Radians(Degrees degrees) noexcept;
 
 		/// <summary>
-		/// Conversion operator to unwrap the radian float value.
+		/// Division operator by a scalar.
 		/// </summary>
-		/// <returns>Radian value, as float.</returns>
-		constexpr operator float() const noexcept { return value; }
+		/// <param name="value">
+		/// Scalar to divide by.
+		/// </param>
+		/// <returns>Result of division.</returns>
+		constexpr Radians operator/(float value)
+		{
+			return Radians(static_cast<float>(*this) / value);
+		}
 	};
 
 	/// <summary>
 	/// A strong typedef for float to a degree angle measurement.
 	/// </summary>
-	struct Degrees
+	struct Degrees : public util::Newtype<Degrees, float>
 	{
-		/// <summary>
-		/// Value of the angle, in degrees.
-		/// </summary>
-		float value;
-
 		/// <summary>
 		/// Default-constructs a Degrees wrapper; no initialization is performed
 		/// on the value.
 		/// </summary>
-		Degrees() {}
+		Degrees() = default;
 
 		/// <summary>
 		/// Constructs a Degrees wrapper around the given float value.
@@ -601,15 +593,9 @@ namespace glge::math
 		/// <param name="value">
 		/// Float value in degrees.
 		/// </param>
-		explicit constexpr Degrees(float value) noexcept : value(value) {}
-
-		/// <summary>
-		/// Constructs a Degrees wrapper by copying another Degrees object.
-		/// </summary>
-		/// <param name="other">
-		/// Degrees to copy.
-		/// </param>
-		constexpr Degrees(const Degrees & other) = default;
+		explicit constexpr Degrees(float value) :
+			util::Newtype<Degrees, float>(value)
+		{}
 
 		/// <summary>
 		/// Constructs a Degrees wrapper by converting a Radians wrapper object.
@@ -620,19 +606,61 @@ namespace glge::math
 		constexpr Degrees(Radians radians) noexcept;
 
 		/// <summary>
-		/// Conversion operator to unwrap the degree float value.
+		/// Division operator by a scalar.
 		/// </summary>
-		/// <returns>Degree value, as float.</returns>
-		constexpr operator float() const noexcept { return value; }
+		/// <param name="value">
+		/// Scalar to divide by.
+		/// </param>
+		/// <returns>Result of division.</returns>
+		constexpr Degrees operator/(float value)
+		{
+			return Degrees(static_cast<float>(*this) / value);
+		}
 	};
 
 	constexpr Radians::Radians(Degrees degrees) noexcept :
-		value(glm::radians(static_cast<float>(degrees)))
+		Newtype<Radians, float>(glm::radians(static_cast<float>(degrees)))
 	{}
 
 	constexpr Degrees::Degrees(Radians radians) noexcept :
-		value(glm::degrees(static_cast<float>(radians)))
+		Newtype<Degrees, float>(glm::degrees(static_cast<float>(radians)))
 	{}
+
+	/// <summary>
+	/// Type-safe wrapper for glm::sin.
+	/// </summary>
+	/// <param name="rad">
+	/// Radians to take sine of.
+	/// </param>
+	/// <returns>Result of glm::sin.</returns>
+	constexpr float sin(Radians rad)
+	{
+		return glm::sin(static_cast<float>(rad));
+	}
+
+	/// <summary>
+	/// Type-safe wrapper for glm::cos.
+	/// </summary>
+	/// <param name="rad">
+	/// Radians to take cosine of.
+	/// </param>
+	/// <returns>Result of glm::cos.</returns>
+	constexpr float cos(Radians rad)
+	{
+		return glm::cos(static_cast<float>(rad));
+	}
+
+	/// <summary>
+	/// Type-safe wrapper for glm::tan.
+	/// </summary>
+	/// <param name="rad">
+	/// Radians to take tangent of.
+	/// </param>
+	/// <returns>Result of glm::tan.</returns>
+	constexpr float tan(Radians rad)
+	{
+		return glm::tan(static_cast<float>(rad));
+	}
 
 	/// <summary>Compare vectors by x-coordinate value.</summary>
 	/// <param name="a">First vector.</param>

@@ -4,7 +4,7 @@ namespace glge::renderer
 {
 	static constexpr float plane_height(math::Radians v_fov, float distance)
 	{
-		return 2 * glm::tan(static_cast<float>(v_fov) / 2.0f) * distance;
+		return 2 * math::tan(v_fov / 2.0f) * distance;
 	}
 
 	vec2 CameraIntrinsics::near_dimensions() const

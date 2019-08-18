@@ -362,14 +362,6 @@ namespace glge::obj_parser
 				parse_line(parser));
 		} while (!file.eof());
 
-		std::cerr << "Vertices: " << object.vertex_data.points.size()
-				  << std::endl;
-		std::cerr << "Normals: " << object.normal_data.points.size()
-				  << std::endl;
-		std::cerr << "Uvs: " << object.uv_data.points.size() << std::endl;
-		std::cerr << "Indices: " << object.vertex_data.indices.size()
-				  << std::endl;
-
 		return object;
 	}
 }   // namespace glge::obj_parser
