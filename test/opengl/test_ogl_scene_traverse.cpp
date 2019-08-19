@@ -7,6 +7,7 @@
 #include "ogl_test_utils.h"
 
 using namespace glge;
+using namespace glge::model_parser;
 using namespace glge::renderer;
 using namespace glge::renderer::primitive;
 using namespace glge::renderer::scene_graph;
@@ -27,8 +28,8 @@ namespace glge::test::opengl::cases
 			auto color_instance =
 				color_shader->instance(vec3(1.0f, 0.0f, 0.0f));
 
-			auto model = Model::from_file(
-				ModelFileInfo{"./resources/models/test.obj"});
+			auto model = Model::from_file(ModelFileInfo{
+				"./resources/models/test.obj", ModelFiletype::Auto});
 
 			Scene scene;
 

@@ -10,6 +10,7 @@
 
 #include <glge/renderer/primitives/primitive_data.h>
 #include <glge/renderer/primitives/renderable.h>
+#include <glge/model_parser/types.h>
 
 namespace glge::renderer::primitive
 {
@@ -28,7 +29,8 @@ namespace glge::renderer::primitive
 		/// </summary>
 		/// <param name="file_info">Descriptor for the model file.</param>
 		/// <returns>Pointer to created model.</returns>
-		static unique_ptr<Model> from_file(const ModelFileInfo & file_info);
+		static unique_ptr<Model>
+		from_file(const model_parser::ModelFileInfo & file_info);
 
 		/// <summary>
 		/// Load a model from a set of model data. Copies the supplied data; may

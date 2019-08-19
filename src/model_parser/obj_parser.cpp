@@ -1,4 +1,4 @@
-#include "glge/obj_parser/obj_parser.h"
+#include "glge/model_parser/model_parser.h"
 
 #include <array>
 #include <fstream>
@@ -7,15 +7,15 @@
 #include <optional>
 #include <variant>
 
-namespace glge::obj_parser
+namespace glge::model_parser
 {
 	namespace
 	{
 		struct FaceGroup
 		{
-			unsigned int vertex_index;
-			std::optional<unsigned int> normal_index;
-			std::optional<unsigned int> uv_index;
+			Index vertex_index;
+			std::optional<Index> normal_index;
+			std::optional<Index> uv_index;
 		};
 
 		struct Face
@@ -172,14 +172,14 @@ namespace glge::obj_parser
 		{
 			// e.g. 5/3/7 or 5//7 or 5
 
-			const auto vertex_index = parser.expect<unsigned int>() - 1;
+			const auto vertex_index = Index(parser.expect<size_t>() - 1);
 
 			if (!parser.maybe_match('/'))
 			{
 				return {vertex_index, std::nullopt, std::nullopt};
 			}
 
-			std::optional<unsigned int> uv_index;
+			std::optional<Index> uv_index;
 
 			if (parser.maybe_match('/'))
 			{
@@ -187,12 +187,12 @@ namespace glge::obj_parser
 			}
 			else
 			{
-				uv_index = parser.expect<unsigned int>() - 1;
+				uv_index = Index(parser.expect<size_t>() - 1);
 				parser.expect('/');
 			}
 
 			// Normal isn't optional at this point - read it
-			const auto normal_index = parser.expect<unsigned int>() - 1;
+			const auto normal_index = Index(parser.expect<size_t>() - 1);
 
 			return {vertex_index, normal_index, uv_index};
 		}
@@ -313,7 +313,7 @@ namespace glge::obj_parser
 		}
 	}   // namespace
 
-	Object parse_object_file(czstring filepath)
+	ModelData parse_object_file(czstring filepath)
 	{
 		std::ifstream file(filepath);
 
@@ -324,7 +324,7 @@ namespace glge::obj_parser
 
 		Parser parser(file);
 
-		Object object;
+		ModelData object;
 
 		do
 		{

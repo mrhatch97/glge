@@ -9,21 +9,20 @@
 
 namespace glge::renderer::primitive
 {
-	ModelData ModelData::from_file(const ModelFileInfo & file_info)
+	EBOModelData::EBOModelData(const ModelData & model_data) :
+		EBOModelData(ModelData(model_data))
 	{
-		using namespace obj_parser;
-		Object obj = parse_object_file(file_info.filename.c_str());
-
-		return ModelData{obj.vertex_data, obj.normal_data, obj.uv_data};
 	}
 
-	EBOModelData ModelData::to_EBO_data(const ModelData & model_data)
+	EBOModelData::EBOModelData(ModelData && model_data)
 	{
-		return to_EBO_data(ModelData(model_data));
-	}
+		auto move_op = [&model_data, this]() {
+			this->vertices = std::move(model_data.vertex_data.points);
+			this->normals = std::move(model_data.normal_data.points);
+			this->uvs = std::move(model_data.uv_data.points);
+			this->indices = std::move(model_data.vertex_data.indices);
+		};
 
-	EBOModelData ModelData::to_EBO_data(ModelData && model_data)
-	{
 		if (model_data.vertex_data.points.size() ==
 				model_data.vertex_data.indices.size() &&
 			model_data.normal_data.points.size() ==
@@ -31,10 +30,8 @@ namespace glge::renderer::primitive
 			model_data.uv_data.points.size() ==
 				model_data.uv_data.indices.size())
 		{
-			return EBOModelData{std::move(model_data.vertex_data.points),
-								std::move(model_data.normal_data.points),
-								std::move(model_data.uv_data.points),
-								std::move(model_data.vertex_data.indices)};
+			move_op();
+			return;
 		}
 
 		auto copy_op = [=](auto & data) {
@@ -56,12 +53,10 @@ namespace glge::renderer::primitive
 			copy_op(model_data.uv_data);
 
 			std::iota(model_data.vertex_data.indices.begin(),
-					  model_data.vertex_data.indices.end(), 0);
+					  model_data.vertex_data.indices.end(),
+					  model_parser::Index(0UL));
 
-			return EBOModelData{std::move(model_data.vertex_data.points),
-								std::move(model_data.normal_data.points),
-								std::move(model_data.uv_data.points),
-								std::move(model_data.vertex_data.indices)};
+			move_op();
 		}
 		catch (const std::exception &)
 		{

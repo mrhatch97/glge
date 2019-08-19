@@ -108,6 +108,11 @@ namespace glge
 	namespace math
 	{}
 
+	/// <summary>Namespace for model file operations.</summary>
+	/// Namespace containing functions for loading model files.
+	namespace model_parser
+	{}
+
 	/// <summary>Namespace for event-based message passing.</summary>
 	/// Namespace containing support for raising and handling events.
 	namespace event

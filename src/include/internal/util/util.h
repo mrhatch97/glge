@@ -8,8 +8,8 @@
 
 #include "glge/util/util.h"
 
-#include <cstdio>
 #include <chrono>
+#include <fstream>
 #include <stdexcept>
 
 namespace glge::util

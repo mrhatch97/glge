@@ -23,7 +23,7 @@ add_library (glge STATIC
 add_subdirectory(src/support)
 add_subdirectory(src/util)
 add_subdirectory(src/renderer)
-add_subdirectory(src/obj_parser)
+add_subdirectory(src/model_parser)
 
 target_link_libraries(glge
 	PUBLIC

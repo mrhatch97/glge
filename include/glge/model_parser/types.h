@@ -1,16 +1,12 @@
-/// <summary>
-/// Data representations for object files and object file
-/// parsing functions.
-/// </summary>
-///
-/// \file obj_parser.h
-
 #pragma once
 
 #include <glge/common.h>
 #include <glge/util/util.h>
 
-namespace glge::obj_parser
+/// <summary>
+/// Data representations for model files.
+/// </summary>
+namespace glge::model_parser
 {
 	/// <summary>
 	/// Strong typedef of glm::vec3 representing a vertex in a 3D model.
@@ -103,6 +99,26 @@ namespace glge::obj_parser
 		}
 	};
 
+	/// <summary>
+	/// Strong typedef of std::size_t representing an index in a 3D model
+	/// model.
+	/// </summary>
+	struct Index : public util::Newtype<Index, size_t>
+	{
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		Index() = default;
+
+		/// <summary>
+		/// Constructs an Index from the given std::size_t.
+		/// </summary>
+		/// <param name="value">size_t to wrap.</param>
+		explicit constexpr Index(size_t value) noexcept :
+			Newtype<Index, size_t>(value)
+		{}
+	};
+
 	/// <summary>Type alias for collection of vertices.</summary>
 	using Vertices = vector<Vertex>;
 	/// <summary>Type alias for collection of normals.</summary>
@@ -110,7 +126,7 @@ namespace glge::obj_parser
 	/// <summary>Type alias for collection of uvs.</summary>
 	using TexCoords = vector<TexCoord>;
 	/// <summary>Type alias for collection of indices.</summary>
-	using Indices = vector<unsigned int>;
+	using Indices = vector<Index>;
 
 	/// <summary>
 	/// Representation of a collection and a set of indices
@@ -149,9 +165,35 @@ namespace glge::obj_parser
 	using UVData = Indexed<TexCoords>;
 
 	/// <summary>
-	/// Representation of an object file.
+	/// Supported file types for model file loading.
 	/// </summary>
-	struct Object
+	enum class ModelFiletype
+	{
+		Auto,
+		Object
+	};
+
+	/// <summary>
+	/// Info for loading a model file from disk.
+	/// </summary>
+	struct ModelFileInfo
+	{
+		/// <summary>
+		/// Path to model file.
+		/// </summary>
+		czstring filepath;
+
+		/// <summary>
+		/// Type of file to load or auto to determine
+		/// from file extension.
+		/// </summary>
+		ModelFiletype filetype;
+	};
+
+	/// <summary>
+	/// Representation of a model file.
+	/// </summary>
+	struct ModelData
 	{
 		/// <summary>Vertices and vertex indices for the model.</summary>
 		VertexData vertex_data;
@@ -159,14 +201,14 @@ namespace glge::obj_parser
 		NormalData normal_data;
 		/// <summary>Uvs and uv indices for the model.</summary>
 		UVData uv_data;
-	};
 
-	/// <summary>
-	/// Parse the given object file into an Object.
-	/// </summary>
-	/// <param name="filepath">
-	/// Path to the object file to parse.
-	/// </param>
-	/// <returns>Parsed representation of the file contents.</returns>
-	Object parse_object_file(czstring filepath);
-}   // namespace glge::obj_parser
+		/// <summary>
+		/// Load a set of model data from the given file.
+		/// </summary>
+		/// <param name="file_info">
+		/// Descriptor for the file to load from.
+		/// </param>
+		/// <returns>Loaded model data.</returns>
+		static ModelData from_file(ModelFileInfo file_info);
+	};
+}   // namespace glge::model_parser
