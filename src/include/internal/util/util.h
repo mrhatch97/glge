@@ -95,4 +95,126 @@ namespace glge::util
 
 		return new_value;
 	}
+
+	/// <summary>
+	/// Open the given file in readonly mode.
+	/// </summary>
+	/// <param name="filepath">
+	/// Path to the file to open.
+	/// </param>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if opening file fails.
+	/// </exception>
+	/// <returns>Stream for the opened file.</returns>
+	/// <typeparam name="PathT">
+	/// Type of the path-like value used to open the file.
+	/// </typeparam>
+	template<typename PathT>
+	std::ifstream open_file_read(const PathT filepath, bool binary = false)
+	{
+		std::ios_base::openmode flags = std::ios::in;
+
+		if (binary)
+		{
+			flags |= std::ios::binary;
+		}
+
+		std::ifstream stream(filepath, flags);	
+
+		if(stream.fail())
+		{
+			throw std::runtime_error(EXC_MSG("Failed to open file for read"));
+		}
+
+		return stream;
+	}
+
+	/// <summary>
+	/// Open the given file in writeonly mode.
+	/// </summary>
+	/// <param name="filepath">
+	/// Path to the file to open.
+	/// </param>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if opening file fails.
+	/// </exception>
+	/// <returns>Stream for the opened file.</returns>
+	/// <typeparam name="PathT">
+	/// Type of the path-like value used to open the file.
+	/// </typeparam>
+	template<typename PathT>
+	std::ofstream open_file_write(const PathT filepath,
+								  bool truncate = false,
+								  bool append = false,
+								  bool binary = false)
+	{
+		std::ios_base::openmode flags = std::ios::out;
+
+		if(truncate)
+		{
+			flags |= std::ios::trunc;
+		}
+		if(append)
+		{
+			flags |= std::ios::app;
+		}
+		if (binary)
+		{
+			flags |= std::ios::binary;
+		}
+
+		std::ofstream stream(filepath, flags);
+
+		if(stream.fail())
+		{
+			throw std::runtime_error(EXC_MSG("Failed to open file for write"));
+		}
+
+		return stream;
+	}
+
+	/// <summary>
+	/// Open the given file in read-write mode.
+	/// </summary>
+	/// <param name="filepath">
+	/// Path to the file to open.
+	/// </param>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if opening file fails.
+	/// </exception>
+	/// <returns>Stream for the opened file.</returns>
+	/// <typeparam name="PathT">
+	/// Type of the path-like value used to open the file.
+	/// </typeparam>
+	template<typename PathT>
+	std::fstream open_file_read_write(const PathT filepath,
+									  bool truncate = false,
+									  bool append = false,
+									  bool binary = false)
+	{
+		std::ios_base::openmode flags = std::ios::in | std::ios::out;
+
+		if(truncate)
+		{
+			flags |= std::ios::trunc;
+		}
+		if(append)
+		{
+			flags |= std::ios::app;
+		}
+		if (binary)
+		{
+			flags |= std::ios::binary;
+		}
+
+		std::fstream stream(filepath, flags);
+
+		if (stream.fail())
+		{
+			throw std::runtime_error(
+				EXC_MSG("Failed to open file for read/write"));
+		}
+
+		return stream;
+	}
 }   // namespace glge::util

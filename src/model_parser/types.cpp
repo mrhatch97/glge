@@ -22,6 +22,10 @@ namespace glge::model_parser
 			{
 				return parse_object_file(file_info.filepath);
 			}
+			else if (extension == ".pck")
+			{
+				return read_packed_file(file_info.filepath);
+			}
 			else
 			{
 				throw std::runtime_error(

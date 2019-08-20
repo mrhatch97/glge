@@ -9,6 +9,7 @@
 #include <glge/util/util.h>
 
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 
@@ -75,6 +76,18 @@ namespace glge::test
 		}
 
 		return true;
+	}
+
+	template<typename T>
+	static bool vector_eq(const std::vector<T> & vec1, const std::vector<T> & vec2)
+	{
+		if(vec1.size() != vec2.size())
+		{
+			return false;
+		}
+
+		return memcmp(vec1.data(), vec2.data(),
+					vec1.size() * sizeof(typename std::vector<T>::value_type)) == 0;
 	}
 
 	/// <summary>

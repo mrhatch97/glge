@@ -170,7 +170,8 @@ namespace glge::model_parser
 	enum class ModelFiletype
 	{
 		Auto,
-		Object
+		Object,
+		Packed
 	};
 
 	/// <summary>

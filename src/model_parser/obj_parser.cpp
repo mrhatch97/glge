@@ -1,5 +1,7 @@
 #include "glge/model_parser/model_parser.h"
 
+#include <internal/util/util.h>
+
 #include <array>
 #include <fstream>
 #include <istream>
@@ -315,12 +317,7 @@ namespace glge::model_parser
 
 	ModelData parse_object_file(czstring filepath)
 	{
-		std::ifstream file(filepath);
-
-		if (!file)
-		{
-			throw std::runtime_error(EXC_MSG("Couldn't open file for parsing"));
-		}
+		std::ifstream file = util::open_file_read(filepath);
 
 		Parser parser(file);
 

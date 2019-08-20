@@ -1,4 +1,5 @@
 #include "glge/util/util.h"
+#include "internal/util/util.h"
 
 #include <algorithm>
 #include <cerrno>
