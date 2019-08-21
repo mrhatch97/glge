@@ -1,7 +1,7 @@
 #include "glge/renderer/primitives/primitive_data.h"
 
-#include <internal/util/compat.h>
-#include <internal/util/util.h>
+#include <internal/util/_compat.h>
+#include <internal/util/_util.h>
 
 #include <algorithm>
 #include <cstring>

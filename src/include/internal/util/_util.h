@@ -2,7 +2,7 @@
 ///
 /// Contains various utility classes and functions used by glge.
 ///
-/// \file util.h
+/// \file utils.h
 
 #pragma once
 

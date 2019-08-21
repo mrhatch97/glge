@@ -1,7 +1,7 @@
 #include "glge/util/heightmap.h"
 
-#include <internal/util/compat.h>
-#include <internal/util/util.h>
+#include <internal/util/_compat.h>
+#include <internal/util/_util.h>
 
 namespace glge::util
 {

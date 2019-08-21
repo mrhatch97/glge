@@ -1,6 +1,6 @@
 #include "glge/model_parser/model_parser.h"
 
-#include <internal/util/util.h>
+#include <internal/util/_util.h>
 
 #include <array>
 #include <fstream>
