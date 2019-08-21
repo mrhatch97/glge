@@ -29,7 +29,7 @@ namespace glge::test
 	constexpr float fp_epsilon = 0.001f;
 
 	template<typename FloatT>
-	static bool float_eq(FloatT a, FloatT b)
+	static constexpr bool float_eq(FloatT a, FloatT b)
 	{
 		return glm::epsilonEqual(a, b, fp_epsilon);
 	}
@@ -49,7 +49,7 @@ namespace glge::test
 	/// </param>
 	/// <returns>True if vectors are approximately equal.</returns>
 	template<typename VecT>
-	static bool vec_eq(VecT a, VecT b)
+	static constexpr bool vec_eq(VecT a, VecT b)
 	{
 		return glm::all(glm::epsilonEqual(a, b, fp_epsilon));
 	}
@@ -79,15 +79,17 @@ namespace glge::test
 	}
 
 	template<typename T>
-	static bool vector_eq(const std::vector<T> & vec1, const std::vector<T> & vec2)
+	static bool vector_eq(const std::vector<T> & vec1,
+						  const std::vector<T> & vec2)
 	{
-		if(vec1.size() != vec2.size())
+		if (vec1.size() != vec2.size())
 		{
 			return false;
 		}
 
 		return memcmp(vec1.data(), vec2.data(),
-					vec1.size() * sizeof(typename std::vector<T>::value_type)) == 0;
+					  vec1.size() *
+						  sizeof(typename std::vector<T>::value_type)) == 0;
 	}
 
 	/// <summary>
@@ -161,7 +163,7 @@ namespace glge::test
 				glge::util::print_nested_exception(e);
 				std::exit(test_fail_code);
 			}
-			catch(...)
+			catch (...)
 			{
 				std::cerr << "Caught non-exception object!" << std::endl;
 				std::exit(test_fail_code);
@@ -186,7 +188,7 @@ namespace glge::test
 				glge::util::print_nested_exception(e);
 				std::exit(test_fail_code);
 			}
-			catch(...)
+			catch (...)
 			{
 				std::cerr << "Caught non-exception object!" << std::endl;
 				std::exit(test_fail_code);
@@ -223,6 +225,34 @@ namespace glge::test
 			throw std::runtime_error(EXC_MSG(msg));
 		}
 		catch (const std::logic_error &)
+		{
+		}
+	}
+
+	/// <summary>
+	/// Asserts that the given function, when executed, throws any exception.
+	/// If it does not, throws std::runtime_error with the provided explanation
+	/// message or a default.
+	/// </summary>
+	/// <typeparam name="F">
+	/// Callable type of passed function.
+	/// </typeparam>
+	/// <param name="f">
+	/// Callable object to invoke.
+	/// </param>
+	/// <param name="msg">
+	/// Explanatory message to attach to thrown exception.
+	/// </param>
+	template<typename F>
+	void test_throws(F f,
+					std::string msg = "Expected function to throw")
+	{
+		try
+		{
+			f();
+			throw std::runtime_error(EXC_MSG(msg));
+		}
+		catch (...)
 		{
 		}
 	}

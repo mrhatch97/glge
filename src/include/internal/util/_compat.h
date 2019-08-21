@@ -2,7 +2,7 @@
 /// /// Contains utility macros and variables for cross compatibility between
 /// Windows, Linux, and OSX.
 ///
-/// \file compat.h
+/// \file _compat.h
 
 #pragma once
 

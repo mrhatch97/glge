@@ -9,6 +9,11 @@ namespace glge::test::cases
 {
 	using namespace glge::model_parser;
 
+	static_assert(std::is_standard_layout<Vertex>());
+	static_assert(std::is_standard_layout<Normal>());
+	static_assert(std::is_standard_layout<TexCoord>());
+	static_assert(std::is_standard_layout<Index>());
+
 	/// <summary>
 	/// Context for packed model write/load tests.
 	/// </summary>
