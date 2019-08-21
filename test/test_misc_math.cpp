@@ -38,6 +38,17 @@ namespace glge::test::cases
 
 		test_assert(vec_eq(result, expected), "Result was not correct");
 	}
+
+	void test_trig()
+	{
+		// Sanity check - this will fail if for some unholy reason GLM
+		// is defaulting to degrees
+		test_assert(float_eq(0.0f, glm::cos(glm::radians(90.0f))));
+
+		test_assert(float_eq(1.0f, sin(Degrees(90.0f))));
+		test_assert(float_eq(1.0f, cos(Degrees(0.0f))));
+		test_assert(float_eq(1.0f, tan(Degrees(45.0f))));
+	}
 }   // namespace glge::test::cases
 
 
@@ -49,4 +60,5 @@ int main()
 	Test::run(test_trackball_center);
 	Test::run(test_trackball_right);
 	Test::run(test_trackball_up);
+	Test::run(test_trig);
 }

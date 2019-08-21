@@ -4,6 +4,7 @@
 
 namespace glge::test::cases
 {
+	using namespace glge::model_parser;
 	using namespace glge::renderer::primitive;
 
 	/// \test Tests that the correct EBO data is produced by the
@@ -11,9 +12,9 @@ namespace glge::test::cases
 	void test_move()
 	{
 		ModelData data = ModelData::from_file(
-			ModelFileInfo{"./resources/models/test.obj", true});
+			ModelFileInfo{"./resources/models/test.obj", ModelFiletype::Auto});
 
-		EBOModelData ebo_data = ModelData::to_EBO_data(std::move(data));
+		EBOModelData ebo_data(std::move(data));
 
 		test_equal(178U * 3, ebo_data.indices.size());
 		test_equal(ebo_data.indices.size(), ebo_data.vertices.size());
@@ -25,10 +26,11 @@ namespace glge::test::cases
 	/// copy overload of to_EBO_data.
 	void test_copy()
 	{
-		ModelData data = ModelData::from_file(
-			ModelFileInfo{"./resources/models/test.obj", true});
+		ModelData data =
+			ModelData::from_file(ModelFileInfo{"./resources/models/test.obj",
+								 ModelFiletype::Object});
 
-		EBOModelData ebo_data = ModelData::to_EBO_data(data);
+		EBOModelData ebo_data(data);
 
 		test_equal(178U * 3, ebo_data.indices.size());
 		test_equal(ebo_data.indices.size(), ebo_data.vertices.size());

@@ -106,7 +106,8 @@ namespace glge::renderer::primitive
 		};
 	}   // namespace opengl
 
-	unique_ptr<Model> Model::from_file(const ModelFileInfo & file_info)
+	unique_ptr<Model>
+	Model::from_file(const model_parser::ModelFileInfo & file_info)
 	{
 		ModelData model_data = ModelData::from_file(file_info);
 		return Model::from_data(std::move(model_data));
@@ -114,14 +115,13 @@ namespace glge::renderer::primitive
 
 	unique_ptr<Model> Model::from_data(const ModelData & model_data)
 	{
-		EBOModelData ebo_data = ModelData::to_EBO_data(model_data);
+		EBOModelData ebo_data(model_data);
 		return Model::from_data(ebo_data);
 	}
 
 	unique_ptr<Model> Model::from_data(ModelData && model_data)
 	{
-		EBOModelData ebo_data =
-			ModelData::to_EBO_data(std::forward<ModelData>(model_data));
+		EBOModelData ebo_data(std::forward<ModelData>(model_data));
 		return Model::from_data(ebo_data);
 	}
 

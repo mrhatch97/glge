@@ -2,14 +2,14 @@
 ///
 /// Contains various utility classes and functions used by glge.
 ///
-/// \file util.h
+/// \file utils.h
 
 #pragma once
 
 #include "glge/util/util.h"
 
-#include <cstdio>
 #include <chrono>
+#include <fstream>
 #include <stdexcept>
 
 namespace glge::util
@@ -97,39 +97,124 @@ namespace glge::util
 	}
 
 	/// <summary>
-	/// Wrapper for fscanf IO that checks whether the count of
-	/// matched variables equals the expected count.
+	/// Open the given file in readonly mode.
 	/// </summary>
-	/// Runs scanf pattern match on the given buffer with the given format
-	/// string and optional arguments. Return value indicates whether expected
-	/// count matches actual count. Use FMT_STRING_ARG(buf) for MSVC
-	/// compatibility.
-	/// <typeparam name="Args">
-	/// Variadic parameter pack forwarded to sscanf.
+	/// <param name="filepath">
+	/// Path to the file to open.
+	/// </param>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if opening file fails.
+	/// </exception>
+	/// <returns>Stream for the opened file.</returns>
+	/// <typeparam name="PathT">
+	/// Type of the path-like value used to open the file.
 	/// </typeparam>
-	/// <param name="count">
-	/// Expected number of matched format variables.
-	/// </param>
-	/// <param name="buf">
-	/// Pointer to character buffer to read from.
-	/// </param>
-	/// <param name="fmt">
-	/// C IO format string.
-	/// </param>
-	/// <param name="args">
-	/// Variadic arguments for C IO format string.
-	/// </param>
-	/// <returns>True if count matched expected.</returns>
-	template<typename... Args>
-	bool
-	checked_sscanf(int count, const char * buf, czstring fmt, Args &&... args)
+	template<typename PathT>
+	std::ifstream open_file_read(const PathT filepath, bool binary = false)
 	{
-#ifdef _MSC_VER
-		int matchCt = sscanf_s(buf, fmt, std::forward<Args>(args)...);
-#else
-		int matchCt = sscanf(buf, fmt, args...);
-#endif
+		std::ios_base::openmode flags = std::ios::in;
 
-		return count == matchCt;
+		if (binary)
+		{
+			flags |= std::ios::binary;
+		}
+
+		std::ifstream stream(filepath, flags);	
+
+		if(stream.fail())
+		{
+			throw std::runtime_error(EXC_MSG("Failed to open file for read"));
+		}
+
+		return stream;
+	}
+
+	/// <summary>
+	/// Open the given file in writeonly mode.
+	/// </summary>
+	/// <param name="filepath">
+	/// Path to the file to open.
+	/// </param>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if opening file fails.
+	/// </exception>
+	/// <returns>Stream for the opened file.</returns>
+	/// <typeparam name="PathT">
+	/// Type of the path-like value used to open the file.
+	/// </typeparam>
+	template<typename PathT>
+	std::ofstream open_file_write(const PathT filepath,
+								  bool truncate = false,
+								  bool append = false,
+								  bool binary = false)
+	{
+		std::ios_base::openmode flags = std::ios::out;
+
+		if(truncate)
+		{
+			flags |= std::ios::trunc;
+		}
+		if(append)
+		{
+			flags |= std::ios::app;
+		}
+		if (binary)
+		{
+			flags |= std::ios::binary;
+		}
+
+		std::ofstream stream(filepath, flags);
+
+		if(stream.fail())
+		{
+			throw std::runtime_error(EXC_MSG("Failed to open file for write"));
+		}
+
+		return stream;
+	}
+
+	/// <summary>
+	/// Open the given file in read-write mode.
+	/// </summary>
+	/// <param name="filepath">
+	/// Path to the file to open.
+	/// </param>
+	/// <exception cref="std::runtime_error">
+	/// Thrown if opening file fails.
+	/// </exception>
+	/// <returns>Stream for the opened file.</returns>
+	/// <typeparam name="PathT">
+	/// Type of the path-like value used to open the file.
+	/// </typeparam>
+	template<typename PathT>
+	std::fstream open_file_read_write(const PathT filepath,
+									  bool truncate = false,
+									  bool append = false,
+									  bool binary = false)
+	{
+		std::ios_base::openmode flags = std::ios::in | std::ios::out;
+
+		if(truncate)
+		{
+			flags |= std::ios::trunc;
+		}
+		if(append)
+		{
+			flags |= std::ios::app;
+		}
+		if (binary)
+		{
+			flags |= std::ios::binary;
+		}
+
+		std::fstream stream(filepath, flags);
+
+		if (stream.fail())
+		{
+			throw std::runtime_error(
+				EXC_MSG("Failed to open file for read/write"));
+		}
+
+		return stream;
 	}
 }   // namespace glge::util

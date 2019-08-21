@@ -7,96 +7,20 @@
 #pragma once
 
 #include <glge/common.h>
+#include <glge/model_parser/types.h>
 
 namespace glge::renderer::primitive
 {
-	/// <summary>
-	/// File information data object for model files.
-	/// </summary>
-	struct ModelFileInfo
-	{
-		/// <summary>Path to model file.</summary>
-		string filename;
-		/// <summary>Whether or not model file includes uvs.</summary>
-		bool is_textured;
-	};
-
-	/// <summary>Type alias for collection of vertices.</summary>
-	using VertexPoints = vector<vec3>;
-	/// <summary>Type alias for collection of normals.</summary>
-	using NormalPoints = vector<vec3>;
-	/// <summary>Type alias for collection of uvs.</summary>
-	using UVPoints = vector<vec2>;
-	/// <summary>Type alias for collection of indices.</summary>
-	using Indices = vector<unsigned int>;
-
-	/// <summary>
-	/// Data object containing a set of vertex points and their
-	/// mapped indices.
-	/// </summary>
-	struct VertexData
-	{
-		/// <summary>Collection of vertices.</summary>
-		VertexPoints points;
-		/// <summary>Indices for the set of vertices.</summary>
-		Indices indices;
-	};
-
-	/// <summary>
-	/// Data object containing a set of model normals and their
-	/// mapped indices.
-	/// </summary>
-	struct NormalData
-	{
-		/// <summary>Collection of normal vectors.</summary>
-		NormalPoints points;
-		/// <summary>Indices for the set of normals.</summary>
-		Indices indices;
-	};
-
-	/// <summary>
-	/// Data object containing a set of model uvs and their
-	/// mapped indices.
-	/// </summary>
-	struct UVData
-	{
-		/// <summary>Collection of uvs.</summary>
-		UVPoints points;
-		/// <summary>Indices for the set of uvs.</summary>
-		Indices indices;
-	};
-
-	struct EBOModelData;
-
-	/// <summary>
-	/// Data for a 3D model in program memory.
-	/// </summary>
-	struct ModelData
-	{
-		/// <summary>Vertices and vertex indices for the model.</summary>
-		VertexData vertex_data;
-		/// <summary>Normals and normal indices for the model.</summary>
-		NormalData normal_data;
-		/// <summary>Uvs and uv indices for the model.</summary>
-		UVData uv_data;
-
-		/// <summary>Load a set of ModelData from a file on disk.</summary>
-		/// <param name="file_info">Descriptor for the model file.</param>
-		/// <returns>Loaded ModelData.</returns>
-		static ModelData from_file(const ModelFileInfo & file_info);
-
-		/// <summary>Convert a ModelData to an EBOModelData.</summary>
-		/// <param name="data">
-		/// ModelData to be converted. Data is copied.
-		/// </param>
-		/// <returns>Produced EBOModelData.</summary>
-		static EBOModelData to_EBO_data(const ModelData & data);
-
-		/// <summary>Convert a ModelData to an EBOModelData.</summary>
-		/// <param name="data">ModelData to be converted. Data is moved.</param>
-		/// <returns>Produced EBOModelData.</summary>
-		static EBOModelData to_EBO_data(ModelData && data);
-	};
+	using model_parser::Vertices;
+	using model_parser::Normals;
+	using model_parser::TexCoords;
+	using model_parser::Indices;
+	using model_parser::VertexData;
+	using model_parser::NormalData;
+	using model_parser::UVData;
+	using model_parser::ModelData;
+	using model_parser::ModelFileInfo;
+	using model_parser::ModelFiletype;
 
 	/// <summary>
 	/// Data for a 3D model converted to an EBO-friendly format.
@@ -107,14 +31,41 @@ namespace glge::renderer::primitive
 	/// data that has been converted to this format.
 	struct EBOModelData
 	{
+	private:
+		EBOModelData() = default;
+
+	public:
 		/// <summary>Vertex list.</summary>
-		VertexPoints vertices;
+		Vertices vertices;
 		/// <summary>Normal vector list.</summary>
-		NormalPoints normals;
+		Normals normals;
 		/// <summary>Uv list.</summary>
-		UVPoints uvs;
+		TexCoords uvs;
 		/// <summary>Index list. Indexes into all collections.</summary>
 		Indices indices;
+
+		/// <summary>
+		/// Copy a set of EBOModelData.
+		/// </summary>
+		/// <param name="other">EBOModelData to copy from.</param>
+		EBOModelData(const EBOModelData & other) = default;
+
+		/// <summary>
+		/// Move a set of EBOModelData.
+		/// </summary>
+		/// <param name="other">EBOModelData to move from.</param>
+		EBOModelData(EBOModelData && other) = default;
+
+		/// <summary>Convert a ModelData to an EBOModelData.</summary>
+		/// <param name="data">
+		/// ModelData to be converted. Data is copied.
+		/// </param>
+		EBOModelData(const ModelData & data);
+
+		/// <summary>Convert a ModelData to an EBOModelData.</summary>
+		/// <param name="data">ModelData to be converted. Data is moved.</param>
+		/// <returns>Produced EBOModelData.</summary>
+		EBOModelData(ModelData && data);
 	};
 
 	/// <summary>

@@ -4,14 +4,14 @@
 
 namespace glge::test::cases
 {
-	using namespace glge::renderer::primitive;
+	using namespace glge::model_parser;
 
     /// \test Tests whether a ModelData can be loaded from a large
     /// untextured .obj file on disk. Useful for benchmarking.
 	void test_load()
 	{
 		ModelData data = ModelData::from_file(
-			ModelFileInfo{"./resources/models/big.obj", false});
+			ModelFileInfo{"./resources/models/big.obj", ModelFiletype::Object});
 
 		test_equal(34835U, data.vertex_data.points.size());
 		test_equal(34835U, data.normal_data.points.size());

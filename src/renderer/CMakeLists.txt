@@ -6,7 +6,7 @@ target_sources(glge
 		engine.cpp
 		primitives/shader_program.cpp
 		primitives/primitive_data.cpp
-    scene_graph/scene_settings.cpp
+		scene_graph/scene_settings.cpp
 		scene_graph/scene.cpp
 		scene_graph/traversal.cpp
 )

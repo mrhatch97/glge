@@ -3,7 +3,7 @@
 
 #include <glge/common.h>
 #include <glge/renderer/primitives/lines.h>
-#include <internal/util/util.h>
+#include <internal/util/_util.h>
 
 #include <array>
 
