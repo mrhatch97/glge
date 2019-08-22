@@ -1,3 +1,9 @@
+/// <summary>
+/// Types used for representing data parsed from model files.
+/// </summary>
+///
+/// \file types.h
+
 #pragma once
 
 #include <glge/common.h>

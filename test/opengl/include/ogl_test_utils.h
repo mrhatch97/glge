@@ -11,14 +11,18 @@
 
 #include "test_utils.h"
 
+#ifdef GLGE_HEADLESS_TESTS
+#include <EGL/egl.h>
+#else
+#include <GLFW/glfw3.h>
+#endif
+
 namespace glge::test::opengl
 {
 
 #ifdef GLGE_HEADLESS_TESTS
 	// Taken from
 	// https://devblogs.nvidia.com/egl-eye-opengl-visualization-without-x-server/
-
-#include <EGL/egl.h>
 
 	static const EGLint config_attribs[] = {EGL_SURFACE_TYPE,
 											EGL_PBUFFER_BIT,
@@ -96,8 +100,6 @@ namespace glge::test::opengl
 	}
 
 #else
-#include <GLFW/glfw3.h>
-
 	/// <summary>
 	/// Creates an OpenGL context for a test to run under.
 	/// </summary>

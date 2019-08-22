@@ -95,6 +95,7 @@ namespace glge
 	/// </summary>
 	/// User defined deduction guide for overloaded to allow implicit type
 	/// deduction in pattern matching syntax.
+	/// <returns>Nothing, this isn't a function, but ok Doxygen.</returns>
 	template<class... Ts>
 	overloaded(Ts...)->overloaded<Ts...>;
 

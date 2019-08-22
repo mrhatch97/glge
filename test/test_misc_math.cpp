@@ -39,6 +39,8 @@ namespace glge::test::cases
 		test_assert(vec_eq(result, expected), "Result was not correct");
 	}
 
+	/// \test Tests that the type-safe glm trigonometric function wrappers 
+	/// function as expected.
 	void test_trig()
 	{
 		// Sanity check - this will fail if for some unholy reason GLM
