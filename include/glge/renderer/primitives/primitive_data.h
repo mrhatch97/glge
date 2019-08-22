@@ -64,7 +64,6 @@ namespace glge::renderer::primitive
 
 		/// <summary>Convert a ModelData to an EBOModelData.</summary>
 		/// <param name="data">ModelData to be converted. Data is moved.</param>
-		/// <returns>Produced EBOModelData.</summary>
 		EBOModelData(ModelData && data);
 	};
 
